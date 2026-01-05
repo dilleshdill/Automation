@@ -20,7 +20,7 @@ const Data = [
     }
 ]
 const LoginPage = () => {
-    const [state, setState] = useState("login");
+    const [state, setState] = useState("register");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -78,21 +78,27 @@ const LoginPage = () => {
     
         }
 
-    const onCreateAccount = (role,name,email,password) => {
+    const onCreateAccount = async (e) => {
+        e.preventDefault()
         if (role !== "" && email !== "" && password !=="" ){
             try{
-                const reponse = axios.post(DOMAIN + "/auth/register",{
+                console.log(role,email,password)
+                const response = await axios.post(DOMAIN + "/auth/register",{
                     role: role,
                     name: name,
                     email: email,
                     password: password
                 })
-                console.log(reponse.data);
-                toast.success("User Registered Successfully")
-                navigate("/")
+                if (response.status === 201){
+                    console.log(response.data);
+                    toast.success("User Registered Successfully")
+                    navigate("/")
+                }
+
             }
             catch(err){
                 console.log(err);
+
                 toast.error("Invalid Values")
             }
 
@@ -174,7 +180,7 @@ const LoginPage = () => {
             
             {
                 (state === "register") ? (
-                    <button className="bg-gray-400  hover:bg-gray-900 transition-all text-gray-600  w-full py-2 rounded-md cursor-pointer" onClick={()=>{onCreateAccount(role,name,email,password)}}>
+                    <button className="bg-gray-400  hover:bg-gray-900 transition-all text-gray-600  w-full py-2 rounded-md cursor-pointer" onClick={(e)=>{onCreateAccount(e)}}>
                         Create Account
                     </button>
             )

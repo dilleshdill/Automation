@@ -1,17 +1,24 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import {React,lazy,Suspense} from 'react'
 import './App.css'
+import {BrowserRouter as Router,Routes,Route, BrowserRouter} from 'react-router-dom'
 
-function App() {
-  const [count, setCount] = useState(0)
+const LoginPage = lazy(() => import('./Pages/LoginPage'))
+const HomePage = lazy(()=> import('./Pages/HomePage'))
+import { ToastContainer } from "react-toastify";
 
+const App = () => {
   return (
-    <>
-      <div>
-        <p className='text-red-400'>hello world</p>
-      </div>
-    </>
+    <BrowserRouter>
+      <ToastContainer />
+      <Suspense>
+        <Routes>
+          
+          <Route path='/login' element={<LoginPage />} />
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </Suspense> 
+    </BrowserRouter>
+
   )
 }
 

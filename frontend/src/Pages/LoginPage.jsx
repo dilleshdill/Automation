@@ -30,7 +30,8 @@ const LoginPage = () => {
     const [bidderID,setBidderID] = useState("");
     const navigate = useNavigate()
 
-    const onSubmit = async() => {
+    const onSubmit = async(e) => {
+        e.preventDefault()
         if (role === "User"){
             if (role !== "" && email !== "" && password !== "") {
                 const body = {
@@ -84,8 +85,7 @@ const LoginPage = () => {
             try{
                 console.log(role,email,password)
                 const response = await axios.post(DOMAIN + "/auth/register",{
-                    role: role,
-                    name: name,
+                    userName: name,
                     email: email,
                     password: password
                 })
@@ -186,7 +186,7 @@ const LoginPage = () => {
             )
             :
             (
-                    <button className="bg-gray-400  hover:bg-gray-900 transition-all text-gray-600  w-full py-2 rounded-md cursor-pointer" onClick={()=>{onSubmit()}}>
+                    <button className="bg-gray-400  hover:bg-gray-900 transition-all text-gray-600  w-full py-2 rounded-md cursor-pointer" onClick={(e)=>{onSubmit(e)}}>
                         Login
                     </button>
             )

@@ -2,14 +2,12 @@ import mongoose from "mongoose";
 
 const userRegisterSchema = new mongoose.Schema(
   {
-    userName: { type: String, required: true, unique: true },
+    userName: { type: String, required: true, unique: true, trim: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-  },
-  { timestamps: true }
-);
+    
+  },{ timestamps: true });
 
-export const UserRegister = mongoose.model(
-  "UserRegister",
-  userRegisterSchema
-);
+export const UserRegister =
+  mongoose.models.UserRegister ||
+  mongoose.model("UserRegister", userRegisterSchema);

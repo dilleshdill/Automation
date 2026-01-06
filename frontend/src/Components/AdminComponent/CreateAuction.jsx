@@ -70,7 +70,7 @@ const CreateAuction = () => {
         },
     {withCredentials: true});
         if(response.status === 201){
-            Cookies.set("auctionId", response.data._id);
+            localStorage.setItem("auctionId",response.data._id)
             toast.success("Auction Created Successfully");
         }
 
@@ -84,7 +84,7 @@ const CreateAuction = () => {
   const DevelopAction = () => {
 
     try{
-        const auctionId = Cookies.get("auctionId");
+        const auctionId = localStorage.getItem("auctionId")
         const response = axios.post(DOMAIN + "/auction/develop-auction",{
             auctionId: auctionId,
             auctionName:auction.name,

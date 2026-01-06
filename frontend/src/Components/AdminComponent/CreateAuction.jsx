@@ -58,7 +58,6 @@ const CreateAuction = () => {
 
   const CreateAuction = async() => {
     console.log("AUCTION CREATED", auction)
-    toast.info("Creating Auction...");
     try{
         const response = await axios.post(DOMAIN + "/auction/create-auction",{
             auction_name:auction.name,
@@ -70,6 +69,7 @@ const CreateAuction = () => {
         },
     {withCredentials: true});
         if(response.status === 201){
+            
             localStorage.setItem("auctionId",response.data._id)
             toast.success("Auction Created Successfully");
         }
@@ -85,6 +85,7 @@ const CreateAuction = () => {
 
     try{
         const auctionId = localStorage.getItem("auctionId")
+        toast.info(auctionId)
         const response = axios.post(DOMAIN + "/auction/develop-auction",{
             auctionId: auctionId,
             auctionName:auction.name,

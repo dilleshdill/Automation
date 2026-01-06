@@ -70,7 +70,7 @@ const CreateAuction = () => {
         },
     {withCredentials: true});
         if(response.status === 201){
-            Cookies.set("auctionId",response.data.auctionId);
+            Cookies.setItem("auctionId",response.data._id)
             toast.success("Auction Created Successfully");
         }
 

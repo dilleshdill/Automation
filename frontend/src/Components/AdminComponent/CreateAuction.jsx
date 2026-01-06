@@ -24,6 +24,8 @@ const CreateAuction = () => {
 
   const [players, setPlayers] = useState([]);
 
+
+
   
   const addFranchise = () => {
     setFranchises([
@@ -86,7 +88,7 @@ const CreateAuction = () => {
 
     try{
         const auctionId = localStorage.getItem("auctionId")
-        toast.info(auctionId)
+        console.log(players)
         const response = axios.post(DOMAIN + "/auction/develop-auction",{
             auctionId: auctionId,
             auctionName:auction.name,
@@ -300,21 +302,108 @@ const CreateAuction = () => {
                 </h3>
 
                 <div className="grid md:grid-cols-3 gap-3">
-                  <input className="input" placeholder="Set No" />
-                  <input className="input" placeholder="Player Name" />
-                  <input className="input" placeholder="Country" />
+                  <input
+                    className="input"
+                    placeholder="Set No"
+                    value={p.setNo}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].setNo = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+
+                  <input
+                    className="input"
+                    placeholder="Player Name"
+                    value={p.name}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].name = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+
+                  <input
+                    className="input"
+                    placeholder="Country"
+                    value={p.country}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].country = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-3">
-                  <input className="input" placeholder="Batting Style" />
-                  <input className="input" placeholder="Runs" />
-                  <input className="input" placeholder="Average" />
+                  <input
+                    className="input"
+                    placeholder="Batting Style"
+                    value={p.battingStyle}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].battingStyle = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+
+                  <input
+                    className="input"
+                    placeholder="Runs"
+                    value={p.runs}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].runs = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+
+                  <input
+                    className="input"
+                    placeholder="Average"
+                    value={p.average}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].average = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-3">
-                  <input className="input" placeholder="Strike Rate" />
-                  <input className="input" placeholder="Fifties" />
-                  <input className="input" placeholder="Hundreds" />
+                  <input
+                    className="input"
+                    placeholder="Strike Rate"
+                    value={p.strikeRate}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].strikeRate = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+
+                  <input
+                    className="input"
+                    placeholder="Fifties"
+                    value={p.fifties}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].fifties = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+
+                  <input
+                    className="input"
+                    placeholder="Hundreds"
+                    value={p.hundreds}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].hundreds = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
                 </div>
               </div>
             ))}

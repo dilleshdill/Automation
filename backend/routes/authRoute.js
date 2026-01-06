@@ -1,11 +1,11 @@
 import express from 'express';
-import { registerUser } from '../controllers/authController.js';
-import { protect } from '../middleware/protect.js';
-import { isUser } from '../middleware/isUser.js';
+import { registerUser, userLogin } from '../controllers/authController.js';
+import { protectUser } from '../middleware/protectUser.js';
+// import { isUser } from '../middleware/isUser.js';
 
 const authRoute = express.Router();
 
 // Routes
 authRoute.post('/register',registerUser)
-authRoute.post('/login',protect,isUser,registerUser)
+authRoute.post('/login',userLogin)
 export default authRoute;

@@ -9,9 +9,9 @@ dotenv.config();
 
 export const registerBidder = async (req, res) =>{
     try{
-        const {bidderName , email , password , bidderTeam} = req.body;
+        const {email , password , bidderTeam} = req.body;
 
-        if (!bidderName || !email || !password || ! bidderTeam){
+        if (!email || !password || ! bidderTeam){
             return res.status(400).json({message:"Please provide all required fields"});
         }
 
@@ -23,7 +23,6 @@ export const registerBidder = async (req, res) =>{
         const hashedPassword = await bcrypt.hash(password , 10);
 
         const newBidder = new bidderRegister({
-            bidderName,
             bidderTeam,
             email,
             password:hashedPassword,
@@ -64,7 +63,7 @@ export const bidderLogin = async (req , res) => {
 
         const token = generateUserToken(existingUser._id , existingUser.email , "Bidder")
 
-        res.cookie("bidder-token", token, {
+        res.cookie("bidder_token", token, {
         httpOnly: true,
         secure: false, // true in production (HTTPS)
         sameSite: "lax",

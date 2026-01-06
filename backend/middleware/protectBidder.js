@@ -1,14 +1,14 @@
 import jwt from "jsonwebtoken";
 
-export const protect = (req, res, next) => {
-  const token = req.cookies.token;
+export const protectBidder = (req, res, next) => {
+  const token = req.cookies.bidder_token;
 
   if (!token) {
     return res.status(401).json({ message: "Not authenticated" });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_BIDDER_SECRET);
     req.user = decoded;
     next();
   } catch {

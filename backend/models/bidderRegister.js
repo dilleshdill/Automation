@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 
 const bidderRegisterSchema = new mongoose.Schema({
-  bidderName: {
-    type: String,
-    required: true,
-  },
   bidderTeam: {
     type: String,
     required: true,

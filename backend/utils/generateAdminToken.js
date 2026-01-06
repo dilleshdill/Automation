@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 
-const generateUserToken = (userId,email ) => {
+const generateAdminToken = (adminId,email) => {
   return jwt.sign(
-    { id: userId ,
+    { id: adminId ,
         email
     },
-    process.env.JWT_USER_SECRET,
+    process.env.JWT_ADMIN_SECRET,
     {
       expiresIn: "7d", // token validity
     }
@@ -13,4 +13,4 @@ const generateUserToken = (userId,email ) => {
   
 };
 
-export default generateUserToken;
+export default generateAdminToken;

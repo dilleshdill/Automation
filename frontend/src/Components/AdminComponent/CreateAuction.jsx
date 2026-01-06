@@ -85,13 +85,12 @@ const CreateAuction = () => {
     }
     };
 
-  // ---------- SUBMIT ----------
-  const DevelopAction = () => {
+  const DevelopAction = async() => {
 
     try{
         const auctionId = localStorage.getItem("auctionId")
         console.log(players)
-        const response = axios.post(DOMAIN + "/auction/develop-auction",{
+        const response = await axios.post(DOMAIN + "/auction/develop-auction",{
             auctionId: auctionId,
             auctionName:auction.name,
             auctionTime:auction.time,

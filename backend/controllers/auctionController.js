@@ -134,4 +134,4 @@ export const getAllAuctions = async (req , res) => {
     }catch(e){
         return res.stats(500).json({message:"server error"})
     }
-}..
+}

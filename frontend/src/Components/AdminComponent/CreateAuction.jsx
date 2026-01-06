@@ -68,8 +68,8 @@ const CreateAuction = () => {
             auction_img:auction.auctionImg,
             auction_time:auction.playerTime
         });
-        if(response.status === 200){
-            Cookies.setItem("auctionId",response.data.auctionId);
+        if(response.status === 201){
+            Cookies.set("auctionId",response.data.auctionId);
             toast.success("Auction Created Successfully");
         }
 

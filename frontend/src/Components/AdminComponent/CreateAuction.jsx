@@ -56,10 +56,11 @@ const CreateAuction = () => {
     ]);
   };
 
-  const CreateAuction = () => {
+  const CreateAuction = async() => {
     console.log("AUCTION CREATED", auction)
+    toast.info("Creating Auction...");
     try{
-        const response = axios.post(DOMAIN + "/auction/create-auction",{
+        const response = await axios.post(DOMAIN + "/auction/create-auction",{
             auction_name:auction.name,
             description:auction.description,
             short_name:auction.shortName,

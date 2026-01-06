@@ -5,6 +5,7 @@ import { connectDB } from "./config/db.js";
 import authRoute from "./routes/authRoute.js";
 import adminRoute from "./routes/adminRoute.js";
 import bidderRoute from "./routes/bidderRoute.js";
+import playerRoute from "./routes/playersRoute.js";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.use(cors({ origin: origins, credentials: true }));
 app.use('/auth',authRoute)
 app.use('/admin',adminRoute)
 app.use('/bidder',bidderRoute)
-
+app.use('/add-player',playerRoute)
 
 // ✅ CONNECT DB FIRST
 const PORT = process.env.PORT || 5000;

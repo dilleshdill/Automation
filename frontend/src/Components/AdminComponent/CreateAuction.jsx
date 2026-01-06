@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Cookies } from "react-cookie";
-const DOMAIN = import.meta.env.VITE_API_URL;
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 import { useNavigate } from "react-router-dom";
 
 const CreateAuction = () => {

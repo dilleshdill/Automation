@@ -55,6 +55,7 @@ const LoginPage = () => {
                 try{
                     const response = await axios.post(DOMAIN + "/admin/login",{adminKey:adminKey});
                     toast.success("Admin logged in successfully");
+                    navigate("/admin");
                     console.log(response.data);
                 }catch(err){
                     console.log(err);

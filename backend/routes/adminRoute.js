@@ -1,6 +1,5 @@
 import express from "express"
-import { adminLogin, registerAdmin,getAuctions } from "../controllers/adminRegisterController.js"
-import { protectAdmin } from "../middleware/protectAdmin.js"
+import { adminLogin, registerAdmin } from "../controllers/adminRegisterController.js"
 
 const adminRoute = express.Router()
 

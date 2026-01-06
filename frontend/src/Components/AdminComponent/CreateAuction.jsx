@@ -11,12 +11,12 @@ const CreateAuction = () => {
 
 
   const [auction, setAuction] = useState({
-    name: "",
-    time: "",
-    playerTime: "",
-    description:"",
-    shortName:"",
-    auctionImg:"" 
+    name: "ipl",
+    time: "30",
+    playerTime: "30",
+    description:"sdfgh",
+    shortName:"sdf",
+    auctionImg:"sdfg" 
   });
 
   

@@ -29,7 +29,7 @@ const NavBar = () => {
 
           
           <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
-            <a className="hover:text-gray-700 cursor-pointer">Home</a>
+            <a href = "/admin" className="hover:text-gray-700 cursor-pointer">Home</a>
           </div>
 
           

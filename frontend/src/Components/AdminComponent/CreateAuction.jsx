@@ -67,7 +67,8 @@ const CreateAuction = () => {
             auction_date:auction.time,
             auction_img:auction.auctionImg,
             auction_time:auction.playerTime
-        });
+        },
+    {withCredentials: true});
         if(response.status === 201){
             Cookies.set("auctionId",response.data.auctionId);
             toast.success("Auction Created Successfully");

@@ -53,7 +53,10 @@ const LoginPage = () => {
         else if (role === "Admin"){
             if (adminKey !== ""){
                 try{
-                    const response = await axios.post(DOMAIN + "/admin/login",{adminKey:adminKey});
+                    const response = await axios.post(DOMAIN + "/admin/login",
+                        {adminKey:adminKey},
+                        {withCredentials: true}
+                    );
                     toast.success("Admin logged in successfully");
                     navigate("/admin");
                     console.log(response.data);

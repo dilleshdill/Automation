@@ -69,7 +69,7 @@ const CreateAuction = () => {
         },
     {withCredentials: true});
         if(response.status === 201){
-            
+            console.log(response.data)
             localStorage.setItem("auctionId",response.data._id)
             toast.success("Auction Created Successfully");
         }

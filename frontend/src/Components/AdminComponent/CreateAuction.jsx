@@ -45,15 +45,17 @@ const CreateAuction = () => {
       ...players,
       {
         id: Date.now(),
-        setNo: "",
+        setNo: 0,
         name: "",
         country: "",
         battingStyle: "",
-        runs: "",
-        average: "",
-        strikeRate: "",
-        fifties: "",
-        hundreds: "",
+        runs: 0,
+        average: 0,
+        strikeRate: 0,
+        fifties: 0,
+        hundreds: 0,
+        basePrice:0,
+        imageUrl:""
       },
     ]);
   };
@@ -101,7 +103,8 @@ const CreateAuction = () => {
             players:players
 
         },
-      {withCredentials: true});
+        {withCredentials: true});
+
         if (response.status === 200){
             toast.success("Auction Developed Successfully");
             Navigate("/admin")
@@ -189,6 +192,7 @@ const CreateAuction = () => {
                 value={auction.auctionImg}
                 onChange={(e) => setAuction({...auction,auctionImg:e.target.value})}
                 />
+                
             </div>
 
             <p className="text-sm text-gray-500 mt-2">
@@ -401,6 +405,26 @@ const CreateAuction = () => {
                     onChange={(e) => {
                       const copy = [...players];
                       copy[index].hundreds = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+                  <input
+                    className="input"
+                    placeholder="Base Price"
+                    value={p.basePrice}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].basePrice = e.target.value;
+                      setPlayers(copy);
+                    }}
+                  />
+                  <input
+                    className="input"
+                    placeholder="ImageUrl"
+                    value={p.imageUrl}
+                    onChange={(e) => {
+                      const copy = [...players];
+                      copy[index].imageUrl = e.target.value;
                       setPlayers(copy);
                     }}
                   />

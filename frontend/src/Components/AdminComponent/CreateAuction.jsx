@@ -70,7 +70,7 @@ const CreateAuction = () => {
         },
     {withCredentials: true});
         if(response.status === 201){
-            Cookies.setItem("auctionId",response.data._id)
+            Cookies.set("auctionId", response.data._id);
             toast.success("Auction Created Successfully");
         }
 
@@ -82,7 +82,6 @@ const CreateAuction = () => {
 
   // ---------- SUBMIT ----------
   const DevelopAction = () => {
-    
 
     try{
         const auctionId = Cookies.get("auctionId");
@@ -90,14 +89,15 @@ const CreateAuction = () => {
             auctionId: auctionId,
             auctionName:auction.name,
             auctionTime:auction.time,
-            auctionDescription:auction.description,
+            auctionDescription:auction.description, 
             auctionShortName:auction.shortName,
             auctionImg:auction.auctionImg,
             auctionPlayerTime:auction.playerTime,
             franchises:franchises,
             players:players
 
-        });
+        },
+      {withCredentials: true});
         if (response.status === 200){
             toast.success("Auction Developed Successfully");
             Navigate("/admin")

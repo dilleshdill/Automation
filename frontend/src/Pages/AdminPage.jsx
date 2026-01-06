@@ -12,7 +12,8 @@ const AdminPage = () => {
             try{
                 const response = await axios.get(DOMAIN + "/admin/get-auction-list");
                 if (response.status === 200) {
-                    setAuctionList(response.data.auctions);
+                    console.log(response.data)
+                    setAuctionList(response.data);
                     console.log(response.data);
                     
                 }

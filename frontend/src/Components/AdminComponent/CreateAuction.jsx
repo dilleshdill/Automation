@@ -25,7 +25,6 @@ const CreateAuction = () => {
   const [players, setPlayers] = useState([]);
 
 
-
   
   const addFranchise = () => {
     setFranchises([

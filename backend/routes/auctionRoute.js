@@ -6,5 +6,5 @@ const auctionRoute = express.Router()
 auctionRoute.post('/create-auction',protectAdmin,createAuction)
 auctionRoute.post('/develop-auction',protectAdmin,addPlayersAndFranchises)
 auctionRoute.get('/get-auction-list',protectAdmin,getAllAuctions)
-auctionRoute.get('/get-auction',protectAdmin,getAuctionDetails)
+auctionRoute.post('/get-auction',protectAdmin,getAuctionDetails)
 export default auctionRoute;

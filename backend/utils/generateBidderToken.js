@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
 
-const generateBidderToken = (bidderId,email ) => {
+const generateBidderToken = (bidderId,auctionId,email ) => {
   return jwt.sign(
-    { id: bidderId ,
-        email
+    { bidder_id: bidderId ,
+      auction_id : auctionId,
+      email
     },
     process.env.JWT_BIDDER_SECRET,
     {

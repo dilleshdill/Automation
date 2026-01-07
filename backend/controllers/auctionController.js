@@ -1,5 +1,6 @@
 import { Auction } from "../models/auctionModel.js";
 
+
 export const createAuction = async (req, res) => {
     // console.log("Create Auction Request Body:", req.body);
     // console.log("Authenticated Admin ID:", req.user.id );
@@ -74,6 +75,7 @@ export const addPlayersAndFranchises = async (req, res) => {
         teamName: f.teamName,
         email: f.email,
         password: f.password, // ⚠️ hash later
+        bidderId: `BIDDER-${Date.now()}`,
         purse: Number(f.purse),
         players: [],
       }));
@@ -135,4 +137,19 @@ export const getAllAuctions = async (req , res) => {
     }catch(e){
         return res.status(500).json({message:"server error"})
     }
+}
+
+export const getAuctionDetails = async (req ,res) => {
+  try{
+    const {auctionId} = req.body
+
+    const existingAuction = await Auction.findById(auctionId)
+
+    if(!existingAuction){
+      return res.status(400).json({message:"no auction found"})
+    }
+    return res.status(200).json({message:"auction details",existingAuction})
+  }catch(e){
+    return res.status(500).json({message:"server error",e})
+  }
 }

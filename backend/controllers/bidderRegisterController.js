@@ -2,35 +2,44 @@ import bidderRegister from "../models/bidderRegister.js";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import generateUserToken from "../utils/generateUserToken.js";
-
+import { Auction } from "../models/auctionModel.js";
 dotenv.config();
 
 //bidder Register
 
 export const registerBidder = async (req, res) =>{
     try{
-        const {email , password , bidderTeam} = req.body;
+        const {email, auctionId , password , bidderTeam} = req.body;
 
-        if (!email || !password || ! bidderTeam){
+        if (!email || !auctionId || !password || ! bidderTeam){
             return res.status(400).json({message:"Please provide all required fields"});
         }
+        const auction = await Auction.findById(auctionId)
 
-        const existingUser = await bidderRegister.findOne({email});
-        if (existingUser){
+        if(!auction){
+            return res.status(400).json({message:"no auctionId found"})
+        }
+
+        const existingFranchise = auction.franchises.find(
+            (e) => e.email === email
+        )
+        if (existingFranchise){
             return res.status(400).json({message:"Bidder already exists"});
         }
 
         const hashedPassword = await bcrypt.hash(password , 10);
 
-        const newBidder = new bidderRegister({
+        const newBidder = {
+            _id: new mongoose.Types.ObjectId(),
             bidderTeam,
             email,
-            password:hashedPassword,
-            bidderId: `BIDDER-${Date.now()}`
-        })
-
-        await newBidder.save();
-        const token = generateUserToken(newBidder._id, newBidder.email, "Bidder");
+            password: hashedPassword,
+            bidderId: `BIDDER-${Date.now()}`,
+            players: [],
+        };
+        auction.franchises.push(newBidder)
+        await auction.save();
+        const token = generateUserToken(newBidder._id, auction._id, newBidder.email);
         // const token = generateUserToken(newBidder._id)
         res.status(201).json({message:"Bidder registered successfully", token});
     } catch (error) {
@@ -43,25 +52,33 @@ export const registerBidder = async (req, res) =>{
 export const bidderLogin = async (req , res) => {
     try{
 
-        const {bidderId , password} = req.body
+        const {bidderId , auctionId , password} = req.body
 
-        if (! bidderId || ! password) {
+        if (! bidderId || !auctionId || ! password) {
             return res.status(400).json({message:"provide all the credentials"})
         }
 
-        const existingUser = await bidderRegister.findOne({bidderId})
+        const existingAuction = await Auction.findById(auctionId)
 
-        if (!existingUser){
-            return res.status(400).json({message:"Invalid credentials"});
+        if (!existingAuction){
+            return res.status(400).json({message:"no auction found"});
         }
 
-        const isPasswordCorrect = await bcrypt.compare(password , existingUser.password)
+        const franchise = existingAuction.franchises.find(
+            (f) => f._id.toString() === bidderId
+        );
+
+        if (!franchise)
+            return res.status(400).json({message:"franchise not found"})
+
+
+        const isPasswordCorrect = await bcrypt.compare(franchise.password , existingUser.password)
 
         if (!isPasswordCorrect){
             return res.status(400).json({message:"Invalid credentials"});
         }
 
-        const token = generateUserToken(existingUser._id , existingUser.email , "Bidder")
+        const token = generateUserToken(existingUser._id, auctionId , existingUser.email )
 
         res.cookie("bidder_token", token, {
         httpOnly: true,

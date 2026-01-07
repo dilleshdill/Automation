@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const protectAdmin = (req, res, next) => {
   const token = req.cookies.admin_token;
+  console.log("Protect Admin Middleware Invoked. Token:", token);
   // console.log("Protect Admin Middleware Invoked. Token:", token);
   if (!token) {
     return res.status(401).json({ message: "Not authenticated" });

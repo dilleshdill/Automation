@@ -125,13 +125,14 @@ if (Array.isArray(players)) {
 };
 
 export const getAllAuctions = async (req , res) => {
+  console.log("Get All Auctions Request by Admin:" );
     try{
         const details = await Auction.find()
         if (!details){
-            return res.stats(200).json([])
+            return res.status(200).json([])
         }
-        return res.stats(200).json({message:"all auctions",details})
+        return res.status(200).json({message:"all auctions",details})
     }catch(e){
-        return res.stats(500).json({message:"server error"})
+        return res.status(500).json({message:"server error"})
     }
 }

@@ -141,9 +141,9 @@ export const getAllAuctions = async (req , res) => {
 
 export const getAuctionDetails = async (req ,res) => {
   try{
-    const {auctionId} = req.body
+    const {auction_id} = req.body
 
-    const existingAuction = await Auction.findById(auctionId)
+    const existingAuction = await Auction.findById(auction_id)
 
     if(!existingAuction){
       return res.status(400).json({message:"no auction found"})

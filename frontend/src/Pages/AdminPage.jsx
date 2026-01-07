@@ -10,7 +10,9 @@ const AdminPage = () => {
     useEffect(() => {
         const fetchedList = async () => {
             try{
-                const response = await axios.get(DOMAIN + "/auction/get-auction-list");
+                const response = await axios.get(DOMAIN + "/auction/get-auction-list",
+                    {withCredentials:true}
+                );
                 if (response.status === 200) {
                     console.log(response.data)
                     setAuctionList(response.data);

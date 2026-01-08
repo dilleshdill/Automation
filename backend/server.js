@@ -37,8 +37,7 @@ const io = new Server(server, {
   cors: { origin: "*" }
 });
 
-app.set("io", io); // Make io accessible in routes/controllers
-
+app.set("io", io); 
 
 io.use((socket , next) =>{
   try{

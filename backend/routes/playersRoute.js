@@ -6,4 +6,5 @@ const playerRoute = express.Router()
 // Routes
 playerRoute.post('/',addPlayer)
 
+
 export default playerRoute;

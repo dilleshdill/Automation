@@ -73,6 +73,24 @@ const AuctionAdminPage = () => {
     ]);
   };
 
+
+  const getPassPlayer = async() => {
+    try{
+      const response = await axios.post(DOMAIN + "/add-player",
+        {
+          player:players
+        },
+      {withCredentials: true}
+      )
+      if (response.status === 200){
+        console.log(response.data)
+        setShowPlayerModal(false)
+      }
+      }catch(err){
+        console.log(err)
+      }
+  }
+
   return (
     <>
       <NavBar />
@@ -312,7 +330,7 @@ const AuctionAdminPage = () => {
                 >
                   Cancel
                 </button>
-                <button className="btn-primary">
+                <button className="btn-primary" onClick={getPassPlayer()}>
                   Save Players
                 </button>
               </div>
@@ -407,7 +425,7 @@ const AuctionAdminPage = () => {
                 ))}
 
                 <div className="flex justify-between">
-                  <button className="btn-secondary" onClick={() => setShowPlayerModel(false)}>
+                  <button className="btn-secondary" onClick={() => setShowFranchsisModal(false)}>
                     close
                   </button>
                   

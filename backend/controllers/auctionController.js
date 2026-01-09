@@ -53,78 +53,75 @@ export const createAuction = async (req, res) => {
 // add playerse and franchise to auction
 
 export const addPlayersAndFranchises = async (req, res) => {
-  console.log("Incoming body:", req.body);
-
   try {
     const { auctionId, franchises, players } = req.body;
 
-    if (!auctionId) {
-      return res.status(400).json({ message: "Auction ID is required" });
-    }
+    if (!auctionId) return res.status(400).json({ message: "Auction ID required" });
 
-    // 1️⃣ Find auction by MongoDB _id
     const auction = await Auction.findById(auctionId);
+    if (!auction) return res.status(404).json({ message: "Auction not found" });
 
-    if (!auction) {
-      return res.status(404).json({ message: "Auction not found" });
-    }
-
-    // 2️⃣ ADD FRANCHISES
+    /* ---- Add Franchises ---- */
     if (Array.isArray(franchises) && franchises.length > 0) {
-      const formattedFranchises = franchises.map(f => ({
+      const formatted = franchises.map(f => ({
         teamName: f.teamName,
         email: f.email,
-        password: f.password, // ⚠️ hash later
-        bidderId: `BIDDER-${Date.now()}`,
+        password: f.password,
         purse: Number(f.purse),
         players: [],
       }));
 
-      auction.franchises.push(...formattedFranchises);
+      auction.franchises.push(...formatted);
     }
 
-// 3️⃣ ADD PLAYERS (FILTER EMPTY ONES)
-if (Array.isArray(players)) {
-  const validPlayers = players.filter(
-    p =>
-      p.name &&
-      p.battingStyle &&
-      p.country &&
-      p.imageUrl
-  );
+    /* ---- Group Players by setNo ---- */
+    if (Array.isArray(players) && players.length > 0) {
+      const grouped = {};
 
-  const formattedPlayers = validPlayers.map(p => ({
-    name: p.name,
-    role: p.battingStyle,
-    country: p.country,
-    imageUrl: p.imageUrl,
-    basePrice: Number(p.basePrice || 0),
-    setNo: Number(p.setNo || 0),
-    stats: {
-      runs: Number(p.runs || 0),
-      average: Number(p.average || 0),
-      strikeRate: Number(p.strikeRate || 0),
-      fifties: Number(p.fifties || 0),
-      hundreds: Number(p.hundreds || 0),
-    },
-  }));
+      players.forEach(p => {
+        const setNo = Number(p.setNo || 0);
+        const setName = p.setName || "Default";
 
-  auction.players.push(...formattedPlayers);
-}
+        if (!grouped[setNo]) {
+          grouped[setNo] = {
+            setNo,
+            setName,
+            playersList: [],
+          };
+        }
 
-    // 4️⃣ Save auction
+        grouped[setNo].playersList.push({
+          name: p.name,
+          role: p.battingStyle,
+          country: p.country,
+          imageUrl: p.imageUrl,
+          basePrice: Number(p.basePrice || 0),
+          stats: {
+            runs: Number(p.runs || 0),
+            average: Number(p.average || 0),
+            strikeRate: Number(p.strikeRate || 0),
+            fifties: Number(p.fifties || 0),
+            hundreds: Number(p.hundreds || 0),
+          },
+        });
+      });
+
+      auction.players.push(...Object.values(grouped));
+    }
+
     await auction.save();
 
-    return res.status(200).json({
-      message: "Players and franchises added successfully",
+    res.status(200).json({
+      message: "Players & franchises added successfully",
       auction,
     });
 
-  } catch (error) {
-    console.error("Add players/franchises error:", error);
-    return res.status(500).json({ message: "Server error" });
+  } catch (err) {
+    console.error("Add players error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const getAllAuctions = async (req , res) => {
   console.log("Get All Auctions Request by Admin:" );

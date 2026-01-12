@@ -8,10 +8,12 @@ import bidderRoute from "./routes/bidderRoute.js";
 import playerRoute from "./routes/playersRoute.js";
 import auctionRoute from "./routes/auctionRoute.js";
 import cookieParser from "cookie-parser";
+import cookie from "cookie";
 import { Server } from "socket.io";
 import http from "http";
 import { Socket } from "dgram";
 import jwt from 'jsonwebtoken'
+import { registerAuctionSocketEvents } from "./socket/socketAuction.js";
 
 dotenv.config();
 
@@ -33,48 +35,63 @@ app.use(cors({
 }));
 
 const server = http.createServer(app);
+
 const io = new Server(server, {
-  cors: { origin: "*" }
+  cors: {
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true
+  }
 });
 
 app.set("io", io); 
 
 io.use((socket , next) =>{
-  try{
+  try {
     const cookies = socket.handshake.headers.cookie;
-    if (! cookies){
-      return next(new Error("no cookies"))
-    }
-    const parsedCookie = cookie.parse(cookies)
-    const token = parsedCookie.bidder_token
 
-    if (! token){
-      return next(new Error("no bidder token is found"))
+    // If no cookie → admin or public client
+    if (!cookies) {
+      socket.isAdmin = true;
+      return next();
     }
 
-    const decoded = jwt.verify(token , process.env.JWT_BIDDER_SECRET);
+    const parsed = cookie.parse(cookies);
+    const token = parsed.bidder_token;
+
+    // No bidder token → treat as admin
+    if (!token) {
+      socket.isAdmin = true;
+      return next();
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_BIDDER_SECRET);
 
     socket.bidder = {
-      bidderId:decoded.bidder_id,
-      auctionId : decoded.auction_id
-    }
+      bidderId: decoded.bidder_id,
+      auctionId: decoded.auction_id
+    };
 
-    next()
-  }catch(e){
-    return resizeBy.status(500).json({message:"authentication failed"})
+    next();
+
+  } catch(e) {
+    console.log("Socket auth middleware failed", e);
+    // allow admin
+    socket.isAdmin = true;
+    next();
   }
-})
+});
 
-io.on('connection',socket => {
-  console.log("franchise connected" , socket.bidder.bidderId)
 
-  socket.join(socket.bidder.auctionId)
 
-  socket.on('disconnect', () => {
-    console.log("Franchise disconnected:", socket.bidder.bidderId);
-  }) 
-})
-//Routes
+io.on("connection", socket => {
+  socket.on("join-auction", (auctionId) => {
+  console.log("JOINED room:", auctionId);
+  socket.join(auctionId);
+  console.log("ROOMS NOW:", io.sockets.adapter.rooms);
+});   
+});
+
+registerAuctionSocketEvents(io);
 
 app.use('/auth',authRoute)
 app.use('/admin',adminRoute)

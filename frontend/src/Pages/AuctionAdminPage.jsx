@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import NavBar from "../Components/AdminComponent/AdminNavBar";
 
-
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const AuctionAdminPage = () => {
@@ -75,10 +74,12 @@ const AuctionAdminPage = () => {
 
 
   const getPassPlayer = async() => {
+    
     try{
       const response = await axios.post(DOMAIN + "/add-player",
         {
-          player:players
+          auctionId:id,
+          players
         },
       {withCredentials: true}
       )
@@ -89,6 +90,24 @@ const AuctionAdminPage = () => {
       }catch(err){
         console.log(err)
       }
+  }
+
+  const getPassFranchsis = async() => { 
+    try{
+      const response = await axios.post(DOMAIN + "/bidder/add-franchsis",
+        { auctionId:id,
+          franchises
+        },
+        { withCredentials: true }
+      )
+      if (response.status === 200){
+        console.log(response.data)
+        setShowFranchsisModal(false)
+      }
+    }catch(err){
+      console.log(err)
+
+    }
   }
 
   return (
@@ -140,7 +159,7 @@ const AuctionAdminPage = () => {
                 onClick={()=>setShowPlayerModal(true)}
               >
                 <span className="text-lg">➕</span>
-                Add Player Image
+                Add Player
               </button>
 
               <button
@@ -330,7 +349,7 @@ const AuctionAdminPage = () => {
                 >
                   Cancel
                 </button>
-                <button className="btn-primary" onClick={getPassPlayer()}>
+                <button className="btn-primary" onClick={getPassPlayer}>
                   Save Players
                 </button>
               </div>
@@ -424,12 +443,18 @@ const AuctionAdminPage = () => {
                   </div>
                 ))}
 
-                <div className="flex justify-between">
-                  <button className="btn-secondary" onClick={() => setShowFranchsisModal(false)}>
-                    close
-                  </button>
-                  
-                </div>
+                <div className="flex justify-end gap-4 mt-6">
+                <button
+                  className="btn-secondary"
+                  onClick={() => setShowFranchsisModal(false)}
+                >
+                  Cancel
+                </button>
+                <button className="btn-primary" onClick={getPassFranchsis
+                }>
+                  Save Franchsis
+                </button>
+              </div>
             </div>
           </div>
         </div>

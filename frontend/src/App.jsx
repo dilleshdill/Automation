@@ -7,6 +7,8 @@ const HomePage = lazy(()=> import('./Pages/HomePage'))
 const AdminPage = lazy(()=> import('./Pages/AdminPage'))
 const AuctionCreate = lazy(()=> import('./Pages/AuctionCreate'))
 const AcutionAdminPage = lazy(() => import('./Pages/AuctionAdminPage'))
+const AuctionScreen = lazy(() => import("./Pages/AuctionScreen"))
+const AuctionEnded = lazy(() => import("./Pages/AuctionEnded"))
 import { ToastContainer } from "react-toastify";
 
 const App = () => {
@@ -20,6 +22,8 @@ const App = () => {
           <Route path="/admin" element={ <AdminPage />} />
           <Route path="/admin/create-auction" element={ <AuctionCreate />} />
           <Route path="/auction/:id" element = {<AcutionAdminPage />} /> 
+          <Route path="/auction/:id/live" element = {<AuctionScreen />} />
+          <Route path="/auction/ended" element = {<AuctionEnded />} />
         </Routes>
       </Suspense> 
     </BrowserRouter>

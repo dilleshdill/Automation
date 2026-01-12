@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Cookies } from "react-cookie";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 import { useNavigate } from "react-router-dom";
+import { socket } from "../../Socket/socket";
 
 const CreateAuction = () => {
   const [step, setStep] = useState(1);
@@ -59,30 +60,30 @@ const CreateAuction = () => {
     ]);
   };
 
-  const CreateAuction = async() => {
-    console.log("AUCTION CREATED", auction)
-    try{
-        const response = await axios.post(DOMAIN + "/auction/create-auction",{
-            auction_name:auction.name,
-            description:auction.description,
-            short_name:auction.shortName,
-            auction_date:auction.time,
-            auction_img:auction.auctionImg,
-            auction_time:auction.playerTime
-        },
-    {withCredentials: true});
-        if(response.status === 201){
-            console.log(response.data)
-            localStorage.setItem("auctionId",response.data.newAuction._id)
-            console.log(response.data.newAuction._id)
-            toast.success("Auction Created Successfully");
-        }
+    const CreateAuction = async() => {
+      
+      
+      try{
+          const response = await axios.post(DOMAIN + "/auction/create-auction",{
+              auction_name:auction.name,
+              description:auction.description,
+              short_name:auction.shortName,
+              auction_date:auction.time,
+              auction_img:auction.auctionImg,
+              auction_time:auction.playerTime
+          },
+      {withCredentials: true});
+          if(response.status === 201){
+              
+              socket.emit("join-auction",response.data.newAuction._id)
+              localStorage.setItem("auctionId",response.data.newAuction._id)
+          }
 
-    }catch(err){
-        console.log(err);
-        toast.error("Error in creating auction")
-    }
-    };
+      }catch(err){
+          console.log(err);
+          toast.error("Error in creating auction")
+      }
+      };
 
   const DevelopAction = async() => {
 

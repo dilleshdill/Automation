@@ -1,4 +1,5 @@
 import { Auction } from "../models/auctionModel.js";
+import { startTimer } from "../socket/socketAuction.js";
 
 
 export const createAuction = async (req, res) => {
@@ -150,3 +151,59 @@ export const getAuctionDetails = async (req ,res) => {
     return res.status(500).json({message:"server error",e})
   }
 }
+
+export const startAuction = async (req, res) => {
+  try {
+    const { auction_id } = req.body;
+    const auction = await Auction.findById(auction_id);
+    
+
+    if (!auction) return res.status(404).json("Auction Not Found");
+    if (auction.status !== "upcoming") return res.status(400).json("Already Live");
+
+    
+    auction.currentSet = 0;
+    auction.currentPlayerIndex = 0;
+
+    
+      const set = auction.players[0];
+      const player = set.playersList[0];
+
+      const newData = {
+        playerId: player._id,
+        name: player.name,
+        basePrice: player.basePrice,
+        setNo: set.setNo,
+        role:player.role,
+        imageUrl:player.imageUrl,
+        matches:player.stats.matches,
+        innings:player.stats.innings,
+        runs:player.stats.runs,
+        highestScore:player.stats.highestScore,
+        average:player.stats.average,
+        strikeRate:player.stats.strikeRate,
+        fifties:player.stats.fifties,
+        hundreds:player.stats.hundreds  
+      };
+
+    await auction.save(); 
+
+      const io = req.app.get("io");
+      console.log("Rooms", io.sockets.adapter.rooms)
+      console.log("auctionid",auction_id)
+
+      io.to(auction_id).emit("auction-started",
+        {
+        auctionId: auction._id,
+        currentPlayer: newData,
+        status: "live",
+        
+      });
+      startTimer(auction_id,io)
+    return res.status(200).json("Auction started");
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Internal error");
+  }
+};

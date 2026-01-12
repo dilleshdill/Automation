@@ -4,13 +4,20 @@ const DOMAIN = import.meta.env.VITE_DOMAIN;
 import axios from 'axios';
 import AdminAuctionNotStart from '../Components/AdminComponent/AdminAuctionNotStart.jsx';
 import { useNavigate } from 'react-router-dom';
+import { socket } from '../Socket/socket.js';
 
 
 const AdminPage = () => {
     const [auctionList,setAuctionList] = useState([]);   
     const navigate = useNavigate()
+    
     useEffect(() => {
-        const fetchedList = async () => {
+        
+        fetchedList()
+    }
+    , []);
+
+    const fetchedList = async () => {
             try{
                 const response = await axios.get(DOMAIN + "/auction/get-auction-list",
                     {withCredentials:true}
@@ -23,16 +30,41 @@ const AdminPage = () => {
             }catch(err){
                 console.log(err)      
             }
-        }
-        fetchedList()
     }
-    , []);
 
     const getNavigate = (id) => {
         navigate(`/auction/${id}`,{
             state: {id}
         })
     }
+
+    const startAuction = async (id) => {
+
+        socket.emit("join-auction", id);
+
+        // Remove any older listeners
+        socket.off("auction-started");
+
+        // Attach listener BEFORE starting auction
+        socket.once("auction-started", (auction) => {
+            console.log("auction-started:", auction);
+
+            navigate(`/auction/${auction.auctionId}/live`, {
+            state: { auction }
+            });
+        });
+
+        // Now make backend call
+        try {
+            await axios.post(DOMAIN + "/auction/start-auction",
+            { auction_id: id },
+            { withCredentials: true }
+            );
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     return (
         <div className='flex flex-col min-h-screen'>
@@ -60,11 +92,23 @@ const AdminPage = () => {
                             <p className="text-zinc-500 text-sm/6 mt-2 ml-2 mb-2">
                                 PlayerTime : {auction.auction_time}
                             </p>
-                            <button type="button" className="!bg-gray-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm">
-                                {
-                                    auction.status === "upcoming" && "Start Auction"
-                                }
-                            </button>
+                            {
+                                auction.status === "upcoming" ? 
+                                <button type="button" className="!bg-gray-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" onClick={(e)=>{
+                                    e.stopPropagation();
+                                    startAuction(auction._id)}}>
+                                    Start
+                                </button>
+                                :
+                                <div>
+                                    <button type="button" className="!bg-green-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" >
+                                        Live
+                                    </button>
+                                    <button type="button" className="!bg-red-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" >
+                                        Pause
+                                    </button>
+                                </div>
+                            }
                         </div>
                     ))
                 }

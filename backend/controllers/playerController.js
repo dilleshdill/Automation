@@ -3,12 +3,16 @@ import { Auction } from "../models/auctionModel.js";
 export const addPlayer = async (req, res) => {
   try {
     const { auctionId, players } = req.body;
+    console.log("Incoming:", auctionId, players);
 
     const auction = await Auction.findById(auctionId);
+    if (!auction) {
+      return res.status(404).json({ message: "Auction not found" });
+    }
 
     const grouped = {};
 
-    players.forEach(p => {
+    players.map((p) => {
       const setNo = Number(p.setNo || 0);
       const setName = p.setName || "Default";
 
@@ -33,17 +37,37 @@ export const addPlayer = async (req, res) => {
           fifties: Number(p.fifties || 0),
           hundreds: Number(p.hundreds || 0),
         },
+        status: "unsold",
+        soldTo: null,
+        soldPrice: 0,
       });
     });
 
-    auction.players.push(...Object.values(grouped));
+    
+    const incomingSets = Object.values(grouped);
+
+    incomingSets.forEach((incomingSet) => {
+      const existingSet = auction.players.find(
+        (s) => s.setNo === incomingSet.setNo
+      );
+
+      if (existingSet) {
+        // Append players (avoid duplicates if needed)
+        existingSet.playersList.push(...incomingSet.playersList);
+      } else {
+        // Create new set
+        auction.players.push(incomingSet);
+      }
+    });
 
     await auction.save();
 
-    res.status(200).json({ message: "Players added successfully", auction });
+    return res
+      .status(200)
+      .json({ message: "Players added successfully", auction });
 
   } catch (error) {
-    console.error("addPlayers error:", error);
+    console.error("addPlayer error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

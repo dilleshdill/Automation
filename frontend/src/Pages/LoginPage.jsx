@@ -58,7 +58,7 @@ const LoginPage = () => {
                         {withCredentials: true}
                     );
                     toast.success("Admin logged in successfully");
-                    navigate("/admin");
+                    navigate("/bidder/auctions");
                     console.log(response.data);
                 }catch(err){
                     console.log(err);
@@ -67,17 +67,18 @@ const LoginPage = () => {
             }
         }
         else if (role === "Bidder"){
-            if (team !== "" && bidderID !== ""){
-                try{
-                    const response = await axios.post(DOMAIN + "/bidder/login",{team:team,bidderID:bidderID});
-                    console.log(response.data);
-                    toast.success("Bidder Logged Successfully ")
-                }
-                catch(err){
-                    console.log(err);
-                    toast.error("Invalid Bidder Value")
-                }
-            }
+            // if (team !== "" && bidderID !== ""){
+            //     try{
+            //         const response = await axios.post(DOMAIN + "/bidder/login",{team:team,bidderID:bidderID});
+            //         console.log(response.data);
+            //         toast.success("Bidder Logged Successfully ")
+            //     }
+            //     catch(err){
+            //         console.log(err);
+            //         toast.error("Invalid Bidder Value")
+            //     }
+            // }
+            navigate("/bidder/auctions")
         }
 
     

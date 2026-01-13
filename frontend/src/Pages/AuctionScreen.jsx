@@ -7,6 +7,7 @@ const AuctionScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [player, setPlayer] = useState(null);
+  
   const { auction } = location.state || "";
   const { auctionId, currentPlayer } = auction;
 
@@ -14,21 +15,10 @@ const AuctionScreen = () => {
   const [timer, setTimer] = useState(0);
 
   useEffect(() => {
-    if (auctionId) {
-      socket.emit("join-auction", auctionId);
-    }
+    if (auctionId) socket.emit("join-auction", auctionId);
 
-    socket.on("timer-update", (data) => {
-      setTimer(data.timeLeft);
-    });
-
-    socket.on("bid-updated", (data) => {
-      setCurrentBid(data.bid);
-    });
-
-    socket.on("player-result", (data) => {
-      console.log(data.currentPlayer);
-    });
+    socket.on("timer-update", (data) => setTimer(data.timeLeft));
+    socket.on("bid-updated", (data) => setCurrentBid(data.bid));
 
     socket.on("new-player", (data) => {
       setPlayer(data.currentPlayer);
@@ -36,19 +26,17 @@ const AuctionScreen = () => {
       setCurrentBid(data.currentPlayer.basePrice);
     });
 
-    socket.on("auction-ended", () => {
-      navigate("/auction/ended");
-    });
+    socket.on("auction-ended", () => navigate("/auction/ended"));
 
     return () => {
-      socket.off("auction-started");
       socket.off("timer-update");
       socket.off("bid-updated");
+      socket.off("new-player");
     };
   }, []);
 
   const placeBid = () => {
-    toast.info("enter into the placebid function");
+    toast.info("Bid placed!");
     socket.emit("place-bid", {
       auctionId,
       bid: currentBid + 100000,
@@ -56,49 +44,64 @@ const AuctionScreen = () => {
   };
 
   const displayPlayer = player || currentPlayer;
-  const dummyImage =
+
+  const dummyImg =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTK38tEeJiYTWzabBXNBoRta9hhg6G8eZvEA&s";
 
   return (
-    <div className="p-4 flex flex-col items-center bg-gray-100 min-w-screen text-center">
-      <h2 className="text-2xl font-bold mb-4">Auction Screen</h2>
+    <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center p-4">
 
+      <h2 className="text-3xl font-bold mb-6 tracking-wide">Live Auction</h2>
+
+      
       {displayPlayer && (
-        <div className="bg-white shadow-md rounded-lg p-4 w-full max-w-md">
-          <img
-            src={dummyImage}
-            alt="player"
-            className="w-full rounded-lg mb-4 object-cover"
-          />
+        <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
 
-          <h3 className="text-xl font-semibold">{displayPlayer.name}</h3>
-          <p className="text-sm text-gray-500 mb-2">{displayPlayer.role}</p>
+          
+          <div className="w-full md:w-1/3 p-3 flex justify-center items-center">
+            <img
+              src={dummyImg}
+              alt="player"
+              className="rounded-lg object-cover w-48 h-56 md:w-56 md:h-72"
+            />
+          </div>
 
-          <div className="grid grid-cols-2 gap-2 text-left text-sm">
-            <p><strong>Base Price:</strong> {displayPlayer.basePrice}</p>
-            <p><strong>Matches:</strong> {displayPlayer.matches}</p>
-            <p><strong>Innings:</strong> {displayPlayer.innings}</p>
-            <p><strong>Runs:</strong> {displayPlayer.runs}</p>
-            <p><strong>Highest:</strong> {displayPlayer.highestScore}</p>
-            <p><strong>Avg:</strong> {displayPlayer.average}</p>
-            <p><strong>Strike Rate:</strong> {displayPlayer.strikeRate}</p>
-            <p><strong>50s:</strong> {displayPlayer.fifties}</p>
-            <p><strong>100s:</strong> {displayPlayer.hundreds}</p>
+          
+          <div className="w-full md:w-2/3 p-4">
+            <h3 className="text-2xl font-semibold">{displayPlayer.name}</h3>
+            <p className="text-gray-600 mb-3">{displayPlayer.role}</p>
+
+            
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <p><span className="font-medium">Matches:</span> {displayPlayer.matches}</p>
+              <p><span className="font-medium">Innings:</span> {displayPlayer.innings}</p>
+              <p><span className="font-medium">Runs:</span> {displayPlayer.runs}</p>
+              <p><span className="font-medium">Highest:</span> {displayPlayer.highestScore}</p>
+              <p><span className="font-medium">Average:</span> {displayPlayer.average}</p>
+              <p><span className="font-medium">Strike Rate:</span> {displayPlayer.strikeRate}</p>
+              <p><span className="font-medium">50s:</span> {displayPlayer.fifties}</p>
+              <p><span className="font-medium">100s:</span> {displayPlayer.hundreds}</p>
+            </div>
           </div>
         </div>
       )}
 
-      <p className="mt-4 text-lg font-semibold">
-        Time Remaining: <span className="text-red-600">{timer}s</span>
-      </p>
+      
+      <div className="flex flex-wrap gap-6 mt-6 justify-center">
+        <div className="bg-white shadow rounded-xl p-3 w-32 text-center">
+          <p className="text-xs text-gray-500 uppercase tracking-wide">Time Left</p>
+          <p className="text-xl font-bold text-red-600">{timer}s</p>
+        </div>
 
-      <p className="mt-2 text-lg">
-        Current Bid: <span className="font-bold">₹{currentBid}</span>
-      </p>
+        <div className="bg-white shadow rounded-xl p-3 w-32 text-center">
+          <p className="text-xs text-gray-500 uppercase tracking-wide">Current Bid</p>
+          <p className="text-xl font-bold text-blue-600">₹{currentBid}</p>
+        </div>
+      </div>
 
       <button
         onClick={placeBid}
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+        className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition shadow"
       >
         Place Bid
       </button>

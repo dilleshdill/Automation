@@ -72,7 +72,6 @@ const AuctionAdminPage = () => {
     ]);
   };
 
-
   const getPassPlayer = async() => {
     
     try{

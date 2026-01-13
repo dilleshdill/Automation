@@ -42,10 +42,8 @@ const AdminPage = () => {
 
         socket.emit("join-auction", id);
 
-        // Remove any older listeners
         socket.off("auction-started");
 
-        // Attach listener BEFORE starting auction
         socket.once("auction-started", (auction) => {
             console.log("auction-started:", auction);
 
@@ -54,7 +52,6 @@ const AdminPage = () => {
             });
         });
 
-        // Now make backend call
         try {
             await axios.post(DOMAIN + "/auction/start-auction",
             { auction_id: id },

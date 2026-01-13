@@ -26,3 +26,31 @@ export const addFranchsis = async(req,res) => {
         res.status(200).json("something went wrong",error)
     }
 }
+
+
+export const franchiseLogin = async (req, res) => {
+    console.log("enter into the backend")
+    try {
+        const { auction_id, teamName,email, password } = req.body;
+
+        const auction = await Auction.findById(auction_id);
+        if (!auction) return res.status(404).json("Auction not found");
+        
+        const f = auction.franchises.find(fr => (fr.email === email && fr.teamName === teamName));
+        if (!f) return res.status(404).json("Invalid email or Invalid TeamName");
+
+        if (f.password !== password)
+        return res.status(400).json("Invalid password");
+        console.log("team detailes",f)
+        return res.status(200).json({
+        teamName: f.teamName,
+        purse: f.purse,
+        auction_id  ,
+        teamId:f._id
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json("Server error");
+    }
+};

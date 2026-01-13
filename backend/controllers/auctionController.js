@@ -39,6 +39,7 @@ export const createAuction = async (req, res) => {
       auction_img,
     });
 
+
     await newAuction.save();
 
     res.status(201).json({
@@ -199,6 +200,8 @@ export const startAuction = async (req, res) => {
         status: "live",
         
       });
+
+      
       startTimer(auction_id,io)
     return res.status(200).json("Auction started");
 

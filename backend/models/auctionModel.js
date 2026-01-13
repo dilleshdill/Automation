@@ -1,8 +1,6 @@
-// models/auctionModel.js
 import mongoose from "mongoose";
 import { playerSchema } from "./playersModel.js";
 
-/* Franchise player info (after buying) */
 const franchisePlayerSchema = new mongoose.Schema(
   {
     playerId: mongoose.Schema.Types.ObjectId,
@@ -17,8 +15,9 @@ const franchiseSchema = new mongoose.Schema(
   {
     teamName: { type: String, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true }, // hash later
+    password: { type: String, required: true }, 
     purse: { type: Number, required: true },
+    isEnter:{type:Boolean,default:false},
     players: [franchisePlayerSchema],
   },
   { _id: true }

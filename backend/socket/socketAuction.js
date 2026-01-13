@@ -1,32 +1,75 @@
 import { Auction } from "../models/auctionModel.js";
 
 let timers = {};
+export const runningAuctions = {};
 
 export const registerAuctionSocketEvents = (io) => {
   io.on("connection", (socket) => {
 
-    socket.on("place-bid", async ({ auctionId, bid }) => {
-        console.log("enter into the placebid")
+    socket.on("place-bid", async ({ auctionId, bid,teamId }) => {
+        
         const auction = await Auction.findById(auctionId);
 
         if (!auction) return;
-        if (bid <= auction.currentBid) return;
-        console.log(socket.bidder)
+
+        const team = auction.franchises.find(f =>
+  f._id.equals(new mongoose.Types.ObjectId(franchiseId))
+);
+        if (!team) {
+          return
+        }
+        if (team.purse < bid){
+            io.to(auctionId).emit("bid-error","Not Enough Purse")
+            return ;
+        }
+        
         auction.currentBid = bid;
-        auction.currentBidder = socket.bidder.bidderId;
+        auction.currentBidder = teamName;
         await auction.save();
-        console.log("Rooms", io.socket.adapter.rooms)
         io.to(auctionId).emit("bid-updated", {
             bid,
-            bidderId: socket.bidder.bidderId
+            bidderId: teamName
         });
+        startTimer(auctionId,io)
     });
+
+    socket.on("franchise-join", async ({ id, teamName }) => {
+        console.log(id,teamName)
+        const auctionId=id
+    try {
+        const auction = await Auction.findById(auctionId);
+        if (!auction) return socket.emit("join-error", "Auction not found");
+
+        if (auction.status === "live") {
+            return socket.emit("join-error", "Auction already live");
+        }
+
+        // prevent duplicate franchise entry
+        const f = auction.franchises.find(fr => fr.teamName === teamName && fr.isEnter);
+        if (f) {
+            return socket.emit("join-error", "Team already joined");
+        }
+
+        socket.teamName = teamName;
+        socket.auctionId = auctionId;
+
+        socket.join(auctionId);
+
+        socket.emit("join-success", "Successfully joined");
+        socket.to(auctionId).emit("team-joined", teamName);
+
+    } catch (err) {
+        console.log(err);
+    }
+});
+    
+
   });
 };
-
 // TIMER
 export const startTimer = (auctionId, io)=>{
-  let timeLeft = 7;
+    clearInterval(timers[auctionId])
+  let timeLeft = 30;
 
   timers[auctionId] = setInterval(async () => {
     timeLeft--;

@@ -14,6 +14,8 @@ import http from "http";
 import { Socket } from "dgram";
 import jwt from 'jsonwebtoken'
 import { registerAuctionSocketEvents } from "./socket/socketAuction.js";
+import { runningAuctions } from "./socket/socketAuction.js";
+import { Auction } from "./models/auctionModel.js";
 
 dotenv.config();
 
@@ -75,7 +77,6 @@ io.use((socket , next) =>{
 
   } catch(e) {
     console.log("Socket auth middleware failed", e);
-    // allow admin
     socket.isAdmin = true;
     next();
   }
@@ -84,11 +85,10 @@ io.use((socket , next) =>{
 
 
 io.on("connection", socket => {
-  socket.on("join-auction", (auctionId) => {
-  console.log("JOINED room:", auctionId);
-  socket.join(auctionId);
-  console.log("ROOMS NOW:", io.sockets.adapter.rooms);
-});   
+  socket.on("join-auction", async (auctionId) => {
+    socket.join(auctionId);
+    console.log("ROOMS NOW:", io.sockets.adapter.rooms);
+  });   
 });
 
 registerAuctionSocketEvents(io);

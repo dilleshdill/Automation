@@ -1,18 +1,9 @@
 import React from "react";
 
-const AuctionStart = () => {
-  
+const AuctionStart = ({Player}) => {
+  console.log(Player)
 
   const product = {
-    name: "Virat Kohli",
-    battingStyle: "Right Handed Batter",
-    innings: 267,
-    highest: 113,
-    runs: 12345,
-    average: 57.32,
-    strikeRate: 93.25,
-    fifties: 64,
-    hundreds: 43,
     imageUrl:
       "https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/card/productImage.png",
   };
@@ -29,7 +20,7 @@ const AuctionStart = () => {
             <div className="md:w-1/3 w-full flex justify-center">
               <img
                 src={product.imageUrl}
-                alt={product.name}
+                
                 className="w-72 h-84 object-cover rounded-lg"
               />
             </div>
@@ -37,23 +28,28 @@ const AuctionStart = () => {
             {/* Details */}
             <div className="md:w-2/3 w-full">
               <div className="flex items-center gap-4 mb-6">
-                  <h1 className="text-3xl font-semibold text-gray-800">
-                      {product.name}
+                  <h1 className="text-2xl font-semibold text-gray-800">
+                      {Player.name}
                   </h1>
                   <p className="text-gray-500 text-xl mt-5">
-                      {product.battingStyle}
+                      {Player.role}
                   </p>
               </div>
 
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-lg">
-                <Info label="Innings" value={product.innings} />
-                <Info label="Highest Score" value={product.highest} />
-                <Info label="Runs" value={product.runs} />
-                <Info label="Strike Rate" value={product.strikeRate} />
-                <Info label="Average" value={product.average} />
-                <Info label="50s" value={product.fifties} />
-                <Info label="100s" value={product.hundreds} />
+                <Info label="Country" value={Player.country} />
+                <Info label="Base Price" value={Player.basePrice} />
+                <Info label="Status" value={Player.status} />
+                <Info label="SoldPrice" value={Player.soldPrice} />
+               
+                {/* <Info label="Innings" value={Player.stats.innings} />
+                <Info label="Highest Score" value={Player.stats.highestScore} />
+                <Info label="Runs" value={Player.stats.runs} />
+                <Info label="Strike Rate" value={Player.stats.strikeRate} />
+                <Info label="Average" value={Player.stats.average} />
+                <Info label="50s" value={Player.stats.fifties} />
+                <Info label="100s" value={Player.stats.hundreds} /> */}
               </div>
             </div>
           </div>

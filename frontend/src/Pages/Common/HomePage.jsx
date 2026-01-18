@@ -1,7 +1,7 @@
 import {React,useEffect,useState} from 'react'
-import NavBar from '../Components/Common/NavBar.jsx'
-import AuctionNotStart from '../Components/Common/AuctionNotStart.jsx'
-import AuctionStart from '../Components/Common/AuctionStart.jsx'
+import NavBar from '../../Components/Common/NavBar.jsx'
+import AuctionNotStart from '../../Components/Common/AuctionNotStart.jsx'
+import AuctionStart from '../../Components/Common/AuctionStart.jsx'
 const DOMAIN = import.meta.env.VITE_API_URL;
 
 

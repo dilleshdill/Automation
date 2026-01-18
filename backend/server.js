@@ -98,6 +98,7 @@ app.use('/admin',adminRoute)
 app.use('/bidder',bidderRoute)
 app.use('/add-player',playerRoute)
 app.use('/auction',auctionRoute)
+app.use("/player",playerRoute)
 
 // ✅ CONNECT DB FIRST
 const PORT = process.env.PORT || 5000;

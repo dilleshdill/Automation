@@ -71,3 +71,26 @@ export const addPlayer = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getPlayer = async(req,res) => {
+  
+  const {id,auctionId,setNo} = req.body
+  // console.log("player detailes",id,auctionId,setNo)
+  const auction = await Auction.findById(auctionId)
+  if (!auction){
+    return res.status(400).json("Auction DoesNot Exist")
+  }
+  const setPlayers = auction.players.filter(sets => sets.setNo === setNo)
+  if(!setPlayers){
+    return res.status(400).json("Player Doesnot Exist")
+  }
+  const Players = setPlayers[0].playersList
+  console.log("player detailes",Players)
+  const data = Players.filter(player => player._id.toString() === id)
+  console.log("data detailes",data)
+  if (!data){
+    return res.status(400).json("Player Doesnot Exist")
+  }
+  res.status(200).json(data)
+
+}

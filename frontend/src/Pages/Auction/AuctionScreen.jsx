@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { socket } from "../Socket/socket.js";
+import { socket } from "../../Socket/socket.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 

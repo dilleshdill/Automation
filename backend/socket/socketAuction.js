@@ -6,17 +6,17 @@ export const runningAuctions = {};
 export const registerAuctionSocketEvents = (io) => {
   io.on("connection", (socket) => {
 
-    socket.on("place-bid", async ({ auctionId, bid,teamId }) => {
-        
+    socket.on("place-bid", async ({auctionId,bid,teamName,teamId}) => {
+        console.log("socket props detailes",auctionId,bid,teamName,teamId)
         const auction = await Auction.findById(auctionId);
 
         if (!auction) return;
+        const team = auction.franchises.find(f => f._id.toString() === teamId);
 
-        const team = auction.franchises.find(f =>
-  f._id.equals(new mongoose.Types.ObjectId(franchiseId))
-);
         if (!team) {
+          console.log("not mathces with id")
           return
+
         }
         if (team.purse < bid){
             io.to(auctionId).emit("bid-error","Not Enough Purse")
@@ -24,7 +24,7 @@ export const registerAuctionSocketEvents = (io) => {
         }
         
         auction.currentBid = bid;
-        auction.currentBidder = teamName;
+        auction.currentBidder = teamId;
         await auction.save();
         io.to(auctionId).emit("bid-updated", {
             bid,
@@ -42,12 +42,6 @@ export const registerAuctionSocketEvents = (io) => {
 
         if (auction.status === "live") {
             return socket.emit("join-error", "Auction already live");
-        }
-
-        // prevent duplicate franchise entry
-        const f = auction.franchises.find(fr => fr.teamName === teamName && fr.isEnter);
-        if (f) {
-            return socket.emit("join-error", "Team already joined");
         }
 
         socket.teamName = teamName;
@@ -69,7 +63,7 @@ export const registerAuctionSocketEvents = (io) => {
 // TIMER
 export const startTimer = (auctionId, io)=>{
     clearInterval(timers[auctionId])
-  let timeLeft = 30;
+  let timeLeft = 10;
 
   timers[auctionId] = setInterval(async () => {
     timeLeft--;

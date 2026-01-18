@@ -1,10 +1,10 @@
 import {React,useEffect,useState} from 'react'
-import NavBar from '../Components/AdminComponent/AdminNavBar.jsx'
+import NavBar from '../../Components/AdminComponent/AdminNavBar.jsx'
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 import axios from 'axios';
-import AdminAuctionNotStart from '../Components/AdminComponent/AdminAuctionNotStart.jsx';
+import AdminAuctionNotStart from '../../Components/AdminComponent/AdminAuctionNotStart.jsx';
 import { useNavigate } from 'react-router-dom';
-import { socket } from '../Socket/socket.js';
+import { socket } from '../../Socket/socket.js';
 
 
 const AdminPage = () => {

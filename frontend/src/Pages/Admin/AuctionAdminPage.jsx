@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import NavBar from "../Components/AdminComponent/AdminNavBar";
+import NavBar from "../../Components/AdminComponent/AdminNavBar";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 

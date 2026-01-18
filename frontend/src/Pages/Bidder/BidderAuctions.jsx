@@ -1,8 +1,8 @@
 import { React, useEffect, useState } from 'react';
-import NavBar from '../Components/AdminComponent/AdminNavBar.jsx';
+import NavBar from '../../Components/AdminComponent/AdminNavBar.jsx';
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 import axios from 'axios';
-import AdminAuctionNotStart from '../Components/AdminComponent/AdminAuctionNotStart.jsx';
+import AdminAuctionNotStart from '../../Components/AdminComponent/AdminAuctionNotStart.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -19,7 +19,7 @@ const AdminPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchList();
+    fetchList();  
   }, []);
 
   const fetchList = async () => {
@@ -50,7 +50,7 @@ const AdminPage = () => {
         { auction_id: selectedAuction, teamName, email, password },
         { withCredentials: true }
       );
-
+      console.log(response.data)
       if (response.status === 200) {
         const data = {
           id:selectedAuction,
@@ -66,7 +66,10 @@ const AdminPage = () => {
         );
       }
     } catch (err) {
-      console.log(err);
+      setShowLoginModal(false)
+      console.log(err)
+      toast.error(err.response.data)
+      
     }
   };
 

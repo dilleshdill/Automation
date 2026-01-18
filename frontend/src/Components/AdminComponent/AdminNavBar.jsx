@@ -31,6 +31,9 @@ const NavBar = () => {
           <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
             <a href = "/admin" className="hover:text-gray-700 cursor-pointer">Home</a>
           </div>
+          <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
+            <a href = "/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
+          </div>
 
           
           <div className="flex items-center gap-4 relative">

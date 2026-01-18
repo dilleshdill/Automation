@@ -210,3 +210,15 @@ export const startAuction = async (req, res) => {
     return res.status(500).json("Internal error");
   }
 };
+
+export const getTeams = async(req,res) => {
+  
+  const {auctionId}  = req.body
+  const auction = await Auction.findById(auctionId)
+  
+  if (!auction){
+    return res.status(400).json("No Auction Are exsisted")
+  }
+  
+  return res.status(200).json({data:auction.franchises})
+}

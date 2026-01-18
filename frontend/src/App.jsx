@@ -2,16 +2,19 @@ import {React,lazy,Suspense} from 'react'
 import './App.css'
 import {BrowserRouter as Router,Routes,Route, BrowserRouter} from 'react-router-dom'
 
-const LoginPage = lazy(() => import('./Pages/LoginPage'))
-const HomePage = lazy(()=> import('./Pages/HomePage'))
-const AdminPage = lazy(()=> import('./Pages/AdminPage'))
-const AuctionCreate = lazy(()=> import('./Pages/AuctionCreate'))
-const AcutionAdminPage = lazy(() => import('./Pages/AuctionAdminPage'))
-const AuctionScreen = lazy(() => import("./Pages/AuctionScreen"))
-const AuctionEnded = lazy(() => import("./Pages/AuctionEnded"))
-const BidderAuctions = lazy(() => import("./Pages/BidderAuctions"))
-const BidderAuctionScreen = lazy(() => import("./Pages/BidderAuctionScreen"))
+const LoginPage = lazy(() => import('./Pages/Common/LoginPage'))
+const HomePage = lazy(()=> import('./Pages/Common/HomePage'))
+const AdminPage = lazy(()=> import('./Pages/Admin/AdminPage'))
+const AuctionCreate = lazy(()=> import('./Pages/Auction/AuctionCreate'))
+const AcutionAdminPage = lazy(() => import('./Pages/Admin/AuctionAdminPage'))
+const AuctionScreen = lazy(() => import("./Pages/Auction/AuctionScreen"))
+const AuctionEnded = lazy(() => import("./Pages/Auction/AuctionEnded"))
+const BidderAuctions = lazy(() => import("./Pages/Bidder/BidderAuctions"))
+const BidderAuctionScreen = lazy(() => import("./Pages/Bidder/BidderAuctionScreen"))
+const TeamsPage = lazy(() =>import("./Pages/Bidder/TeamsPage"))
+const BidderTeamPlayers = lazy(() => import("./Pages/Bidder/BidderTeamPlayers"))
 import { ToastContainer } from "react-toastify";
+
 
 const App = () => {
   return (
@@ -28,6 +31,8 @@ const App = () => {
           <Route path="/auction/:id" element = {<AcutionAdminPage />} /> 
           <Route path="/auction/:id/live" element = {<AuctionScreen />} />
           <Route path="/auction/ended" element = {<AuctionEnded />} />
+          <Route path="/auction/teams" element = {<TeamsPage />} />
+          <Route path="/auction/teams/:id" element = {<BidderTeamPlayers />} />
         </Routes>
       </Suspense> 
     </BrowserRouter>

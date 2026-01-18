@@ -1,5 +1,5 @@
 import {React,useEffect, useState} from 'react'
-import { socket } from '../Socket/socket'
+import { socket } from '../../Socket/socket'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { Navigate } from 'react-router-dom'
@@ -18,7 +18,8 @@ const BidderAuctionScreen = () => {
     useEffect(()=>{
         socket.emit("franchise-join", {
             id,
-            teamName
+            teamName,
+            
         });
 
         socket.on("auction-started",auction => {
@@ -70,7 +71,8 @@ const BidderAuctionScreen = () => {
         socket.emit("place-bid", {
           auctionId,
           bid: currentBid + 100000,
-          teamName
+          teamName,
+          teamId
         });
       };
 

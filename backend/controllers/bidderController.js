@@ -39,15 +39,20 @@ export const franchiseLogin = async (req, res) => {
         const f = auction.franchises.find(fr => (fr.email === email && fr.teamName === teamName));
         if (!f) return res.status(404).json("Invalid email or Invalid TeamName");
 
-        if (f.password !== password)
-        return res.status(400).json("Invalid password");
-        console.log("team detailes",f)
-        return res.status(200).json({
-        teamName: f.teamName,
-        purse: f.purse,
-        auction_id  ,
-        teamId:f._id
-        });
+        if (f.password !== password) return res.status(400).json("Invalid password");
+        if (f.isEnter) {
+            return res.status(400).json("Already Franchsis Enter In This Auction")
+        }
+        else {
+            // f.isEnter = true
+            // await auction.save()
+            return res.status(200).json({
+            teamName: f.teamName,
+            purse: f.purse,
+            auction_id ,
+            teamId:f._id
+            });
+    }
 
     } catch (err) {
         console.log(err);

@@ -85,9 +85,8 @@ export const getPlayer = async(req,res) => {
     return res.status(400).json("Player Doesnot Exist")
   }
   const Players = setPlayers[0].playersList
-  console.log("player detailes",Players)
+  
   const data = Players.filter(player => player._id.toString() === id)
-  console.log("data detailes",data)
   if (!data){
     return res.status(400).json("Player Doesnot Exist")
   }

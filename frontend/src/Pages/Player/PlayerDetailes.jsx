@@ -2,7 +2,7 @@ import axios from 'axios'
 import {React,useEffect, useState} from 'react'
 import { useLocation } from 'react-router-dom'
 import AuctionStart from '../../Components/Common/AuctionStart'
-import NavBar from '../../Components/Common/NavBar'
+import AdminNavBar from '../../Components/AdminComponent/AdminNavBar'
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
 
@@ -38,7 +38,7 @@ const PlayerDetailes = () => {
 
     return (
         <div>
-            <NavBar />
+            <AdminNavBar />
             <AuctionStart Player={Player}/>
         </div>
     )

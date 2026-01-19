@@ -28,7 +28,7 @@ const NavBar = () => {
           </div>
 
           
-          <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
+          <div className="hidden md:flex space-x-5 text-gray-600 font-medium">
             <a href = "/admin" className="hover:text-gray-700 cursor-pointer">Home</a>
           </div>
           <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
@@ -71,11 +71,8 @@ const NavBar = () => {
            
             {profileOpen && (
               <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-lg shadow-md">
-                <a  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a href="/bidder/profile"  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Profile
-                </a>
-                <a href="/admin/create-auction" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
-                  Create Auction
                 </a>
                 <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Settings

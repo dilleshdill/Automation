@@ -45,6 +45,7 @@ const BidderAuctionScreen = () => {
         })
 
         socket.on("join-success",msg=>{
+            localStorage.setItem("BidderId",id)
             toast.success(msg)
         })
 

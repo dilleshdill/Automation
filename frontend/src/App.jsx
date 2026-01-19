@@ -14,6 +14,7 @@ const BidderAuctionScreen = lazy(() => import("./Pages/Bidder/BidderAuctionScree
 const TeamsPage = lazy(() =>import("./Pages/Bidder/TeamsPage"))
 const BidderTeamPlayers = lazy(() => import("./Pages/Bidder/BidderTeamPlayers"))
 const PlayerDetailes  = lazy(() => import("./Pages/Player/PlayerDetailes") )
+const BidderProfile = lazy(() =>import("./Pages/Bidder/BidderProfile"))
 import { ToastContainer } from "react-toastify";
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/admin/create-auction" element={ <AuctionCreate />} />
           <Route path="/bidder/auctions" element={<BidderAuctions />} />
           <Route path="/bidder/auction/:id" element={<BidderAuctionScreen />} />
+          <Route path="/bidder/profile" element={<BidderProfile />} />
           <Route path="/auction/:id" element = {<AcutionAdminPage />} /> 
           <Route path="/auction/:id/live" element = {<AuctionScreen />} />
           <Route path="/auction/ended" element = {<AuctionEnded />} />

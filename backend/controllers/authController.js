@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import generateUserToken from "../utils/generateUserToken.js";
 import { json } from "express";
+import { Auction } from "../models/auctionModel.js";
 
 dotenv.config();
 
@@ -75,4 +76,16 @@ export const userLogin = async (req , res) => {
     } catch (error){
         res.status(500).json({message:"Server Error", error:error.message});
     }
+}
+
+export const getBidder = async(req,res) => {
+    const {id} = req.body
+    const auction = await Auction.findById(id)
+    if(!auction){
+        return res.status(400).json("Bidder Id Doesnot Exist")
+    }
+
+    const franchises = auction.franchises.filter(franchises => franchsis._id.tostring() === id)
+
+    res.status(200).json(franchises)
 }

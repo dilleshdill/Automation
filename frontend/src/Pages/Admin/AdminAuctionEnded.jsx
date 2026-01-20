@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminNavBar from '../../Components/AdminComponent/AdminNavBar';
 
-const AuctionEnded = () => {
+const AdminAuctionEnded = () => {
   const navigate = useNavigate();
 
   return (
@@ -44,4 +44,4 @@ const AuctionEnded = () => {
   );
 };
 
-export default AuctionEnded;
+export default AdminAuctionEnded;

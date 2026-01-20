@@ -59,3 +59,14 @@ export const franchiseLogin = async (req, res) => {
         res.status(500).json("Server error");
     }
 };
+
+export const getBidder = async(req,res) => {
+    const {id,auctionId} = req.body
+    const auction = await Auction.findById(auctionId)
+    
+    if(!auction){
+        return res.status(400).json("Bidder Id Doesnot Exist")
+    }
+    const franchises = auction.franchises.filter(franchises => franchises._id.toString() === id)
+    res.status(200).json(franchises[0])
+}

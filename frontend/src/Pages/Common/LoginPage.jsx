@@ -26,8 +26,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
     const [role,setRole] = useState("User"); 
     const [adminKey,setAdminKey] = useState(""); 
-    const [team,setTeam] = useState("");
-    const [bidderID,setBidderID] = useState("");
+    
     const navigate = useNavigate()
 
     const onSubmit = async(e) => {
@@ -41,8 +40,13 @@ const LoginPage = () => {
                 }
                 try {
                     const response = await axios.post(DOMAIN + "/auth/login", body);
-                    console.log(response.data);
-                    toast.success("User logged in successfully");
+                    if (response.status === 200){
+                        console.log(response.data);
+                        
+                        localStorage.setItem("userId",response.data.data)
+                        navigate("/user/auctions")
+                        toast.success("Welcome To The Auction");
+                    }
                 }
                 catch (err) {
                     console.log(err);
@@ -57,14 +61,20 @@ const LoginPage = () => {
                         {adminKey:adminKey},
                         {withCredentials: true}
                     );
-                    toast.success("Admin logged in successfully");
-                    navigate("/bidder/auctions");
-                    console.log(response.data);
+                    
+                    if (response.status === 200){
+                        localStorage.setItem("AdminId",response.data.data)
+                        navigate("/admin");
+                        toast.success("Welcome To The Auction");
+                    }
+                    
                 }catch(err){
                     console.log(err);
                     toast.error("Invalid Admin Key");
                 }
             }
+            
+        
         }
         else if (role === "Bidder"){
             // if (team !== "" && bidderID !== ""){
@@ -79,6 +89,7 @@ const LoginPage = () => {
             //     }
             // }
             navigate("/bidder/auctions")
+            toast.success("Welcome To The Aucton")
         }
 
     
@@ -96,8 +107,9 @@ const LoginPage = () => {
                 })
                 if (response.status === 201){
                     console.log(response.data);
-                    toast.success("User Registered Successfully")
-                    navigate("/")
+                    toast.success("Welcome To The Auction")
+                    localStorage.setItem("userId",response.data.data)
+                    navigate("/user/auctions")
                 }
 
             }

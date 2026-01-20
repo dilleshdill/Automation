@@ -1,6 +1,6 @@
 import React from 'react'
-import AdminNavBar from '../Components/AdminComponent/AdminNavBar.jsx'
-import CreateAuction from '../Components/AdminComponent/CreateAuction.jsx'
+import AdminNavBar from '../../Components/AdminComponent/AdminNavBar.jsx'
+import CreateAuction from '../../Components/AdminComponent/CreateAuction.jsx'
 
 const AuctionCreate = () => {
   return (

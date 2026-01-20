@@ -5,7 +5,6 @@ import generateAdminToken from "../utils/generateAdminToken.js";
 import cookieParser from "cookie-parser";
 
 
-// admin Register
 
 export const  registerAdmin = async (req , res) => {
     try{
@@ -39,7 +38,6 @@ export const  registerAdmin = async (req , res) => {
     }
 }
 
-// admin login
 
 export const adminLogin = async (req,res) => {
     try{
@@ -71,8 +69,20 @@ export const adminLogin = async (req,res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         
-        return res.status(200).json({message:"admin login successfully" , token})
+        return res.status(200).json({message:"admin login successfully" ,data:existingUser._id})
     }catch(error){
         res.status(500).json({message:"Internal server error"});
     }
+}
+
+export const getAdminProfile = async(req,res) => {
+    const {adminId} = req.body 
+    
+    const admin = await adminRegister.findById(adminId)
+    
+    if (!admin){
+        return res.status(400).json("Admin Doesnot Exist")
+    }
+
+    res.status(200).json(admin)
 }

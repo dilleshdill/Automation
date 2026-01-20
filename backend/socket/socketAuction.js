@@ -6,6 +6,18 @@ export const runningAuctions = {};
 export const registerAuctionSocketEvents = (io) => {
   io.on("connection", (socket) => {
 
+    socket.on("join-auction", async (auctionId) => {
+        socket.join(auctionId);
+        runningAuctions[auctionId] = {
+          timeLeft:10,
+          currentPlayer:"",
+          currentBid:"",
+          auctionStatus:"Live",
+          currentBidder:""
+        }
+        console.log("ROOMS NOW:", io.sockets.adapter.rooms,runningAuctions);
+      });   
+
     socket.on("place-bid", async ({auctionId,bid,teamName,teamId}) => {
         console.log("socket props detailes",auctionId,bid,teamName,teamId)
         const auction = await Auction.findById(auctionId);
@@ -19,9 +31,11 @@ export const registerAuctionSocketEvents = (io) => {
 
         }
         if (team.purse < bid){
+            runningAuctions[auctionId].currentBid = bid
+            runningAuctions[auctionId].currentBidder = teamId
             io.to(auctionId).emit("bid-error","Not Enough Purse")
             return ;
-        }
+        } 
         
         auction.currentBid = bid;
         auction.currentBidder = teamId;
@@ -33,46 +47,93 @@ export const registerAuctionSocketEvents = (io) => {
         startTimer(auctionId,io)
     });
 
+    socket.on("pause-auction",async ({auctionId,timer})=>{
+      clearInterval(timers[auctionId])
+
+      runningAuctions[auctionId].auctionStatus = "Pause"
+      runningAuctions[auctionId].timeLeft = timer
+      
+      io.to(auctionId).emit("auction-paused",{
+        timer,
+        currentBid:runningAuctions[auctionId].currentBid,
+        currentPlayer:runningAuctions[auctionId].currentPlayer
+      })
+
+      const auction = await Auction.findById(auctionId)
+      auction.status = "paused"
+      await auction.save()
+
+    })
+
+    socket.on("resume-auction",async({auctionId}) =>{
+      
+      const auction = await Auction.findById(auctionId)
+      auction.status = "upcoming"
+      await auction.save()
+      runningAuctions[auctionId].auctionStatus = "Live"
+      io.to(auctionId).emit("resume-auction")
+      startTimer(auctionId,io)
+      
+    })
+
+    socket.on("end-auction",async({auctionId}) => {
+      
+      // const auction = await Auction.findById(auctionId)
+      // auction.status = "ended"
+      // await auction.save()
+      // runningAuctions[auctionId].auctionStatus = "ended"
+      io.to(auctionId).emit("auction-ended")
+
+    })
+
+
+
     socket.on("franchise-join", async ({ id, teamName }) => {
         console.log(id,teamName)
         const auctionId=id
-    try {
-        const auction = await Auction.findById(auctionId);
-        if (!auction) return socket.emit("join-error", "Auction not found");
+        try {
+            const auction = await Auction.findById(auctionId);
+            if (!auction) return socket.emit("join-error", "Auction not found");
 
-        if (auction.status === "live") {
-            return socket.emit("join-error", "Auction already live");
+            if (auction.status === "live") {
+                return socket.emit("join-error", "Auction already live");
+            }
+
+            socket.teamName = teamName;
+            socket.auctionId = auctionId;
+
+            socket.join(auctionId);
+
+            socket.emit("join-success", "Successfully joined");
+            socket.to(auctionId).emit("team-joined", teamName);
+
+        } catch (err) {
+            console.log(err);
         }
-
-        socket.teamName = teamName;
-        socket.auctionId = auctionId;
-
-        socket.join(auctionId);
-
-        socket.emit("join-success", "Successfully joined");
-        socket.to(auctionId).emit("team-joined", teamName);
-
-    } catch (err) {
-        console.log(err);
-    }
 });
     
 
   });
 };
-// TIMER
-export const startTimer = (auctionId, io)=>{
-    clearInterval(timers[auctionId])
-  let timeLeft = 10;
 
-  timers[auctionId] = setInterval(async () => {
-    timeLeft--;
-    io.to(auctionId).emit("timer-update", { timeLeft });
-    if (timeLeft <= 0) {
-      clearInterval(timers[auctionId]);
-      await closeBidding(auctionId, io);
+export const startTimer = (auctionId, io)=>{
+    console.log(runningAuctions)
+    if (runningAuctions[auctionId].auctionStatus === "Live"){
+      clearInterval(timers[auctionId])
+      let timeLeft = runningAuctions[auctionId].timeLeft || 10;
+
+      timers[auctionId] = setInterval(async () => {
+        timeLeft--;
+        
+        io.to(auctionId).emit("timer-update", { timeLeft });
+        if (timeLeft <= 0) {
+          runningAuctions[auctionId].timeLeft = 10
+          clearInterval(timers[auctionId]);
+          await closeBidding(auctionId, io);
+        }
+      }, 1000);
     }
-  }, 1000);
+    
 }
 
 async function closeBidding(auctionId, io) {
@@ -159,4 +220,4 @@ async function moveNextPlayer(auctionId, io) {
     });
 
     startTimer(auctionId, io);
-    }
+}

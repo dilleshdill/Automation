@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import BidderNavBar from "../../Components/BidderComponent/BidderNavBar";
+import NavBar from "../../Components/Common/NavBar";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 const DOMAIN = import.meta.env.VITE_DOMAIN;
-
-
 
 const TiltCard = ({ team }) => {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -54,7 +51,7 @@ const TiltCard = ({ team }) => {
   );
 };
 
-const TeamsPage = () => {
+const UserTeam = () => {
   const [data, setData] = useState([]);
 
   const fetchedData = async () => {
@@ -84,7 +81,7 @@ const TeamsPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen">
-      <BidderNavBar />
+      <NavBar />
       <p className="text-xl font-semibold px-4 mt-4">Team Details</p>
 
       <div className="grid md:grid-cols-3 gap-6 p-6">
@@ -96,4 +93,4 @@ const TeamsPage = () => {
   );
 };
 
-export default TeamsPage;
+export default UserTeam;

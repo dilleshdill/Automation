@@ -1,17 +1,16 @@
 import { React, useEffect, useState } from 'react';
-import NavBar from '../../Components/AdminComponent/AdminNavBar.jsx';
+import BidderNavBar from '../../Components/BidderComponent/BidderNavBar.jsx';
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 import axios from 'axios';
 import AdminAuctionNotStart from '../../Components/AdminComponent/AdminAuctionNotStart.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const AdminPage = () => {
+const BidderAuctions = () => {
   const [auctionList, setAuctionList] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [selectedAuction, setSelectedAuction] = useState(null);
 
-  // Login form fields
   const [teamName, setTeamName] = useState("CSK");
   const [email, setEmail] = useState("attitudedillesh@gmail.com");
   const [password, setPassword] = useState("123");
@@ -75,7 +74,7 @@ const AdminPage = () => {
 
   return (
     <div className='flex flex-col min-h-screen'>
-      <NavBar />
+      <BidderNavBar />
 
       {auctionList.length === 0 ? (
         <div className='flex flex-col'>
@@ -171,4 +170,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+export default BidderAuctions;

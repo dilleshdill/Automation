@@ -1,5 +1,5 @@
 import {React,useEffect,useState} from 'react'
-import NavBar from '../../Components/AdminComponent/AdminNavBar.jsx'
+import AdminNavBar from '../../Components/AdminComponent/AdminNavBar.jsx';
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 import axios from 'axios';
 import AdminAuctionNotStart from '../../Components/AdminComponent/AdminAuctionNotStart.jsx';
@@ -65,7 +65,7 @@ const AdminPage = () => {
 
     return (
         <div className='flex flex-col min-h-screen'>
-        <NavBar />
+        <AdminNavBar />
         {
             auctionList.length === 0 ?
             <div className='flex flex-col'>

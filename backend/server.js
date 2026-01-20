@@ -22,7 +22,6 @@ dotenv.config();
 const app = express();
 app.use(cookieParser());
 
-// Middleware
 app.use(express.json());
 
 const origins = [
@@ -32,7 +31,7 @@ const origins = [
 ].filter(Boolean);
 
 app.use(cors({
-  origin: origins, // frontend URL
+  origin: origins,
   credentials: true
 }));
 
@@ -83,14 +82,6 @@ io.use((socket , next) =>{
 });
 
 
-
-io.on("connection", socket => {
-  socket.on("join-auction", async (auctionId) => {
-    socket.join(auctionId);
-    console.log("ROOMS NOW:", io.sockets.adapter.rooms);
-  });   
-});
-
 registerAuctionSocketEvents(io);
 
 app.use('/auth',authRoute)
@@ -100,11 +91,9 @@ app.use('/add-player',playerRoute)
 app.use('/auction',auctionRoute)
 app.use("/player",playerRoute)
 
-// ✅ CONNECT DB FIRST
 const PORT = process.env.PORT || 5000;
 await connectDB();
 
-// ✅ START SERVER (NO `server` VARIABLE NEEDED)
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import NavBar from "../../Components/AdminComponent/AdminNavBar";
+import AdminNavBar from "../../Components/AdminComponent/AdminNavBar";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -111,7 +111,7 @@ const AuctionAdminPage = () => {
 
   return (
     <>
-      <NavBar />
+      <AdminNavBar />
 
       <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg p-8">

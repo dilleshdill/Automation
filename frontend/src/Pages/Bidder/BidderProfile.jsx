@@ -1,18 +1,20 @@
 import {React,useEffect, useState} from 'react'
-import AdminNavBar from '../../Components/AdminComponent/AdminNavBar'
+import BidderNavBar from '../../Components/BidderComponent/BidderNavBar'
 import axios from 'axios'
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
 
-const Profile = () => {
+const BidderProfile = () => {
   const [BidderData,setBidderData] = useState({})
 
   const fetchedData = async() => {
     try{
-      const id = localStorage.getItem("bidderId")
+      const id = localStorage.getItem("BidderId")
+      const auctionId = localStorage.getItem("auctionId")
       const response = await axios.post(DOMAIN + "/bidder/get-bidder",
         {
-          id
+          id,
+          auctionId
         },
         {withCredentials:true})
       
@@ -28,10 +30,10 @@ const Profile = () => {
   
   useEffect(() => {
     fetchedData()
-  })
+  },[])
   return (
     <div className='flex flex-col min-w-screen min-h-screen'>
-      <AdminNavBar />
+      <BidderNavBar />
       <div className="flex flex-col max-md:gap-20 md:flex-row pb-20 items-center justify-between mt-20 px-4 md:px-16 lg:px-24 xl:px-32">
         <div className="flex flex-col items-center md:items-start">
             <div className="flex flex-wrap items-center justify-center p-1.5 rounded-full border border-slate-600 text-black text-xs">
@@ -47,10 +49,13 @@ const Profile = () => {
                 <p className="-translate-x-2">Support Our Franchsis To Win </p>
             </div>
             <h1 className="text-center md:text-left text-5xl leading-[68px] md:text-6xl md:leading-[84px] font-medium max-w-xl text-slate-500">
-                Intelligent AI tools built to help.
+                {BidderData.teamName}
             </h1>
             <p className="text-center md:text-left text-sm text-slate-400 max-w-lg mt-2">
-                Unlock smarter workflows with AI tools designed to boost productivity, simplify tasks and help you do more with less effort.
+                Email : {BidderData.email}
+            </p>
+            <p className="text-center md:text-left text-sm text-slate-400 max-w-lg mt-2">
+                Purse : {BidderData.purse}
             </p>
             <div className="flex items-center gap-4 mt-8 text-sm">
               
@@ -63,4 +68,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default BidderProfile

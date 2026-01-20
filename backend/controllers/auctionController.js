@@ -222,3 +222,16 @@ export const getTeams = async(req,res) => {
   
   return res.status(200).json({data:auction.franchises})
 }
+
+export const getAuctionStatus = async(req,res) => {
+  const auctionId = req.query.auctionId
+  console.log(auctionId)
+
+  const auction = await Auction.findById(auctionId)
+
+  if (!auction) {
+    return res.status(400).json("Auction DoesNot Exist")
+  }
+
+  res.status(200).json({status:auction.status})
+}

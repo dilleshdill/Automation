@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminNavBar from '../../Components/AdminComponent/AdminNavBar';
 
-const AuctionEnded = () => {
+const BidderAuctionEnded = () => {
   const navigate = useNavigate();
 
   return (
@@ -26,7 +26,7 @@ const AuctionEnded = () => {
 
         <div className="flex gap-4">
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/bidder/auctions')}
             className="px-6 py-2 !bg-blue-600 text-white rounded-lg font-medium hover:!bg-blue-700"
           >
             Go to Dashboard
@@ -44,4 +44,4 @@ const AuctionEnded = () => {
   );
 };
 
-export default AuctionEnded;
+export default BidderAuctionEnded;

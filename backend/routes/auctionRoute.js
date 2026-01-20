@@ -1,6 +1,6 @@
 import express from 'express';
 import { protectAdmin } from '../middleware/protectAdmin.js';
-import { addPlayersAndFranchises, createAuction,getAllAuctions, getAuctionDetails ,startAuction , getTeams} from '../controllers/auctionController.js';
+import { addPlayersAndFranchises, createAuction,getAllAuctions, getAuctionDetails ,startAuction , getTeams,getAuctionStatus} from '../controllers/auctionController.js';
 const auctionRoute = express.Router()
 
 auctionRoute.post('/create-auction',protectAdmin,createAuction)
@@ -9,4 +9,5 @@ auctionRoute.get('/get-auction-list',protectAdmin,getAllAuctions)
 auctionRoute.post('/get-auction',protectAdmin,getAuctionDetails)
 auctionRoute.post("/start-auction",protectAdmin,startAuction)
 auctionRoute.post("/get-teams",protectAdmin,getTeams)
+auctionRoute.get("/auction-status",getAuctionStatus)
 export default auctionRoute;

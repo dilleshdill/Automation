@@ -11,11 +11,9 @@ import cookieParser from "cookie-parser";
 import cookie from "cookie";
 import { Server } from "socket.io";
 import http from "http";
-import { Socket } from "dgram";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 import { registerAuctionSocketEvents } from "./socket/socketAuction.js";
-import { runningAuctions } from "./socket/socketAuction.js";
-import { Auction } from "./models/auctionModel.js";
+
 
 dotenv.config();
 
@@ -30,23 +28,25 @@ const origins = [
   process.env.FRONTEND_DOMAIN,
 ].filter(Boolean);
 
-app.use(cors({
-  origin: origins,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: origins,
+    credentials: true,
+  }),
+);
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:5173", "http://localhost:5174"],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
-app.set("io", io); 
+app.set("io", io);
 
-io.use((socket , next) =>{
+io.use((socket, next) => {
   try {
     const cookies = socket.handshake.headers.cookie;
 
@@ -69,27 +69,25 @@ io.use((socket , next) =>{
 
     socket.bidder = {
       bidderId: decoded.bidder_id,
-      auctionId: decoded.auction_id
+      auctionId: decoded.auction_id,
     };
 
     next();
-
-  } catch(e) {
+  } catch (e) {
     console.log("Socket auth middleware failed", e);
     socket.isAdmin = true;
     next();
   }
 });
 
-
 registerAuctionSocketEvents(io);
 
-app.use('/auth',authRoute)
-app.use('/admin',adminRoute)
-app.use('/bidder',bidderRoute)
-app.use('/add-player',playerRoute)
-app.use('/auction',auctionRoute)
-app.use("/player",playerRoute)
+app.use("/auth", authRoute);
+app.use("/admin", adminRoute);
+app.use("/bidder", bidderRoute);
+app.use("/add-player", playerRoute);
+app.use("/auction", auctionRoute);
+app.use("/player", playerRoute);
 
 const PORT = process.env.PORT || 5000;
 await connectDB();

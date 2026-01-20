@@ -22,6 +22,7 @@ const AdminAuctionEnded = lazy(() => import("./Pages/Admin/AdminAuctionEnded"))
 const UserAuctionEnded = lazy(() =>import("./Pages/User/UserAuctionEnded"))
 const BidderAuctionEnded = lazy(() =>import("./Pages/Bidder/BidderAuctionEnded"))
 const AdminProfile = lazy(() => import("./Pages/Admin/AdminProfile"))
+const PageNotFound = lazy(() => import("./Pages/Common/PageNotFound"))
 
 import { ToastContainer } from "react-toastify";
 
@@ -35,6 +36,7 @@ const App = () => {
         <Routes>
           <Route path='/login' element={<LoginPage />} />
           <Route path="/" element={<HomePage />} />
+          <Route path="*" element={<PageNotFound />} />
           
           <Route path="/admin" element={ <AdminPage />} />
           <Route path="/admin/create-auction" element={ <AuctionCreate />} />

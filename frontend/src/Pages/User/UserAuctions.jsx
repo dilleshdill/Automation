@@ -2,7 +2,7 @@ import { React, useEffect, useState } from 'react';
 import axios from 'axios';
 import NavBar from '../../Components/Common/NavBar.jsx';
 import { useNavigate } from 'react-router-dom';
-import AdminAuctionNotStart from '../../Components/AdminComponent/AdminAuctionNotStart.jsx';
+import BidderAuctionNotStart from '../../Components/BidderComponent/BidderAuctionNotStart.jsx';
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -13,22 +13,23 @@ const UserAuctions = () => {
   const navigate = useNavigate();
 
     const fetchList = async () => {
-    try {
-      const response = await axios.get(DOMAIN + "/auction/get-auction-list", { withCredentials: true });
-      if (response.status === 200) {
-        setAuctionList(response.data.details);
+      try {
+        const response = await axios.get(DOMAIN + "/auction/get-auction-list", { withCredentials: true });
+        if (response.status === 200) {
+          setAuctionList(response.data.details);
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   useEffect(() => {
     fetchList()
-    
-  }, []);
 
-  
+    const interval = setInterval(fetchList,5000)
+    return () => clearInterval(interval)
+
+  }, []);
 
   const getNavigate = (id) => {
     navigate(`/auction/${id}`,{ state: { id } });
@@ -41,7 +42,6 @@ const UserAuctions = () => {
       state:{userId}
     })
   }
-  
 
   return (
     <div className='flex flex-col min-h-screen'>
@@ -49,7 +49,7 @@ const UserAuctions = () => {
 
       {auctionList.length === 0 ? (
         <div className='flex flex-col'>
-          <AdminAuctionNotStart />
+          <BidderAuctionNotStart />
         </div>
       ) : (
         <div className='m-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
@@ -76,7 +76,6 @@ const UserAuctions = () => {
         </div>
       )}
 
-      
     </div>
   );
 };

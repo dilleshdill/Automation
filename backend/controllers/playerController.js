@@ -43,12 +43,11 @@ export const addPlayer = async (req, res) => {
       });
     });
 
-    
     const incomingSets = Object.values(grouped);
 
     incomingSets.forEach((incomingSet) => {
       const existingSet = auction.players.find(
-        (s) => s.setNo === incomingSet.setNo
+        (s) => s.setNo === incomingSet.setNo,
       );
 
       if (existingSet) {
@@ -65,31 +64,28 @@ export const addPlayer = async (req, res) => {
     return res
       .status(200)
       .json({ message: "Players added successfully", auction });
-
   } catch (error) {
     console.error("addPlayer error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const getPlayer = async(req,res) => {
-  
-  const {id,auctionId,setNo} = req.body
+export const getPlayer = async (req, res) => {
+  const { id, auctionId, setNo } = req.body;
   // console.log("player detailes",id,auctionId,setNo)
-  const auction = await Auction.findById(auctionId)
-  if (!auction){
-    return res.status(400).json("Auction DoesNot Exist")
+  const auction = await Auction.findById(auctionId);
+  if (!auction) {
+    return res.status(400).json("Auction DoesNot Exist");
   }
-  const setPlayers = auction.players.filter(sets => sets.setNo === setNo)
-  if(!setPlayers){
-    return res.status(400).json("Player Doesnot Exist")
+  const setPlayers = auction.players.filter((sets) => sets.setNo === setNo);
+  if (!setPlayers) {
+    return res.status(400).json("Player Doesnot Exist");
   }
-  const Players = setPlayers[0].playersList
-  
-  const data = Players.filter(player => player._id.toString() === id)
-  if (!data){
-    return res.status(400).json("Player Doesnot Exist")
-  }
-  res.status(200).json(data)
+  const Players = setPlayers[0].playersList;
 
-}
+  const data = Players.filter((player) => player._id.toString() === id);
+  if (!data) {
+    return res.status(400).json("Player Doesnot Exist");
+  }
+  res.status(200).json(data);
+};

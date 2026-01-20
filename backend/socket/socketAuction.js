@@ -5,7 +5,6 @@ export const runningAuctions = {};
 
 export const registerAuctionSocketEvents = (io) => {
   io.on("connection", (socket) => {
-
     socket.on("join-auction", async (auctionId) => {
         socket.join(auctionId);
         runningAuctions[auctionId] = {
@@ -68,7 +67,7 @@ export const registerAuctionSocketEvents = (io) => {
     socket.on("resume-auction",async({auctionId}) =>{
       
       const auction = await Auction.findById(auctionId)
-      auction.status = "upcoming"
+      auction.status = "live"
       await auction.save()
       runningAuctions[auctionId].auctionStatus = "Live"
       io.to(auctionId).emit("resume-auction")
@@ -77,10 +76,9 @@ export const registerAuctionSocketEvents = (io) => {
     })
 
     socket.on("end-auction",async({auctionId}) => {
-      
-      // const auction = await Auction.findById(auctionId)
-      // auction.status = "ended"
-      // await auction.save()
+      const auction = await Auction.findById(auctionId)
+      auction.status = "ended"
+      await auction.save()
       // runningAuctions[auctionId].auctionStatus = "ended"
       io.to(auctionId).emit("auction-ended")
 
@@ -117,7 +115,6 @@ export const registerAuctionSocketEvents = (io) => {
 };
 
 export const startTimer = (auctionId, io)=>{
-    console.log(runningAuctions)
     if (runningAuctions[auctionId].auctionStatus === "Live"){
       clearInterval(timers[auctionId])
       let timeLeft = runningAuctions[auctionId].timeLeft || 10;
@@ -181,7 +178,7 @@ async function moveNextPlayer(auctionId, io) {
         auction.currentPlayerIndex = 0;
 
         if (auction.currentSet >= auction.players.length) {
-        auction.status = "upcoming";
+        auction.status = "ended";
         await auction.save();
         io.to(auctionId).emit("auction-ended");
         return

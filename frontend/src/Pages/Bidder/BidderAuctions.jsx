@@ -2,9 +2,10 @@ import { React, useEffect, useState } from 'react';
 import BidderNavBar from '../../Components/BidderComponent/BidderNavBar.jsx';
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 import axios from 'axios';
-import AdminAuctionNotStart from '../../Components/AdminComponent/AdminAuctionNotStart.jsx';
+import BidderAuctionNotStart from '../../Components/BidderComponent/BidderAuctionNotStart.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+
 
 const BidderAuctions = () => {
   const [auctionList, setAuctionList] = useState([]);
@@ -18,8 +19,12 @@ const BidderAuctions = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchList();  
-  }, []);
+  fetchList(); // call once immediately
+
+  const interval = setInterval(fetchList, 5000);
+  return () => clearInterval(interval);
+}, []);
+
 
   const fetchList = async () => {
     try {
@@ -78,7 +83,7 @@ const BidderAuctions = () => {
 
       {auctionList.length === 0 ? (
         <div className='flex flex-col'>
-          <AdminAuctionNotStart />
+          <BidderAuctionNotStart />
         </div>
       ) : (
         <div className='m-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>

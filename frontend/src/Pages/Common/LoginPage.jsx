@@ -44,6 +44,7 @@ const LoginPage = () => {
                         console.log(response.data);
                         
                         localStorage.setItem("userId",response.data.data)
+                        localStorage.setItem("role","user")
                         navigate("/user/auctions")
                         toast.success("Welcome To The Auction");
                     }
@@ -64,6 +65,7 @@ const LoginPage = () => {
                     
                     if (response.status === 200){
                         localStorage.setItem("AdminId",response.data.data)
+                        localStorage.setItem("role","admin")
                         navigate("/admin");
                         toast.success("Welcome To The Auction");
                     }
@@ -88,6 +90,7 @@ const LoginPage = () => {
             //         toast.error("Invalid Bidder Value")
             //     }
             // }
+            localStorage.setItem("role","bidder")
             navigate("/bidder/auctions")
             toast.success("Welcome To The Aucton")
         }
@@ -109,6 +112,7 @@ const LoginPage = () => {
                     console.log(response.data);
                     toast.success("Welcome To The Auction")
                     localStorage.setItem("userId",response.data.data)
+                    localStorage.setItem("role","user")
                     navigate("/user/auctions")
                 }
 
@@ -171,16 +175,16 @@ const LoginPage = () => {
                 role === "Bidder" &&
                 <>
 
-                    <div className="w-full ">
+                    {/* <div className="w-full ">
                         <p>IPL Team</p>
-                        <input placeholder="type here" onChange={(e)=>setTeam(e.target.value)} className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500" type="text" required />
+                        <input placeholder="type here" 
+                        onChange={(e)=>setTeam(e.target.value)} className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500" type="text" required />
                     </div>
                     <div className="w-full ">
                         <p>Bidder ID</p>
                         <input placeholder="type here" onChange={(e)=>setBidderID(e.target.value)} className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500" type="text" required />
-                    </div>
+                    </div> */}
                 </>
-                
             }
             {
 

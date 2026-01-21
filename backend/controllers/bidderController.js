@@ -45,8 +45,8 @@ export const franchiseLogin = async (req, res) => {
     if (f.isEnter) {
       return res.status(400).json("Already Franchsis Enter In This Auction");
     } else {
-      f.isEnter = true;
-      await auction.save();
+      // f.isEnter = true;
+      // await auction.save();
       return res.status(200).json({
         teamName: f.teamName,
         purse: f.purse,
@@ -72,3 +72,27 @@ export const getBidder = async (req, res) => {
   );
   res.status(200).json(franchises[0]);
 };
+
+export const getUpcomingPlayers = async(req,res) => {
+  
+  const {auctionId} = req.query
+
+  const auction = await Auction.findById(auctionId)
+
+  if(!auction){
+    return res.status(400).json("Auction Doesnot Exist")
+  }
+
+  const setNo = auction.currentSet
+  const indexNo = auction.currentPlayerIndex
+
+  const players =  auction.players.filter(each => each.setNo === setNo)
+  
+  if (!players){
+    return res.status(400).json("Players Doesnot Exist")
+  }
+
+  const upcomingPlayers = players[0].playersList.filter((each,index) => index > 0)
+
+  res.status(200).json(upcomingPlayers)
+}

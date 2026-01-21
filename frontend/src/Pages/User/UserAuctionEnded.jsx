@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminNavBar from '../../Components/AdminComponent/AdminNavBar';
+import NavBar from '../../Components/Common/NavBar';
 
 const UserAuctionEnded = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <AdminNavBar />
+      <NavBar />
 
       <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
         <h1 className="text-4xl font-bold text-gray-800 mb-3">

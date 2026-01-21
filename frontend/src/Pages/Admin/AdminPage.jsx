@@ -62,6 +62,16 @@ const AdminPage = () => {
         }
     };
 
+    // const getPauseAuction  = (e) => {
+    //     e.stopPropagation()
+    //     const auctionId = localStorage.getItem("auctionId");
+    //         socket.emit("pause-auction", {
+    //           auctionId,
+    //           timer,
+    //         });
+    //       };
+    // }
+
 
     return (
         <div className='flex flex-col min-h-screen'>
@@ -76,7 +86,7 @@ const AdminPage = () => {
                 {
                     auctionList.map((auction) => (
                         <div className="p-4 bg-white border border-gray-200 hover:-translate-y-1 transition duration-300 rounded-lg shadow shadow-black/10 max-w-80" onClick={() =>{getNavigate(auction._id)}}>
-                            <img className="rounded-md max-h-40 w-full object-cover" src="https://images.unsplash.com/photo-1560264418-c4445382edbc?q=80&w=400" alt="officeImage" />
+                            <img className="rounded-md max-h-40 w-full object-cover" src={auction.auction_img} alt="officeImage" />
                             <p className="text-gray-900 text-xl font-semibold ml-2 mt-4">
                                 {auction.auction_name}
                             </p>
@@ -98,12 +108,17 @@ const AdminPage = () => {
                                 </button>
                                 :
                                 <div>
-                                    <button type="button" className="!bg-green-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" >
-                                        Live
+                                    <button type="button" className="!bg-green-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        navigate(`/auction/${auction._id}/live`)
+                                    }}>
+                                        Go To The Live
                                     </button>
-                                    <button type="button" className="!bg-red-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" >
+                                    {/* <button type="button" className="!bg-red-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
+                                    onClick={(e) => getPauseAuction(e)}>
                                         Pause
-                                    </button>
+                                    </button> */}
                                 </div>
                             }
                         </div>

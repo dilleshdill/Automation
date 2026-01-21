@@ -3,6 +3,7 @@ import { socket } from "../../Socket/socket.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import AdminNavBar from "../../Components/AdminComponent/AdminNavBar.jsx";
 import axios from "axios";
+import BidderUpcomingPlayer from "../../Components/BidderComponent/BidderUpcomingPlayer.jsx";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -20,6 +21,7 @@ const AuctionScreen = () => {
   const [showEndAutionModel, setEndAuctionModel] = useState(false);
   const [showPauseAuctionModel, setPauseAuctionModel] = useState(false);
   const [showResumeAuctionModel, setResumeAuctionModel] = useState(false);
+
 
   const fetchedData = async () => {
     try {
@@ -85,7 +87,7 @@ const AuctionScreen = () => {
 
   const confirmEndAuction = () => {
     const auctionId = localStorage.getItem("auctionId");
-    socket.emit("end-auction",{auctionId})
+    socket.emit("end-auction",auctionId)
     setEndAuctionModel(false)
     // navigate("/admin/auction/ended");
   };
@@ -109,8 +111,7 @@ const AuctionScreen = () => {
 
   const displayPlayer = player || currentPlayer;
 
-  const dummyImg =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTK38tEeJiYTWzabBXNBoRta9hhg6G8eZvEA&s";
+  
 
   return (
     <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center ">
@@ -123,7 +124,7 @@ const AuctionScreen = () => {
         <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
           <div className="w-full md:w-1/3 p-3 flex justify-center items-center">
             <img
-              src={dummyImg}
+              src={displayPlayer.imageUrl}
               alt="player"
               className="rounded-lg object-cover w-48 h-56 md:w-56 md:h-72"
             />
@@ -264,6 +265,8 @@ const AuctionScreen = () => {
           </div>
         </div>
       )}
+
+      
 
       {showResumeAuctionModel && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

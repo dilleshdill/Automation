@@ -19,7 +19,7 @@ const BidderAuctions = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  fetchList(); // call once immediately
+  fetchList(); 
 
   const interval = setInterval(fetchList, 5000);
   return () => clearInterval(interval);
@@ -94,7 +94,7 @@ const BidderAuctions = () => {
               onClick={() => getNavigate(auction._id)}
             >
               <img className="rounded-md max-h-40 w-full object-cover"
-                src="https://images.unsplash.com/photo-1560264418-c4445382edbc?q=80&w=400"
+                src={auction.auction_img}
                 alt="auctionImage"
               />
 
@@ -113,12 +113,10 @@ const BidderAuctions = () => {
                 </button>
               ) : (
                 <div>
-                  <button className="!bg-green-400 mt-4 mb-3 ml-2 px-6 py-2 rounded-md text-white text-sm">
-                    Live
+                  <button className="!bg-green-400 mt-4 mb-3 ml-2 px-6 py-2 rounded-md text-white text-sm" >
+                    Go To The Live Auction
                   </button>
-                  <button className="!bg-red-400 mt-4 mb-3 ml-2 px-6 py-2 rounded-md text-white text-sm">
-                    Pause
-                  </button>
+                  
                 </div>
               )}
             </div>

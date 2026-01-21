@@ -2,8 +2,6 @@ import { UserRegister } from "../models/userRegister.js";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import generateUserToken from "../utils/generateUserToken.js";
-import { json } from "express";
-import { Auction } from "../models/auctionModel.js";
 
 dotenv.config();
 

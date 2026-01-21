@@ -4,31 +4,40 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../../Components/Common/NavBar";
 import Marquee from "react-fast-marquee";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
+import UserUpcomingPlayer from "../../Components/User/UserUpcomingPlayer";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const UserAuctionScreen = () => {
   const navigate = useNavigate();
+  const location = useLocation()
 
   const [player, setPlayer] = useState(null);
-
+  const {data} = location.state || ""
+  const {id,userId} = data
+  const auctionId = id
   const [currentBid, setCurrentBid] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isAuctionPaused, setAuctionPause] = useState(false);
 
   const fetchedData = async () => {
-    const auctionId = localStorage.getItem("auctionId");
+    
     try {
       const response = await axios.get(
         `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`,
       );
       if (response.status === 200) {
-        if (response.data.status === "upcoming") {
+        
+        if (response.data.status === "live") {
           console.log(response.data.status);
           setAuctionPause(false);
         }
         if (response.data.status === "paused") {
           setAuctionPause(true);
+        }
+        if(response.data.status === "ended"){
+          navigate("/user/auction/ended")
         }
       }
     } catch (err) {
@@ -38,9 +47,16 @@ const UserAuctionScreen = () => {
 
   useEffect(() => {
     fetchedData();
-    const auctionId = localStorage.getItem("auctionId");
-    
+
     socket.emit("join-auction", auctionId);
+    
+    socket.on("state-sync",({currentPlayer,currentBid,currentBidder,timeLeft,auctionStatus}) => {      
+        console.log(auctionStatus,currentPlayer,currentBidder)
+        setPlayer(currentPlayer)
+        setCurrentBid(currentBid)
+        setTimer(timeLeft)
+    })
+
     socket.on("resume-auction",() => {
       setAuctionPause(false)
     })
@@ -130,7 +146,7 @@ const UserAuctionScreen = () => {
           <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
             <div className="w-full md:w-1/3 p-3 flex justify-center items-center">
               <img
-                src={dummyImg}
+                src={displayPlayer.imageUrl}
                 alt="player"
                 className="rounded-lg object-cover w-48 h-56 md:w-56 md:h-72"
               />
@@ -203,6 +219,8 @@ const UserAuctionScreen = () => {
           </h2>
         </>
       )}
+
+      <UserUpcomingPlayer auctionId = {auctionId} />
     </div>
   );
 };

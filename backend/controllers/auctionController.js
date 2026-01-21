@@ -50,7 +50,6 @@ export const createAuction = async (req, res) => {
 };
 
 // add playerse and franchise to auction
-
 export const addPlayersAndFranchises = async (req, res) => {
   try {
     const { auctionId, franchises, players } = req.body;
@@ -160,7 +159,7 @@ export const startAuction = async (req, res) => {
     if (auction.status !== "upcoming")
       return res.status(400).json("Already Live");
 
-    auction.status = "live";
+    // auction.status = "live";
     auction.currentSet = 0;
     auction.currentPlayerIndex = 0;
 
@@ -229,3 +228,4 @@ export const getAuctionStatus = async (req, res) => {
 
   res.status(200).json({ status: auction.status });
 };
+

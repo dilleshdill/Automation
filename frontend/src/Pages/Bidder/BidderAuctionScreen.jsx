@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom'
 import BidderNavBar from '../../Components/BidderComponent/BidderNavBar'
 import Marquee from "react-fast-marquee";
 import axios from 'axios'
+import BidderUpcomingPlayer from '../../Components/BidderComponent/BidderUpcomingPlayer'
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -14,12 +15,14 @@ const BidderAuctionScreen = () => {
     const navigate = useNavigate()
     const {data} = location.state || ""
     const {id,teamName,teamId} = data
+    const auctionId = id 
+
     const [player,setPlayer] = useState(null)
     
     const [currentBid, setCurrentBid] = useState(0);
     const [timer, setTimer] = useState(0);
     const [isAuctionPaused,setAuctionPause] = useState(false)
-    const auctionId = id 
+    
 
     const fetchedData = async() => {
     
@@ -47,6 +50,14 @@ const BidderAuctionScreen = () => {
             teamName,
             
         });
+
+        socket.on("state-sync",({currentPlayer,currentBid,currentBidder,timeLeft,auctionStatus}) => {
+            
+            console.log(auctionStatus,currentPlayer,currentBidder)
+            setPlayer(currentPlayer)
+            setCurrentBid(currentBid)
+            setTimer(timeLeft)
+        })
 
         socket.on("resume-auction",() => {
             setAuctionPause(false)
@@ -118,8 +129,6 @@ const BidderAuctionScreen = () => {
 
     const displayPlayer = player;
 
-    const dummyImg =
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTK38tEeJiYTWzabBXNBoRta9hhg6G8eZvEA&s";
 
     return (
         <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center">
@@ -160,7 +169,7 @@ const BidderAuctionScreen = () => {
             
             <div className="w-full md:w-1/3 p-3 flex justify-center items-center">
                 <img
-                src={dummyImg}
+                src={displayPlayer.imageUrl}
                 alt="player"
                 className="rounded-lg object-cover w-48 h-56 md:w-56 md:h-72"
                 />
@@ -193,7 +202,7 @@ const BidderAuctionScreen = () => {
 
             <div className="bg-white shadow rounded-xl p-3 w-32 text-center">
             <p className="text-xs text-gray-500 uppercase tracking-wide">Current Bid</p>
-            <p className="text-xl font-bold text-blue-600">₹{currentBid}</p>
+            <p className="text-xl font-bold text-blue-600">₹{currentBid ? currentBid: 0 }</p>
             </div>
         </div>
 
@@ -214,7 +223,7 @@ const BidderAuctionScreen = () => {
             </>
         )}
 
-        
+        <BidderUpcomingPlayer auctionId={auctionId}/>
         
         </div>
     );

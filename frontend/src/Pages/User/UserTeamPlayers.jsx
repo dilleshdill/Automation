@@ -1,8 +1,8 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import BidderNavBar from "../../Components/BidderComponent/BidderNavBar";
+import NavBar from "../../Components/Common/NavBar";
 
-const BidderTeamPlayers = () => {
+const UserTeamPlayers = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const Players = location.state || [];
@@ -17,7 +17,7 @@ const BidderTeamPlayers = () => {
 
   return (
     <div className="min-h-screen min-w-screen flex flex-col !bg-gray-100">
-      <BidderNavBar />
+      <NavBar />
 
       <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 text-center my-6">
         Team Players
@@ -71,4 +71,4 @@ const BidderTeamPlayers = () => {
   );
 };
 
-export default BidderTeamPlayers;
+export default UserTeamPlayers;

@@ -23,10 +23,13 @@ const UserAuctionEnded = lazy(() =>import("./Pages/User/UserAuctionEnded"))
 const BidderAuctionEnded = lazy(() =>import("./Pages/Bidder/BidderAuctionEnded"))
 const AdminProfile = lazy(() => import("./Pages/Admin/AdminProfile"))
 const PageNotFound = lazy(() => import("./Pages/Common/PageNotFound"))
+const AuctionPlayer = lazy(() =>import("./Pages/Auction/AuctionPlayer"))
+const BidderPlayerDetailes = lazy(() =>import("./Pages/Bidder/BidderPlayerDeatailes") )
+const UserPlayerDetailes = lazy(() =>import("./Pages/User/UserPlayerDetailes"))
+const UserProfile = lazy(() => import("./Pages/User/UserProfile"))
+const UserTeamPlayers = lazy(() =>import("./Pages/User/UserTeamPlayers"))
 
 import { ToastContainer } from "react-toastify";
-
-
 
 const App = () => {
   return (
@@ -47,17 +50,22 @@ const App = () => {
           <Route path="/bidder/auction/:id" element={<BidderAuctionScreen />} />
           <Route path="/bidder/profile" element={<BidderProfile />} />
           <Route path="/bidder/auction/ended" element={<BidderAuctionEnded />} />
+          <Route path="/auction/bidder/player/:id" element={<BidderPlayerDetailes />} />
 
           <Route path="/auction/:id" element = {<AcutionAdminPage />} /> 
           <Route path="/auction/:id/live" element = {<AuctionScreen />} />  
           <Route path="/auction/teams" element = {<TeamsPage />} />
           <Route path="/auction/teams/:id" element = {<BidderTeamPlayers />} />
           <Route path="/auction/teams/player/:id" element={<PlayerDetailes />} />
+          <Route path="/auction/player/:id" element = {<AuctionPlayer />} />
 
           <Route path="/user/auctions" element={<UserAuction />} /> 
           <Route path="/user/auctions/:id/live" element={<UserAuctionScreen />} />
           <Route path="/user/auction/teams" element={<UserTeam />} />
+          <Route path="/user/teams/player/:id" element={<UserTeamPlayers />} />
           <Route path="/user/auction/ended" element={<UserAuctionEnded />} />
+          <Route path="/auction/user/player/:id" element={<UserPlayerDetailes />} />
+          <Route path="/auction/user/profile" element={<UserProfile />} />
         </Routes>
       </Suspense> 
     </BrowserRouter>

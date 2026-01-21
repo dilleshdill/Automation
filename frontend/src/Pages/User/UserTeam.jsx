@@ -12,7 +12,7 @@ const TiltCard = ({ team }) => {
     const navigate = useNavigate()
 
     const getNavigate = (id,team) => {
-    navigate(`/auction/teams/${id}`,{
+    navigate(`/user/teams/player/${id}`,{
         state:team.players
     })
   }

@@ -1,8 +1,8 @@
 import React from "react";
 
-const AuctionStart = ({Player}) => {
-  console.log(Player)
-
+const AuctionStart = (props) => {
+  const {Player} = props
+  
   const product = {
     imageUrl:
       "https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/card/productImage.png",

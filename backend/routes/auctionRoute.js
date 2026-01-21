@@ -10,4 +10,5 @@ auctionRoute.post('/get-auction',protectAdmin,getAuctionDetails)
 auctionRoute.post("/start-auction",protectAdmin,startAuction)
 auctionRoute.post("/get-teams",protectAdmin,getTeams)
 auctionRoute.get("/auction-status",getAuctionStatus)
+
 export default auctionRoute;

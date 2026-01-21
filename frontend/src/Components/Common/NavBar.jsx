@@ -69,7 +69,9 @@ const NavBar = () => {
            
             {profileOpen && (
               <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-lg shadow-md">
-                <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a 
+                href="/auction/user/profile"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Profile
                 </a>
                 <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">

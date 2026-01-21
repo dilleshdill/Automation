@@ -7,6 +7,7 @@ import adminRoute from "./routes/adminRoute.js";
 import bidderRoute from "./routes/bidderRoute.js";
 import playerRoute from "./routes/playersRoute.js";
 import auctionRoute from "./routes/auctionRoute.js";
+import userRoute  from "./routes/userRoute.js";
 import cookieParser from "cookie-parser";
 import cookie from "cookie";
 import { Server } from "socket.io";
@@ -88,6 +89,7 @@ app.use("/bidder", bidderRoute);
 app.use("/add-player", playerRoute);
 app.use("/auction", auctionRoute);
 app.use("/player", playerRoute);
+app.use("/user", userRoute)
 
 const PORT = process.env.PORT || 5000;
 await connectDB();

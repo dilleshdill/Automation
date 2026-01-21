@@ -8,6 +8,5 @@ const userRegisterSchema = new mongoose.Schema(
     
   },{ timestamps: true });
 
-export const UserRegister =
-  mongoose.models.UserRegister ||
-  mongoose.model("UserRegister", userRegisterSchema);
+export const UserRegister = mongoose.model("UserRegister", userRegisterSchema);
+ 

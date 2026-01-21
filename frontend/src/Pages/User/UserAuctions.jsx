@@ -38,8 +38,13 @@ const UserAuctions = () => {
   const getLiveAuction = (id,e) => {
     e.stopPropagation();
     const userId = localStorage.getItem("userId")
+    const data = {
+      id,
+      userId
+    }
+    
     navigate(`/user/auctions/${id}/live`,{
-      state:{userId}
+      state:{data}
     })
   }
 
@@ -60,7 +65,7 @@ const UserAuctions = () => {
               onClick={() => getNavigate(auction._id)}
             >
               <img className="rounded-md max-h-40 w-full object-cover"
-                src="https://images.unsplash.com/photo-1560264418-c4445382edbc?q=80&w=400"
+                src={auction.auction_img}
                 alt="auctionImage"
               />
 

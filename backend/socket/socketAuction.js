@@ -71,7 +71,7 @@ export const registerAuctionSocketEvents = (io) => {
     });
 
     socket.on("place-bid", async ({ auctionId, bid, teamName, teamId }) => {
-      console.log("socket props detailes", auctionId, bid, teamName, teamId);
+
       const auction = await Auction.findById(auctionId);
 
       if (!auction) return;
@@ -118,8 +118,9 @@ export const registerAuctionSocketEvents = (io) => {
     socket.on("resume-auction", async ({ auctionId }) => {
       const auction = await Auction.findById(auctionId);
       auction.status = "live";
+      
       await auction.save();
-      // runningAuctions[auctionId].auctionStatus = "Live";
+      runningAuctions[auctionId].auctionStatus = "Live";
       io.to(auctionId).emit("resume-auction");
       startTimer(auctionId, io);
     });

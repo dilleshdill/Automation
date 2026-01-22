@@ -1,21 +1,22 @@
 import {React,useEffect,useState} from 'react'
-import AdminNavBar from '../../Components/AdminComponent/AdminNavBar.jsx';
-const DOMAIN = import.meta.env.VITE_DOMAIN;
+import AdminHomeNavBar from '../../Components/AdminComponent/AdminHomeNavBar.jsx'
 import axios from 'axios';
 import AdminAuctionNotStart from '../../Components/AdminComponent/AdminAuctionNotStart.jsx';
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../../Socket/socket.js';
+import Loader from '../../Loader/Loader.jsx';
+import { toast } from 'react-toastify';
 
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const AdminPage = () => {
     const [auctionList,setAuctionList] = useState([]);   
     const navigate = useNavigate()
+    const [showLoader,setLoader] = useState(false)
     
     useEffect(() => {
-        
         fetchedList()
-    }
-    , []);
+    }, []);
 
     const fetchedList = async () => {
             try{
@@ -39,43 +40,51 @@ const AdminPage = () => {
     }
 
     const startAuction = async (id) => {
-
+        setLoader(true)
         socket.emit("join-auction", id);
 
         socket.off("auction-started");
 
         socket.once("auction-started", (auction) => {
             console.log("auction-started:", auction);
-
+            setLoader(false)
             navigate(`/auction/${auction.auctionId}/live`, {
             state: { auction }
             });
         });
-
+        
         try {
             await axios.post(DOMAIN + "/auction/start-auction",
             { auction_id: id },
             { withCredentials: true }
             );
         } catch (err) {
-            console.log(err);
+            console.log(err)
+            toast.error(err.response)
+            
         }
     };
 
-    // const getPauseAuction  = (e) => {
-    //     e.stopPropagation()
-    //     const auctionId = localStorage.getItem("auctionId");
-    //         socket.emit("pause-auction", {
-    //           auctionId,
-    //           timer,
-    //         });
-    //       };
-    // }
+    const goToTheLiveAuction = (data,e) => {
+        e.stopPropagation()
+        const auction = {
+            auctionId:data._id,
+            currentPlayer:data.currentPlayer
+        }
+        navigate(`/auction/${data._id}/live`,
+        {
+            state:{auction}
+        }
+        )
+    }
 
 
     return (
         <div className='flex flex-col min-h-screen'>
-        <AdminNavBar />
+        <AdminHomeNavBar />
+        {
+            showLoader && <Loader />
+        }
         {
             auctionList.length === 0 ?
             <div className='flex flex-col'>
@@ -100,27 +109,33 @@ const AdminPage = () => {
                                 PlayerTime : {auction.auction_time}
                             </p>
                             {
-                                auction.status === "upcoming" ? 
+                                auction.status === "upcoming" && 
                                 <button type="button" className="!bg-gray-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" onClick={(e)=>{
                                     e.stopPropagation();
                                     startAuction(auction._id)}}>
                                     Start
                                 </button>
-                                :
-                                <div>
-                                    <button type="button" className="!bg-green-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
+                            }
+                            {
+                                (auction.status === "live" || auction.status === "paused") && 
+                                <button type="button" className="!bg-green-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
                                     onClick={(e) => {
-                                        e.stopPropagation()
-                                        navigate(`/auction/${auction._id}/live`)
+                                        goToTheLiveAuction(auction,e
+
+                                        )
                                     }}>
                                         Go To The Live
-                                    </button>
-                                    {/* <button type="button" className="!bg-red-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
-                                    onClick={(e) => getPauseAuction(e)}>
-                                        Pause
-                                    </button> */}
-                                </div>
+                                </button>
                             }
+                            {
+                                auction.status === "ended" && 
+                                <button type="button" className="!bg-red-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
+                                >
+                                        Auction Ended
+                                </button>
+                            }
+                            
+                            
                         </div>
                     ))
                 }

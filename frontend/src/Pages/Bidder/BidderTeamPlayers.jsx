@@ -6,6 +6,7 @@ const BidderTeamPlayers = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const Players = location.state || [];
+  console.log(Players)
 
   const handleNavigate = (id, setNo) => {
     navigate(`/auction/teams/player/${id}`, {
@@ -32,7 +33,7 @@ const BidderTeamPlayers = () => {
               className="cursor-pointer rounded-lg bg-white shadow hover:shadow-lg transition duration-300 hover:-translate-y-1 border border-gray-200"
             >
               <img
-                src={player.imagePlayer}
+                src={player.imageUrl}
                 alt="player"
                 className="rounded-t-lg w-full h-48 object-cover"
               />

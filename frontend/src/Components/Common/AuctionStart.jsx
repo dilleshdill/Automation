@@ -2,30 +2,22 @@ import React from "react";
 
 const AuctionStart = (props) => {
   const {Player} = props
-  
-  const product = {
-    imageUrl:
-      "https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/card/productImage.png",
-  };
 
 
   return (
       <div className="min-h-screen bg-gray-50 px-4 py-6">
 
-        {/* Player Card */}
         <div className="max-w-6xl mx-auto bg-white rounded-xl shadow p-6">
           <div className="flex flex-col md:flex-row gap-8">
 
-            {/* Image */}
             <div className="md:w-1/3 w-full flex justify-center">
               <img
-                src={product.imageUrl}
+                src={Player.imageUrl}
                 
                 className="w-72 h-84 object-cover rounded-lg"
               />
             </div>
 
-            {/* Details */}
             <div className="md:w-2/3 w-full">
               <div className="flex items-center gap-4 mb-6">
                   <h1 className="text-2xl font-semibold text-gray-800">

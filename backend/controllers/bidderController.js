@@ -42,18 +42,16 @@ export const franchiseLogin = async (req, res) => {
 
     if (f.password !== password)
       return res.status(400).json("Invalid password");
-    if (f.isEnter) {
-      return res.status(400).json("Already Franchsis Enter In This Auction");
-    } else {
-      // f.isEnter = true;
-      // await auction.save();
+    
+      f.isEnter = true;
+      await auction.save();
       return res.status(200).json({
         teamName: f.teamName,
         purse: f.purse,
         auction_id,
         teamId: f._id,
       });
-    }
+    
   } catch (err) {
     console.log(err);
     res.status(500).json("Server error");

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
-const BidderNavBar = () => {
+const UserHomeNavBar = () => {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [name,setName] = useState("");
@@ -28,13 +28,10 @@ const BidderNavBar = () => {
           </div>
 
           
-          <div className="hidden md:flex space-x-5 text-gray-600 font-medium">
-            <a href = "/bidder/auctions" className="hover:text-gray-700 cursor-pointer">Home</a>
-          </div>
           <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
-            <a href = "/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
+            <a href = "/user/auctions" className="hover:text-gray-700 cursor-pointer">Home</a>
+            <a href = "/user/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
           </div>
-          
 
           
           <div className="flex items-center gap-4 relative">
@@ -72,7 +69,9 @@ const BidderNavBar = () => {
            
             {profileOpen && (
               <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-lg shadow-md">
-                <a href="/bidder/profile"  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a 
+                href="/auction/user/profile"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Profile
                 </a>
                 <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
@@ -82,7 +81,6 @@ const BidderNavBar = () => {
                 <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Logout
                 </a>
-                
               </div>
             )}
           </div>
@@ -93,8 +91,8 @@ const BidderNavBar = () => {
       {open && (
         <div className="md:hidden bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
-            <a href="/bidder/auctions" className="block">Home</a>
-            <a href="/auction/teams" className="block">Teams</a>
+            <a href="/user/auctions" className="block">Home</a>
+            <a href ="/user/auction/teams" className="block">Teams</a>
           </div>
         </div>
       )}
@@ -102,4 +100,4 @@ const BidderNavBar = () => {
   );
 };
 
-export default BidderNavBar;
+export default UserHomeNavBar;

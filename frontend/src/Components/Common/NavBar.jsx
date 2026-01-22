@@ -30,7 +30,8 @@ const NavBar = () => {
           
           <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
             <a href = "/user/auctions" className="hover:text-gray-700 cursor-pointer">Home</a>
-            <a href ="/user/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
+            <a href = "/user/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
+            
           </div>
 
           
@@ -91,10 +92,8 @@ const NavBar = () => {
       {open && (
         <div className="md:hidden bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
-            <a className="block">Home</a>
-            <a className="block">Players</a>
-            <a className="block">Teams</a>
-            <a className="block">Auction</a>
+            <a href="/user/auctions" className="block">Home</a>
+            <a href ="/user/auction/teams" className="block">Teams</a>
           </div>
         </div>
       )}

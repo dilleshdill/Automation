@@ -20,6 +20,7 @@ const UserAuctionScreen = () => {
   const [currentBid, setCurrentBid] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isAuctionPaused, setAuctionPause] = useState(false);
+  const [isAuctionStart,setAuctionStart] = useState(false)
 
   const fetchedData = async () => {
     
@@ -32,6 +33,7 @@ const UserAuctionScreen = () => {
         if (response.data.status === "live") {
           console.log(response.data.status);
           setAuctionPause(false);
+          setAuctionStart(true)
         }
         if (response.data.status === "paused") {
           setAuctionPause(true);
@@ -62,6 +64,7 @@ const UserAuctionScreen = () => {
     })
     socket.on("auction-started", (auction) => {
       setPlayer(auction.currentPlayer);
+      setAuctionStart(true)
     });
 
     socket.on("timer-update", (data) => setTimer(data.timeLeft));
@@ -88,10 +91,7 @@ const UserAuctionScreen = () => {
     };
   }, []);
 
-  const displayPlayer = player;
-
-  const dummyImg =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTK38tEeJiYTWzabBXNBoRta9hhg6G8eZvEA&s";
+  const displayPlayer = player
 
   return (
     <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center">
@@ -141,7 +141,7 @@ const UserAuctionScreen = () => {
         </div>
       )}
 
-      {displayPlayer ? (
+      {(displayPlayer && isAuctionStart )? (
         <>
           <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
             <div className="w-full md:w-1/3 p-3 flex justify-center items-center">

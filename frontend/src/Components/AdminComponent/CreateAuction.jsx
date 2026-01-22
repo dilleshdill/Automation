@@ -80,13 +80,14 @@ const CreateAuction = () => {
           }
 
       }catch(err){
+          
           console.log(err);
           toast.error("Error in creating auction")
       }
       };
 
   const DevelopAction = async() => {
-
+    
     try{
         const auctionId = localStorage.getItem("auctionId")
         console.log(players)
@@ -120,6 +121,7 @@ const CreateAuction = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
+
 
         {/* STEP INDICATOR */}
         <div className="flex justify-between text-sm font-semibold">

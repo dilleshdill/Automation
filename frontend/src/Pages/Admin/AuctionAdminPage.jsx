@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import AdminNavBar from "../../Components/AdminComponent/AdminNavBar";
+import AdminHomeNavBar from "../../Components/AdminComponent/AdminHomeNavBar";
+import Loader from "../../Loader/Loader";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -11,6 +12,8 @@ const AuctionAdminPage = () => {
   const { id } = location.state || {};
   const [showPlayerModal,setShowPlayerModal] = useState(false)
   const [showFranchsisModel,setShowFranchsisModal] = useState(false)
+  const [showLoader,setLoader] = useState(false)
+
 
   useEffect(() => {
     const fetchAuction = async () => {
@@ -73,7 +76,7 @@ const AuctionAdminPage = () => {
   };
 
   const getPassPlayer = async() => {
-    
+    setLoader(true)
     try{
       const response = await axios.post(DOMAIN + "/add-player",
         {
@@ -83,15 +86,18 @@ const AuctionAdminPage = () => {
       {withCredentials: true}
       )
       if (response.status === 200){
+        setLoader(false)
         console.log(response.data)
         setShowPlayerModal(false)
       }
       }catch(err){
+        setLoader(false)
         console.log(err)
       }
   }
 
   const getPassFranchsis = async() => { 
+    setLoader(true)
     try{
       const response = await axios.post(DOMAIN + "/bidder/add-franchsis",
         { auctionId:id,
@@ -100,19 +106,22 @@ const AuctionAdminPage = () => {
         { withCredentials: true }
       )
       if (response.status === 200){
+        setLoader(false)
         console.log(response.data)
         setShowFranchsisModal(false)
       }
     }catch(err){
+      setLoader(false)
       console.log(err)
-
     }
   }
 
   return (
     <>
-      <AdminNavBar />
-
+      <AdminHomeNavBar />
+      {
+        showLoader && <Loader />
+      }
       <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg p-8">
           
@@ -122,7 +131,7 @@ const AuctionAdminPage = () => {
            
             <div className="flex justify-center items-start">
               <img
-                src={auction.img}
+                src={auction.auction_img}
                 alt={auction.auction_name}
                 className="w-72 h-80 object-cover rounded-xl shadow-md"
               />

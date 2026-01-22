@@ -3,7 +3,9 @@ import {React,useState} from "react"
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../Loader/Loader";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 
 const Data = [
     {
@@ -26,6 +28,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
     const [role,setRole] = useState("User"); 
     const [adminKey,setAdminKey] = useState(""); 
+    const [showLoader,setLoader] = useState(false)
     
     const navigate = useNavigate()
 
@@ -99,6 +102,7 @@ const LoginPage = () => {
         }
 
     const onCreateAccount = async (e) => {
+        setLoader(true)
         e.preventDefault()
         if (role !== "" && email !== "" && password !=="" ){
             try{
@@ -109,6 +113,7 @@ const LoginPage = () => {
                     password: password
                 })
                 if (response.status === 201){
+                    setLoader(false)
                     console.log(response.data);
                     toast.success("Welcome To The Auction")
                     localStorage.setItem("userId",response.data.data)
@@ -119,7 +124,7 @@ const LoginPage = () => {
             }
             catch(err){
                 console.log(err);
-
+                setLoader(false)
                 toast.error("Invalid Values")
             }
 
@@ -131,6 +136,9 @@ const LoginPage = () => {
 
     return (
         <div className="min-w-screen">
+            {
+                showLoader && <Loader />
+            }
             <form className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white">
             <p className="text-lg m-auto">
                 <ul className="flex gap-10">

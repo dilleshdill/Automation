@@ -1,6 +1,6 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import AdminNavBar from '../../Components/AdminComponent/AdminNavBar';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import AdminNavBar from "../../Components/AdminComponent/AdminNavBar";
 
 const AdminAuctionEnded = () => {
   const navigate = useNavigate();
@@ -26,14 +26,14 @@ const AdminAuctionEnded = () => {
 
         <div className="flex gap-4">
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate("/admin")}
             className="px-6 py-2 !bg-blue-600 text-white rounded-lg font-medium hover:!bg-blue-700"
           >
             Go to Dashboard
           </button>
 
           <button
-            onClick={() => navigate('/auction/results')}
+            onClick={() => navigate("/auction/results")}
             className="px-6 py-2 !bg-green-600 text-white rounded-lg font-medium hover:!bg-green-700"
           >
             View Results

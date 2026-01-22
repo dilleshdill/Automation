@@ -19,25 +19,27 @@ export const registerAuctionSocketEvents = (io) => {
       if (!auction) return;
 
       const set = auction.players[auction.currentSet];
-      const player = set?.playersList[auction.currentPlayerIndex];
+      const player = set?.playersList[auction.currentPlayerIndex] || [];
+      console.log("state sync players",player)
       const newdata = {
-        playerId: player._id || "",
-        name: player.name,
-        basePrice: player.basePrice,
-        setNo: set.setNo,
-        role: player.role,
-        imageUrl: player.imageUrl,
-        matches: player.stats.matches,
-        innings: player.stats.innings,
-        runs: player.stats.runs,
-        highestScore: player.stats.highestScore,
-        average: player.stats.average,
-        strikeRate: player.stats.strikeRate,
-        fifties: player.stats.fifties,
-        hundreds: player.stats.hundreds,
+        playerId: player?._id || "",
+        name: player?.name || "",
+        basePrice: player?.basePrice || "",
+        setNo: set?.setNo || "",
+        role: player?.role || "",
+        imageUrl: player?.imageUrl || "",
+        matches: player?.stats?.matches || "",
+        innings: player?.stats?.innings || "",
+        runs: player?.stats?.runs || "",
+        highestScore: player?.stats?.highestScore || "",
+        average: player?.stats?.average || "",
+        strikeRate: player?.stats?.strikeRate || "",
+        fifties: player?.stats?.fifties || "",
+        hundreds: player?.stats?.hundreds || ""
       };
 
-      io.to(socket.id).emit("state-sync", {
+      
+      io.to(auctionId).emit("state-sync", {
         currentPlayer: newdata,
         currentBid: auction.currentBid,
         currentBidder: auction.currentBidder,
@@ -54,15 +56,16 @@ export const registerAuctionSocketEvents = (io) => {
       const setNo = newauction.currentSet;
       const indexNo = newauction.currentPlayerIndex;
 
-      const players = newauction.players.filter((each) => each.setNo === setNo);
+      const players = newauction.players?.filter((each) => each.setNo === setNo);
 
       if (!players) {
         io.to(auctionId).emit("upcomingPlayer-error");
+        return ;
       }
 
-      const upcomingPlayers = players[0].playersList.filter(
+      const upcomingPlayers = players[0]?.playersList?.filter(
         (each, index) => index > indexNo,
-      );
+      ) || [];
 
       io.to(auctionId).emit("upcomingPlayer-success", upcomingPlayers);
     });
@@ -116,7 +119,7 @@ export const registerAuctionSocketEvents = (io) => {
       const auction = await Auction.findById(auctionId);
       auction.status = "live";
       await auction.save();
-      runningAuctions[auctionId].auctionStatus = "Live";
+      // runningAuctions[auctionId].auctionStatus = "Live";
       io.to(auctionId).emit("resume-auction");
       startTimer(auctionId, io);
     });
@@ -125,7 +128,7 @@ export const registerAuctionSocketEvents = (io) => {
       const auction = await Auction.findById(auctionId);
       auction.status = "ended";
       await auction.save();
-      // runningAuctions[auctionId].auctionStatus = "ended"
+      runningAuctions[auctionId].auctionStatus = "ended"
       io.to(auctionId).emit("auction-ended");
     });
 
@@ -135,9 +138,9 @@ export const registerAuctionSocketEvents = (io) => {
         const auction = await Auction.findById(auctionId);
         if (!auction) return socket.emit("join-error", "Auction not found");
 
-        if (auction.status === "live") {
-          return socket.emit("join-error", "Auction already live");
-        }
+        // if (auction.status === "live") {
+        //   return socket.emit("join-error", "Auction already live");
+        // }
 
         socket.teamName = teamName;
         socket.auctionId = auctionId;
@@ -269,8 +272,8 @@ async function moveNextPlayer(auctionId, io) {
     auction.currentPlayerIndex = 0;
 
     if (auction.currentSet >= auction.players.length) {
-      // auction.status = "ended";
-      // await auction.save();
+      auction.status = "ended";
+      await auction.save();
       io.to(auctionId).emit("auction-ended");
       return;
     }

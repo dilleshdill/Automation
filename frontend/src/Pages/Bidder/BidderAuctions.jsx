@@ -1,10 +1,12 @@
 import { React, useEffect, useState } from 'react';
-import BidderNavBar from '../../Components/BidderComponent/BidderNavBar.jsx';
-const DOMAIN = import.meta.env.VITE_DOMAIN;
+import BidderHomeNavBar from '../../Components/BidderComponent/BidderHomeNavBar.jsx';
 import axios from 'axios';
 import BidderAuctionNotStart from '../../Components/BidderComponent/BidderAuctionNotStart.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+
+const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 
 
 const BidderAuctions = () => {
@@ -15,6 +17,7 @@ const BidderAuctions = () => {
   const [teamName, setTeamName] = useState("CSK");
   const [email, setEmail] = useState("attitudedillesh@gmail.com");
   const [password, setPassword] = useState("123");
+  const [showLoader,setLoader] = useState(false)
 
   const navigate = useNavigate();
 
@@ -38,8 +41,13 @@ const BidderAuctions = () => {
   };
 
   const getNavigate = (id) => {
-    navigate(`/auction/${id}`,{ state: { id } });
+    navigate(`/bidder/auctiondetailes/${id}`,{ state: { id } });
   };
+
+  const goToTheLiveAuction = (id,e) => {
+    e.stopPropagation()
+    navigate(`/bidder/auction/${selectedAuction}`)
+  }
 
   const openLoginForm = (id, e) => {
     e.stopPropagation();
@@ -48,14 +56,16 @@ const BidderAuctions = () => {
   };
 
   const submitLogin = async () => {
+    setLoader(true)
     try {
       const response = await axios.post(
         DOMAIN + "/bidder/verify",
         { auction_id: selectedAuction, teamName, email, password },
         { withCredentials: true }
-      );
+      );  
       console.log(response.data)
       if (response.status === 200) {
+        setLoader(true)
         const data = {
           id:selectedAuction,
           teamName,
@@ -70,6 +80,7 @@ const BidderAuctions = () => {
         );
       }
     } catch (err) {
+      setLoader(false)
       setShowLoginModal(false)
       console.log(err)
       toast.error(err.response.data)
@@ -79,7 +90,7 @@ const BidderAuctions = () => {
 
   return (
     <div className='flex flex-col min-h-screen'>
-      <BidderNavBar />
+      <BidderHomeNavBar />
 
       {auctionList.length === 0 ? (
         <div className='flex flex-col'>
@@ -103,7 +114,7 @@ const BidderAuctions = () => {
               <p className="text-zinc-500 text-sm ml-2">Date: {auction.auction_date}</p>
               <p className="text-zinc-500 text-sm ml-2">Player Time: {auction.auction_time}</p>
 
-              {auction.status === "upcoming" ? (
+              {(auction.status === "upcoming" || auction.status === "live") && (
                 <button
                   type="button"
                   className="!bg-gray-400 transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm"
@@ -111,14 +122,15 @@ const BidderAuctions = () => {
                 >
                   Login
                 </button>
-              ) : (
-                <div>
-                  <button className="!bg-green-400 mt-4 mb-3 ml-2 px-6 py-2 rounded-md text-white text-sm" >
-                    Go To The Live Auction
-                  </button>
-                  
-                </div>
-              )}
+              )  
+            }
+            {
+                auction.status === "ended" && 
+                <button type="button" className="!bg-red-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
+                >
+                    Auction Ended
+                </button>
+            }
             </div>
           ))}
         </div>

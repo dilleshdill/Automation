@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
-const BidderNavBar = () => {
+const BidderHomeNavBar = () => {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [name,setName] = useState("");
@@ -27,19 +28,12 @@ const BidderNavBar = () => {
             Auction
           </div>
 
-          
           <div className="hidden md:flex space-x-5 text-gray-600 font-medium">
             <a href = "/bidder/auctions" className="hover:text-gray-700 cursor-pointer">Home</a>
           </div>
-          <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
-            <a href = "/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
-          </div>
-          
 
-          
           <div className="flex items-center gap-4 relative">
 
-            
             <button
               onClick={() => setOpen(!open)}
               className="md:hidden text-gray-600 hover:text-gray-900"
@@ -94,7 +88,6 @@ const BidderNavBar = () => {
         <div className="md:hidden bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
             <a href="/bidder/auctions" className="block">Home</a>
-            <a href="/auction/teams" className="block">Teams</a>
           </div>
         </div>
       )}
@@ -102,4 +95,4 @@ const BidderNavBar = () => {
   );
 };
 
-export default BidderNavBar;
+export default BidderHomeNavBar;

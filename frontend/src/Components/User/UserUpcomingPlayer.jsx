@@ -9,12 +9,12 @@ const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const UserUpcomingPlayer = ({ auctionId }) => {
   const [upcomingData, setUpcomingData] = useState([]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const fetchedData = async () => {
     try {
       const response = await axios.get(
-        `${DOMAIN}/auction/upcoming-players?auctionId=${auctionId}`
+        `${DOMAIN}/auction/upcoming-players?auctionId=${auctionId}`,
       );
       if (response.status === 200) {
         setUpcomingData(response.data);
@@ -27,28 +27,23 @@ const UserUpcomingPlayer = ({ auctionId }) => {
   useEffect(() => {
     fetchedData();
 
-    socket.on("upcomingPlayer-error",() => {
-      console.log("something there is error in upcomingPlayer Socket")
-    })
+    socket.on("upcomingPlayer-error", () => {
+      console.log("something there is error in upcomingPlayer Socket");
+    });
 
-    socket.on("upcomingPlayer-success",(player) =>{
-      console.log(player)
-      setUpcomingData(player)
-    })
+    socket.on("upcomingPlayer-success", (player) => {
+      console.log(player);
+      setUpcomingData(player);
+    });
   }, []);
 
-
   const getNavigate = (player) => {
-    console.log(player)
-    navigate(`/auction/user/player/${player._id}`,
-        {
-            state : player
-        }
-    )
+    console.log(player);
+    navigate(`/auction/user/player/${player._id}`, {
+      state: player,
+    });
+  };
 
-  }
-
-  ;
   return (
     <div className="flex flex-col min-w-screen p-5">
       <h2 className="text-xl font-semibold mb-3">Upcoming Players</h2>
@@ -60,12 +55,15 @@ const UserUpcomingPlayer = ({ auctionId }) => {
             breakpoints={{
               640: { slidesPerView: 1 },
               768: { slidesPerView: 3 },
-              1024: { slidesPerView: 5 }
+              1024: { slidesPerView: 5 },
             }}
           >
-            {upcomingData.map(player => (
+            {upcomingData.map((player) => (
               <SwiperSlide key={player.playerId}>
-                <div className="border rounded-lg p-3 flex flex-col items-center" onClick={() => getNavigate(player)}>
+                <div
+                  className="border rounded-lg p-3 flex flex-col items-center"
+                  onClick={() => getNavigate(player)}
+                >
                   <img
                     src={player.imageUrl}
                     className="h-32 w-32 rounded-full object-cover mb-2"

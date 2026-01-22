@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import axios from 'axios';
-import NavBar from '../../Components/Common/NavBar.jsx';
+import UserHomeNavBar from '../../Components/User/UserHomeNavBar.jsx';
 import { useNavigate } from 'react-router-dom';
 import BidderAuctionNotStart from '../../Components/BidderComponent/BidderAuctionNotStart.jsx';
 
@@ -32,7 +32,7 @@ const UserAuctions = () => {
   }, []);
 
   const getNavigate = (id) => {
-    navigate(`/auction/${id}`,{ state: { id } });
+    navigate(`/user/auction/${id}`,{ state: { id } });
   };
 
   const getLiveAuction = (id,e) => {
@@ -50,7 +50,7 @@ const UserAuctions = () => {
 
   return (
     <div className='flex flex-col min-h-screen'>
-      <NavBar />
+      <UserHomeNavBar />
 
       {auctionList.length === 0 ? (
         <div className='flex flex-col'>
@@ -73,9 +73,25 @@ const UserAuctions = () => {
               <p className="text-zinc-500 text-sm ml-2 mt-2">{auction.description}</p>
               <p className="text-zinc-500 text-sm ml-2">Date: {auction.auction_date}</p>
               <p className="text-zinc-500 text-sm ml-2">Player Time: {auction.auction_time}</p>
-              <button className='!bg-green-300 text-white mt-2 ml-2' onClick={(e)=> getLiveAuction(auction._id,e)}>
-                View
-              </button>
+              {
+                auction.status === "upcoming" && 
+                  <button className='!bg-blue-500 text-white mt-2 ml-2' onClick={(e)=> getLiveAuction(auction._id,e)}>
+                    View
+                  </button>
+              }
+              {
+                auction.status === "live" && 
+                  <button className='!bg-green-300 text-white mt-2 ml-2' onClick={(e)=> getLiveAuction(auction._id,e)}>
+                    Live
+                  </button>
+              }
+              {
+                auction.status === "ended" && 
+                  <button className='!bg-red-600 text-white mt-2 ml-2' onClick={(e)=> getLiveAuction(auction._id,e)}>
+                    Ended
+                  </button>
+              }
+
             </div>
           ))}
         </div>

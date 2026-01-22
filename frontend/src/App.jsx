@@ -28,6 +28,9 @@ const BidderPlayerDetailes = lazy(() =>import("./Pages/Bidder/BidderPlayerDeatai
 const UserPlayerDetailes = lazy(() =>import("./Pages/User/UserPlayerDetailes"))
 const UserProfile = lazy(() => import("./Pages/User/UserProfile"))
 const UserTeamPlayers = lazy(() =>import("./Pages/User/UserTeamPlayers"))
+const BidderAuctionDetailes = lazy(() =>import("./Pages/Bidder/BidderAuctionDetailes"))
+const UserAuctionDeatailes = lazy(() => import("./Pages/User/UserAuctionDetailes"))
+
 
 import { ToastContainer } from "react-toastify";
 
@@ -39,18 +42,20 @@ const App = () => {
         <Routes>
           <Route path='/login' element={<LoginPage />} />
           <Route path="/" element={<HomePage />} />
-          <Route path="*" element={<PageNotFound />} />
           
           <Route path="/admin" element={ <AdminPage />} />
           <Route path="/admin/create-auction" element={ <AuctionCreate />} />
           <Route path="/admin/profile" element = {<AdminProfile />} />
           <Route path="/admin/auction/ended" element = {<AdminAuctionEnded />} />
           
+          
           <Route path="/bidder/auctions" element={<BidderAuctions />} />
+          <Route path="/bidder/auctiondetailes/:id" element={<BidderAuctionDetailes />} />
           <Route path="/bidder/auction/:id" element={<BidderAuctionScreen />} />
           <Route path="/bidder/profile" element={<BidderProfile />} />
           <Route path="/bidder/auction/ended" element={<BidderAuctionEnded />} />
           <Route path="/auction/bidder/player/:id" element={<BidderPlayerDetailes />} />
+          
 
           <Route path="/auction/:id" element = {<AcutionAdminPage />} /> 
           <Route path="/auction/:id/live" element = {<AuctionScreen />} />  
@@ -60,12 +65,16 @@ const App = () => {
           <Route path="/auction/player/:id" element = {<AuctionPlayer />} />
 
           <Route path="/user/auctions" element={<UserAuction />} /> 
+          <Route path="/user/auction/:id" element={<UserAuctionDeatailes />} />
           <Route path="/user/auctions/:id/live" element={<UserAuctionScreen />} />
           <Route path="/user/auction/teams" element={<UserTeam />} />
           <Route path="/user/teams/player/:id" element={<UserTeamPlayers />} />
           <Route path="/user/auction/ended" element={<UserAuctionEnded />} />
           <Route path="/auction/user/player/:id" element={<UserPlayerDetailes />} />
           <Route path="/auction/user/profile" element={<UserProfile />} />
+          
+
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense> 
     </BrowserRouter>

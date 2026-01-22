@@ -159,51 +159,58 @@ export const startAuction = async (req, res) => {
     if (auction.status !== "upcoming")
       return res.status(400).json("Already Live");
 
-    // auction.status = "live";
+    auction.status = "live";
     auction.currentSet = 0;
     auction.currentPlayerIndex = 0;
 
-    const set = auction.players[0];
-    const player = set.playersList[0];
+    // ---- SAFE SET FETCH ----
+    const set = auction?.players?.[0];
+    if (!set) {
+      return res.status(400).json("No sets found in auction");
+    }
+
+    // ---- SAFE PLAYER FETCH ----
+    const player = set?.playersList?.[0];
+    if (!player) {
+      return res.status(400).json("No players found in first set");
+    }
 
     const newData = {
-      playerId: player._id,
-      name: player.name,
-      basePrice: player.basePrice,
-      setNo: set.setNo,
-      role: player.role,
-      imageUrl: player.imageUrl,
-      matches: player.stats.matches,
-      innings: player.stats.innings,
-      runs: player.stats.runs,
-      highestScore: player.stats.highestScore,
-      average: player.stats.average,
-      strikeRate: player.stats.strikeRate,
-      fifties: player.stats.fifties,
-      hundreds: player.stats.hundreds,
+      playerId: player?._id || "",
+      name: player?.name || "",
+      basePrice: player?.basePrice || "",
+      setNo: set?.setNo || "",
+      role: player?.role || "",
+      imageUrl: player?.imageUrl || "",
+      matches: player?.stats?.matches || "",
+      innings: player?.stats?.innings || "",
+      runs: player?.stats?.runs || "",
+      highestScore: player?.stats?.highestScore || "",
+      average: player?.stats?.average || "",
+      strikeRate: player?.stats?.strikeRate || "",
+      fifties: player?.stats?.fifties || "",
+      hundreds: player?.stats?.hundreds || "",
     };
 
     await auction.save();
 
     const io = req.app.get("io");
-    console.log("Rooms", io.sockets.adapter.rooms);
-    console.log("auctionid", auction_id);
 
     io.to(auction_id).emit("auction-started", {
       auctionId: auction._id,
       currentPlayer: newData,
-      status: "live",
+      status: "live"
     });
-
-
 
     startTimer(auction_id, io);
     return res.status(200).json("Auction started");
+
   } catch (err) {
     console.log(err);
     return res.status(500).json("Internal error");
   }
 };
+
 
 export const getTeams = async (req, res) => {
   const { auctionId } = req.body;

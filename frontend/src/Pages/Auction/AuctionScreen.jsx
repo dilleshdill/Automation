@@ -13,8 +13,9 @@ const AuctionScreen = () => {
   const [player, setPlayer] = useState(null);
 
   const { auction } = location.state || "";
-  const { auctionId, currentPlayer } = auction;
 
+  const { auctionId, currentPlayer } = auction;
+  
   const [currentBid, setCurrentBid] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isAuctionPause, setAuctionPause] = useState(false);
@@ -49,6 +50,11 @@ const AuctionScreen = () => {
       setAuctionPause(false);
       setResumeAuctionModel(false);
     });
+
+    socket.on("state-sync",({currentPlayer,currentBid,currentBidder,auctionStatus,timeLeft}) => {
+      console.log(currentPlayer)
+      setPlayer(currentPlayer)
+    })
 
     socket.on("timer-update", (data) => setTimer(data.timeLeft));
     socket.on("bid-updated", (data) => setCurrentBid(data.bid));
@@ -110,7 +116,7 @@ const AuctionScreen = () => {
   };
 
   const displayPlayer = player || currentPlayer;
-
+  console.log("displayPlayer",displayPlayer)
   
 
   return (

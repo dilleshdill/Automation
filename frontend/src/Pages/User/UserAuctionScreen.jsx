@@ -17,6 +17,7 @@ const UserAuctionScreen = () => {
   const {data} = location.state || ""
   const {id,userId} = data
   const auctionId = id
+  localStorage.setItem("auctionId",auctionId)
   const [currentBid, setCurrentBid] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isAuctionPaused, setAuctionPause] = useState(false);

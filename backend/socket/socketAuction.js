@@ -90,6 +90,7 @@ export const registerAuctionSocketEvents = (io) => {
 
       auction.currentBid = bid;
       auction.currentBidder = teamId;
+      runningAuctions[auctionId].timeLeft = 10
       await auction.save();
       io.to(auctionId).emit("bid-updated", {
         bid,

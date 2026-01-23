@@ -6,6 +6,7 @@ import Marquee from "react-fast-marquee";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import UserUpcomingPlayer from "../../Components/User/UserUpcomingPlayer";
+import { toast } from "react-toastify";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -22,6 +23,7 @@ const UserAuctionScreen = () => {
   const [timer, setTimer] = useState(0);
   const [isAuctionPaused, setAuctionPause] = useState(false);
   const [isAuctionStart,setAuctionStart] = useState(false)
+
 
   const fetchedData = async () => {
     
@@ -58,15 +60,28 @@ const UserAuctionScreen = () => {
         setPlayer(currentPlayer)
         setCurrentBid(currentBid)
         setTimer(timeLeft)
+        setAuctionStart(true)
     })
 
     socket.on("resume-auction",() => {
       setAuctionPause(false)
+      setAuctionStart(true)
     })
     socket.on("auction-started", (auction) => {
       setPlayer(auction.currentPlayer);
       setAuctionStart(true)
+      setAuctionPause(false)
     });
+
+    socket.on("player-sold",({currentBidder,currentPlayer}) => {
+          console.log(currentBidder,currentPlayer)
+          toast.info(`${currentPlayer} Sold To ${currentBidder} Team`)
+        })
+    
+    socket.on("player-unsold",({currentPlayer}) => {
+          toast.error(`${currentPlayer} Unsold`)
+        })
+
 
     socket.on("timer-update", (data) => setTimer(data.timeLeft));
     socket.on("bid-updated", (data) => setCurrentBid(data.bid));
@@ -89,10 +104,15 @@ const UserAuctionScreen = () => {
       socket.off("bid-updated");
       socket.off("new-player");
       socket.off("auction-stated");
+      socket.off("player-sold");
+      socket.off("player-unsold")
+      socket.off("resume-auction")
+      socket.off("state-sync")
     };
   }, []);
 
   const displayPlayer = player
+  console.log(displayPlayer)
 
   return (
     <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center">

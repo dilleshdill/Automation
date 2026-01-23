@@ -53,24 +53,18 @@ const BidderAuctionScreen = () => {
       teamName,
     });
 
-    socket.on(
-      "state-sync",
-      ({
-        currentPlayer,
-        currentBid,
-        currentBidder,
-        timeLeft,
-        auctionStatus,
-      }) => {
+    socket.on("state-sync",({currentPlayer,currentBid,currentBidder,timeLeft,auctionStatus}) => {
         console.log(auctionStatus, currentPlayer, currentBidder);
         setPlayer(currentPlayer);
         setCurrentBid(currentBid);
         setTimer(timeLeft);
+        
       },
     );
 
     socket.on("resume-auction", () => {
       setAuctionPause(false);
+      setAuctionStart(true)
     });
 
     socket.on("auction-started", (auction) => {
@@ -102,6 +96,15 @@ const BidderAuctionScreen = () => {
       toast.success("Welcome To The Auction");
     });
 
+    socket.on("player-sold",({currentBidder,currentPlayer}) => {
+      console.log(currentBidder,currentPlayer)
+      toast.info(`${currentPlayer} Sold To ${currentBidder} Team`)
+    })
+
+    socket.on("player-unsold",({currentPlayer}) => {
+      toast.error(`${currentPlayer} Unsold`)
+    })
+
     socket.on("bid-error", (msg) => {
       toast.error(msg);
     });
@@ -123,7 +126,11 @@ const BidderAuctionScreen = () => {
       socket.off("franchise-join");
       socket.off("auction-stated");
       socket.off("join-success");
+      socket.off("state-sync")
+      socket.off("player-sold")
+      socket.off("player-unsold")
     };
+
   }, []);
 
   const placeBid = () => {
@@ -136,6 +143,7 @@ const BidderAuctionScreen = () => {
   };
 
   const displayPlayer = player;
+  console.log(displayPlayer)
 
   return (
     <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center">
@@ -184,7 +192,7 @@ const BidderAuctionScreen = () => {
         </div>
       )}
 
-      {(displayPlayer && isAuctionStart) ? (
+      {(displayPlayer && (isAuctionPaused || isAuctionStart) ) ? (
         <>
           <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
             <div className="w-full md:w-1/3 p-3 flex justify-center items-center">

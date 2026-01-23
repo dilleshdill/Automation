@@ -91,6 +91,12 @@ const UserAuctions = () => {
                     Ended
                   </button>
               }
+              {
+                auction.status === "paused" && 
+                   <button className='!bg-gray-600 text-white mt-2 ml-2' onClick={(e)=> getLiveAuction(auction._id,e)}>
+                    Paused
+                  </button>
+              }
 
             </div>
           ))}

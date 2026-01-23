@@ -30,7 +30,7 @@ const UserHomeNavBar = () => {
           
           <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
             <a href = "/user/auctions" className="hover:text-gray-700 cursor-pointer">Home</a>
-            <a href = "/user/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
+           
           </div>
 
           

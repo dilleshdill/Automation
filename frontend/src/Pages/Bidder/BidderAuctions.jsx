@@ -125,6 +125,16 @@ const BidderAuctions = () => {
               )  
             }
             {
+              auction.status === "paused" && 
+                    <button
+                      type="button"
+                      className="!bg-gray-400 transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm"
+                      onClick={(e) => openLoginForm(auction._id, e)}
+                    >
+                      Paused
+                    </button>
+            }
+            {
                 auction.status === "ended" && 
                 <button type="button" className="!bg-red-400 border-b-blue-400  transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm" 
                 >

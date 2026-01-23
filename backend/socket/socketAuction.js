@@ -8,7 +8,7 @@ export const registerAuctionSocketEvents = (io) => {
     socket.on("join-auction", async (auctionId) => {
       socket.join(auctionId);
       runningAuctions[auctionId] = {
-        timeLeft: 10,
+        timeLeft: runningAuctions[auctionId]?.timeLeft || 10,
         currentPlayer: "",
         currentBid: "",
         auctionStatus: "Live",
@@ -169,7 +169,7 @@ export const registerAuctionSocketEvents = (io) => {
           hundreds: player.stats.hundreds,
         };
 
-        io.to(socket.id).emit("state-sync", {
+        io.to(auctionId).emit("state-sync", {
           currentPlayer: newdata,
           currentBid: auction.currentBid,
           currentBidder: auction.currentBidder,
@@ -232,24 +232,35 @@ async function closeBidding(auctionId, io) {
   const set = auction.players[auction.currentSet];
   const player = set.playersList[auction.currentPlayerIndex];
 
+ 
   if (auction.currentBid > 0) {
-    player.status = "sold";
-    player.soldTo = auction.currentBidder;
-    player.soldPrice = auction.currentBid;
+    console.log(auction.currentBidder)
+     const bidderTeam = auction.franchises.filter(team => team._id.toString() === auction.currentBidder.toString())
+     console.log("bidderTeam",bidderTeam)
+      io.to(auctionId).emit("player-sold",{
+        currentBidder:bidderTeam[0].teamName,
+        currentPlayer:player.name})
+      player.status = "sold";
+      player.soldTo = auction.currentBidder;
+      player.soldPrice = auction.currentBid;
 
-    const franchise = auction.franchises.find((f) =>
-      f._id.equals(auction.currentBidder),
-    );
-    franchise.players.push({
-      playerId: player._id,
-      name: player.name,
-      soldPrice: auction.currentBid,
-      setNo: auction.currentSet,
-    });
+      const franchise = auction.franchises.find((f) =>
+        f._id.equals(auction.currentBidder),
+      );
+      franchise.players.push({
+        playerId: player._id,
+        name: player.name,
+        soldPrice: auction.currentBid,
+        setNo: auction.currentSet,
+      });
 
-    franchise.purse -= auction.currentBid;
-  } else {
-    player.status = "unsold";
+      franchise.purse -= auction.currentBid;
+    } else {
+
+      player.status = "unsold";
+      io.to(auctionId).emit("player-unsold",{
+        currentPlayer:player.name
+      })
   }
 
   await auction.save();
@@ -265,7 +276,6 @@ async function closeBidding(auctionId, io) {
 async function moveNextPlayer(auctionId, io) {
   const auction = await Auction.findById(auctionId);
   let set = auction.players[auction.currentSet];
-  console.log("set", set);
 
   auction.currentPlayerIndex++;
 

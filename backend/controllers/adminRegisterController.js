@@ -3,11 +3,12 @@ import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import generateAdminToken from "../utils/generateAdminToken.js";
 import cookieParser from "cookie-parser";
+import nodemailer from "nodemailer"
 
 export const registerAdmin = async (req, res) => {
   try {
     const { adminName, email, password } = req.body;
-    console.log(req.body);
+    
     if (!adminName || !email || !password) {
       return res
         .status(400)
@@ -15,10 +16,11 @@ export const registerAdmin = async (req, res) => {
     }
 
     const existingUser = await adminRegister.findOne({ email });
-
+    
     if (existingUser) {
-      return res.status(400).json({ message: "Bidder already exists" });
+      return res.status(400).json({ message: "Admin already exists" });
     }
+    
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newAdmin = new adminRegister({
@@ -27,12 +29,25 @@ export const registerAdmin = async (req, res) => {
       password: hashedPassword,
       adminKey: `ADMIN-${Date.now()}`,
     });
-
     await newAdmin.save();
-    const token = generateUserToken(newAdmin._id, newAdmin.email, "Admin");
-    return res
-      .status(201)
-      .json({ message: "Bidder registered successfully", token });
+    const token = generateAdminToken(newAdmin._id, newAdmin.email, "Admin");
+
+    const transport = nodemailer.createTransport({
+      service:"gmail",
+      auth:{
+          user:"tarunbommana798@gmail.com",
+          pass:"fznt ittn egav kajd"  
+      }
+    })
+
+    await transport.sendMail({
+      from:"tarunbommana798@gmail.com",
+      to:email,
+      subject:"Your AdminKey",
+      text:`Your Key ADMIN-${Date.now()}`
+    })
+
+    return res.status(201).json({data: newAdmin._id});
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -80,7 +95,7 @@ export const getAdminProfile = async (req, res) => {
   const { adminId } = req.body;
 
   const admin = await adminRegister.findById(adminId);
-
+  console.log(admin)
   if (!admin) {
     return res.status(400).json("Admin Doesnot Exist");
   }

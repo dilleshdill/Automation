@@ -89,7 +89,7 @@ app.use("/bidder", bidderRoute);
 app.use("/add-player", playerRoute);
 app.use("/auction", auctionRoute);
 app.use("/player", playerRoute);
-app.use("/user", userRoute)
+app.use("/user", userRoute);
 
 const PORT = process.env.PORT || 5000;
 await connectDB();

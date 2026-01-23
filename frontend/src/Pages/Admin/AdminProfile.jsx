@@ -10,6 +10,7 @@ const AdminProfile = () => {
     const fetchedData = async() => {
         try{
         const adminId = localStorage.getItem("AdminId")
+        console.log(adminId)
         const response = await axios.post(DOMAIN + "/admin/get-admin",
             {
             adminId

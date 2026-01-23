@@ -1,6 +1,7 @@
 import {React,useEffect, useState} from 'react'
-import NavBar from '../../Components/Common/NavBar'
+import UserAuctions from './UserAuctions'
 import axios from 'axios'
+import UserHomeNavBar from '../../Components/User/UserHomeNavBar'
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
 
@@ -31,7 +32,7 @@ const BidderProfile = () => {
   },[])
   return (
     <div className='flex flex-col min-w-screen min-h-screen'>
-      <NavBar />
+      <UserHomeNavBar />
       <div className="flex flex-col max-md:gap-20 md:flex-row pb-20 items-center justify-between mt-20 px-4 md:px-16 lg:px-24 xl:px-32">
         <div className="flex flex-col items-center md:items-start">
             <div className="flex flex-wrap items-center justify-center p-1.5 rounded-full border border-slate-600 text-black text-xs">

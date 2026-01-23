@@ -92,7 +92,6 @@ const UserHomeNavBar = () => {
         <div className="md:hidden bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
             <a href="/user/auctions" className="block">Home</a>
-            <a href ="/user/auction/teams" className="block">Teams</a>
           </div>
         </div>
       )}

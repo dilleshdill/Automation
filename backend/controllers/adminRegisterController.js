@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import generateAdminToken from "../utils/generateAdminToken.js";
 import cookieParser from "cookie-parser";
 import nodemailer from "nodemailer"
+dotenv.config()
 
 export const registerAdmin = async (req, res) => {
   try {
@@ -35,16 +36,29 @@ export const registerAdmin = async (req, res) => {
     const transport = nodemailer.createTransport({
       service:"gmail",
       auth:{
-          user:"tarunbommana798@gmail.com",
-          pass:"fznt ittn egav kajd"  
+          user:process.env.MAIL_USER,
+          pass:process.env.MAIL_PASS  
       }
     })
 
     await transport.sendMail({
-      from:"tarunbommana798@gmail.com",
+      from:process.env.MAIL_USER,
       to:email,
       subject:"Your AdminKey",
-      text:`Your Key ADMIN-${Date.now()}`
+      html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+                <h2 style="color:#333; margin-bottom:8px;">Admin Access Key</h2>
+
+                <p>Your Admin Access Key is:</p>
+
+                <p style="font-size:18px; font-weight:bold; color:#0a58ca;">
+                  ADMIN-${Date.now()}
+                </p>
+
+                <p>Please keep this key <strong>confidential</strong>. Do not share it with anyone.</p>
+                <p>It is required to log in as an <strong>Admin</strong>.</p>
+              </div>
+            `
     })
 
     return res.status(201).json({data: newAdmin._id});

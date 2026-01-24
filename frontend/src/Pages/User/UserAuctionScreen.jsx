@@ -60,7 +60,7 @@ const UserAuctionScreen = () => {
         setPlayer(currentPlayer)
         setCurrentBid(currentBid)
         setTimer(timeLeft)
-        setAuctionStart(true)
+        
     })
 
     socket.on("resume-auction",() => {
@@ -162,7 +162,7 @@ const UserAuctionScreen = () => {
         </div>
       )}
 
-      {(displayPlayer && isAuctionStart )? (
+      {(displayPlayer && (isAuctionStart || isAuctionPaused ) )? (
         <>
           <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
             <div className="w-full md:w-1/3 p-3 flex justify-center items-center">

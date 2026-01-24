@@ -10,17 +10,17 @@ const BidderProfile = () => {
   const fetchedData = async() => {
     try{
       const id = localStorage.getItem("BidderId")
-      const auctionId = localStorage.getItem("auctionId")
+      console.log(id)
+      
       const response = await axios.post(DOMAIN + "/bidder/get-bidder",
         {
-          id,
-          auctionId
+          id
         },
         {withCredentials:true})
       
       if (response.status === 200){
         console.log(response.data)
-        setBidderData(response.data)
+        setBidderData(response.data.data)
       } 
 
     }catch(err){
@@ -54,9 +54,7 @@ const BidderProfile = () => {
             <p className="text-center md:text-left text-sm text-slate-400 max-w-lg mt-2">
                 Email : {BidderData.email}
             </p>
-            <p className="text-center md:text-left text-sm text-slate-400 max-w-lg mt-2">
-                Purse : {BidderData.purse}
-            </p>
+           
             <div className="flex items-center gap-4 mt-8 text-sm">
               
             </div>

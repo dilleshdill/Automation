@@ -7,8 +7,6 @@ import { toast } from 'react-toastify';
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
-
-
 const BidderAuctions = () => {
   const [auctionList, setAuctionList] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -17,7 +15,9 @@ const BidderAuctions = () => {
   const [teamName, setTeamName] = useState("CSK");
   const [email, setEmail] = useState("attitudedillesh@gmail.com");
   const [password, setPassword] = useState("123");
-  const [showLoader,setLoader] = useState(false)
+  const [bidderEmail,setBidderEmail] = useState("")
+  const [loginId,setLoginId] = useState("")
+  const [laoder,setLoader] = useState(false)
 
   const navigate = useNavigate();
 
@@ -28,12 +28,43 @@ const BidderAuctions = () => {
   return () => clearInterval(interval);
 }, []);
 
+  useEffect(() => {
+  const checkAuth = async () => {
+    const bidderId = localStorage.getItem("BidderId");
+
+    try {
+      const res = await axios.get(
+        `${DOMAIN}/bidder/checkAuth?bidderId=${bidderId}`,
+        { withCredentials: true }
+      );
+
+      if (res.status === 200) {
+        const email = res.data.data.email;
+        setBidderEmail(email);
+
+        // Check if bidder belongs to any auction franchise
+        const loggedAuctions = auctionList
+          .filter(a => a.franchises?.some(f => f.email === email))
+          .map(a => a._id);
+        console.log(loggedAuctions)
+        setLoginId(loggedAuctions);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  if (auctionList.length > 0) checkAuth();
+}, [auctionList]);
+
 
   const fetchList = async () => {
     try {
       const response = await axios.get(DOMAIN + "/auction/get-auction-list", { withCredentials: true });
       if (response.status === 200) {
         setAuctionList(response.data.details);
+
       }
     } catch (err) {
       console.log(err);
@@ -88,6 +119,8 @@ const BidderAuctions = () => {
     }
   };
 
+  console.log("logged id",loginId)
+
   return (
     <div className='flex flex-col min-h-screen'>
       <BidderHomeNavBar />
@@ -114,15 +147,16 @@ const BidderAuctions = () => {
               <p className="text-zinc-500 text-sm ml-2">Date: {auction.auction_date}</p>
               <p className="text-zinc-500 text-sm ml-2">Player Time: {auction.auction_time}</p>
 
-              {(auction.status === "upcoming" || auction.status === "live") && (
-                <button
-                  type="button"
-                  className="!bg-gray-400 transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm"
-                  onClick={(e) => openLoginForm(auction._id, e)}
-                >
-                  Login
-                </button>
-              )  
+             {(auction.status === "upcoming" || auction.status === "live") &&
+                loginId.includes(auction._id) && (
+                  <button
+                    type="button"
+                    className="!bg-gray-400 transition cursor-pointer mt-4 mb-3 ml-2 px-6 py-2 font-medium rounded-md text-white text-sm"
+                    onClick={(e) => openLoginForm(auction._id, e)}
+                  >
+                    Login
+                  </button>
+              ) 
             }
             {
               auction.status === "paused" && 

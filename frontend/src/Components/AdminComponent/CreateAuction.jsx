@@ -1,32 +1,29 @@
 import { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { Cookies } from "react-cookie";
-const DOMAIN = import.meta.env.VITE_DOMAIN;
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../Socket/socket";
+
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const CreateAuction = () => {
   const [step, setStep] = useState(1);
   const Navigate = useNavigate();
 
-
   const [auction, setAuction] = useState({
     name: "ipl",
     time: "30",
     playerTime: "30",
-    description:"sdfgh",
-    shortName:"sdf",
-    auctionImg:"sdfg" 
+    description: "sdfgh",
+    shortName: "sdf",
+    auctionImg: "sdfg",
   });
 
-  
   const [franchises, setFranchises] = useState([]);
 
   const [players, setPlayers] = useState([]);
 
-
-  
   const addFranchise = () => {
     setFranchises([
       ...franchises,
@@ -54,75 +51,69 @@ const CreateAuction = () => {
         strikeRate: 0,
         fifties: 0,
         hundreds: 0,
-        basePrice:0,
-        imageUrl:""
+        basePrice: 0,
+        imageUrl: "",
       },
     ]);
   };
 
-    const CreateAuction = async() => {
-      
-      
-      try{
-          const response = await axios.post(DOMAIN + "/auction/create-auction",{
-              auction_name:auction.name,
-              description:auction.description,
-              short_name:auction.shortName,
-              auction_date:auction.time,
-              auction_img:auction.auctionImg,
-              auction_time:auction.playerTime
-          },
-      {withCredentials: true});
-          if(response.status === 201){
-              
-              socket.emit("join-auction",response.data.newAuction._id)
-              localStorage.setItem("auctionId",response.data.newAuction._id)
-          }
-
-      }catch(err){
-          
-          console.log(err);
-          toast.error("Error in creating auction")
-      }
-      };
-
-  const DevelopAction = async() => {
-    
-    try{
-        const auctionId = localStorage.getItem("auctionId")
-        console.log(players)
-        const response = await axios.post(DOMAIN + "/auction/develop-auction",{
-            auctionId: auctionId,
-            auctionName:auction.name,
-            auctionTime:auction.time,
-            auctionDescription:auction.description, 
-            auctionShortName:auction.shortName,
-            auctionImg:auction.auctionImg,
-            auctionPlayerTime:auction.playerTime,
-            franchises:franchises,
-            players:players
-
+  const CreateAuction = async () => {
+    try {
+      const response = await axios.post(
+        DOMAIN + "/auction/create-auction",
+        {
+          auction_name: auction.name,
+          description: auction.description,
+          short_name: auction.shortName,
+          auction_date: auction.time,
+          auction_img: auction.auctionImg,
+          auction_time: auction.playerTime,
         },
-        {withCredentials: true});
-
-        if (response.status === 200){
-            toast.success("Auction Developed Successfully");
-            Navigate("/admin")
-        }
-
-    }catch(err){
-        console.log(err)
-        toast.error("Error in creating auction")
+        { withCredentials: true },
+      );
+      if (response.status === 201) {
+        socket.emit("join-auction", response.data.newAuction._id);
+        localStorage.setItem("auctionId", response.data.newAuction._id);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Error in creating auction");
     }
   };
 
+  const DevelopAction = async () => {
+    try {
+      const auctionId = localStorage.getItem("auctionId");
+      console.log(players);
+      const response = await axios.post(
+        DOMAIN + "/auction/develop-auction",
+        {
+          auctionId: auctionId,
+          auctionName: auction.name,
+          auctionTime: auction.time,
+          auctionDescription: auction.description,
+          auctionShortName: auction.shortName,
+          auctionImg: auction.auctionImg,
+          auctionPlayerTime: auction.playerTime,
+          franchises: franchises,
+          players: players,
+        },
+        { withCredentials: true },
+      );
 
+      if (response.status === 200) {
+        toast.success("Auction Developed Successfully");
+        Navigate("/admin");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Error in creating auction");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-
-
         {/* STEP INDICATOR */}
         <div className="flex justify-between text-sm font-semibold">
           <span className={step === 1 ? "text-blue-600" : "text-gray-400"}>
@@ -174,26 +165,30 @@ const CreateAuction = () => {
                 cols={50}
                 placeholder="Enter Auction Description"
                 className="input"
-                value = {auction.description}
-                onChange={(e) => setAuction({...auction,description:e.target.value})}>
-                
-              </textarea>
+                value={auction.description}
+                onChange={(e) =>
+                  setAuction({ ...auction, description: e.target.value })
+                }
+              ></textarea>
               <input
-                type = "text"
+                type="text"
                 className="input"
                 placeholder="Short Name (e.g. IPL2024)"
                 value={auction.shortName}
-                onChange={(e) => setAuction({...auction,shortName:e.target.value})}
-                />
+                onChange={(e) =>
+                  setAuction({ ...auction, shortName: e.target.value })
+                }
+              />
 
-                <input
-                type = "text"
+              <input
+                type="text"
                 className="input"
                 placeholder="Auction Image URL"
                 value={auction.auctionImg}
-                onChange={(e) => setAuction({...auction,auctionImg:e.target.value})}
-                />
-                
+                onChange={(e) =>
+                  setAuction({ ...auction, auctionImg: e.target.value })
+                }
+              />
             </div>
 
             <p className="text-sm text-gray-500 mt-2">
@@ -201,10 +196,13 @@ const CreateAuction = () => {
             </p>
 
             <div className="flex justify-end mt-6">
-              <button className="btn-primary" onClick={() => {
-                CreateAuction();
-                setStep(2)}
-                }>
+              <button
+                className="btn-primary"
+                onClick={() => {
+                  CreateAuction();
+                  setStep(2);
+                }}
+              >
                 Next → Franchises
               </button>
             </div>
@@ -437,8 +435,7 @@ const CreateAuction = () => {
               <button className="btn-secondary" onClick={() => setStep(2)}>
                 ← Back
               </button>
-              <button className="btn-primary" onClick={DevelopAction}
-            >
+              <button className="btn-primary" onClick={DevelopAction}>
                 ✅ Create Auction
               </button>
             </div>

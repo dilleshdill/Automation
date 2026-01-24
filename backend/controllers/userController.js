@@ -8,6 +8,14 @@ export const getUserProfile = async(req,res) => {
     if(!data){
         return res.status(400).json(data)
     }
-    
     res.status(200).json(data)
+}
+
+export const getLogout = async(req,res) => {
+    res.clearCookie("userToken",{
+        httpOnly:true,
+        secure:false,
+        sameSite:"lax"
+    })
+    res.status(200).json("Logout Successfully")
 }

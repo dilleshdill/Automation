@@ -121,7 +121,6 @@ export const addPlayersAndFranchises = async (req, res) => {
 };
 
 export const getAllAuctions = async (req, res) => {
-  console.log("Get All Auctions Request by Admin:");
   try {
     const details = await Auction.find();
     if (!details) {

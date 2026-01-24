@@ -116,3 +116,12 @@ export const getAdminProfile = async (req, res) => {
 
   res.status(200).json(admin);
 };
+
+export const getLogout = async(req,res) => {
+  res.clearCookie("bidder_register_token",{
+    httpOnly:true,
+    secure:false,
+    sameSite:"lax"
+  })
+  res.status(200).json("Logout Successfully")
+}

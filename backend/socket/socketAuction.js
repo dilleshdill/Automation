@@ -230,6 +230,7 @@ export const startTimer = (auctionId, io) => {
 async function closeBidding(auctionId, io) {
   const auction = await Auction.findById(auctionId);
   const set = auction.players[auction.currentSet];
+  console.log(auction,auction.currentPlayerIndex)
   const player = set.playersList[auction.currentPlayerIndex];
 
  

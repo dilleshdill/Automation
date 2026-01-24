@@ -1,4 +1,5 @@
 import { Auction } from "../models/auctionModel.js";
+import { BidderRegister } from "../models/bidderRegister.js";
 
 export const addFranchsis = async (req, res) => {
   try {
@@ -59,16 +60,17 @@ export const franchiseLogin = async (req, res) => {
 };
 
 export const getBidder = async (req, res) => {
-  const { id, auctionId } = req.body;
-  const auction = await Auction.findById(auctionId);
+  const { id} = req.body;
+  
+  const bidderData = await BidderRegister.findById(id).select("-password")
+  console.log("bidder data",bidderData)
 
-  if (!auction) {
-    return res.status(400).json("Bidder Id Doesnot Exist");
+  if(!bidderData){
+    return res.status(400).json("Bidder DoesNot Exist")
   }
-  const franchises = auction.franchises.filter(
-    (franchises) => franchises._id.toString() === id,
-  );
-  res.status(200).json(franchises[0]);
+
+  res.status(200).json({data:bidderData})
+
 };
 
 export const getUpcomingPlayers = async(req,res) => {
@@ -93,4 +95,18 @@ export const getUpcomingPlayers = async(req,res) => {
   const upcomingPlayers = players[0].playersList.filter((each,index) => index > 0)
 
   res.status(200).json(upcomingPlayers)
+}
+
+// check auth
+export const getBidderDetailes = async (req,res) =>{
+  try{
+    const bidderId = req.query.bidderId
+    const bidder = await BidderRegister.findById(bidderId)
+    if(!bidder){
+      return res.status(400).json("Bidder Doesn't Exist")
+    }
+    return res.status(200).json({message:'success',data:bidder})
+  }catch(error){
+    return res.status(400).json({message:error})
+  }
 }

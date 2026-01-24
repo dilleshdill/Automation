@@ -1,43 +1,61 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const NavBar = () => {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [name,setName] = useState("");
+  const [name, setName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchName = async() => {
-        const response = await axios.get(DOMAIN + "user/getName");
-        if (response.status === 200){
-            setName(response.data.name);
-        }
-    }
+    const fetchName = async () => {
+      const response = await axios.get(DOMAIN + "/user/getName");
+      if (response.status === 200) {
+        setName(response.data.name);
+      }
+    };
     fetchName();
-  },[])
+  }, []);
+
+  const getLogout = async () => {
+    try {
+      const response = await axios.get(DOMAIN + "/user/logout", {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        toast.success("Logout Successfully");
+        navigate("/login");
+      }
+    } catch (err) {
+      toast.error("Something went wrong", err);
+    }
+  };
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm top-0 min-w-screen">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
+          <div className="text-lg font-bold text-gray-700 ">Auction</div>
 
-          
-          <div className="text-lg font-bold text-gray-700 ">
-            Auction
-          </div>
-
-          
           <div className="hidden md:flex space-x-10 text-gray-600 font-medium">
-            <a href = "/user/auctions" className="hover:text-gray-700 cursor-pointer">Home</a>
-            <a href = "/user/auction/teams" className="hover:text-gray-700 cursor-pointer">Teams</a>
-            
+            <a
+              href="/user/auctions"
+              className="hover:text-gray-700 cursor-pointer"
+            >
+              Home
+            </a>
+            <a
+              href="/user/auction/teams"
+              className="hover:text-gray-700 cursor-pointer"
+            >
+              Teams
+            </a>
           </div>
 
-          
           <div className="flex items-center gap-4 relative">
-
-            
             <button
               onClick={() => setOpen(!open)}
               className="md:hidden text-gray-600 hover:text-gray-900"
@@ -64,22 +82,24 @@ const NavBar = () => {
               <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
                 {name[0]}
               </div>
-              
             </button>
 
-           
             {profileOpen && (
               <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-lg shadow-md">
-                <a 
-                href="/auction/user/profile"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a
+                  href="/auction/user/profile"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
                   Profile
                 </a>
                 <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Settings
                 </a>
                 <div className="border-t border-gray-200"></div>
-                <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  onClick={getLogout}
+                >
                   Logout
                 </a>
               </div>
@@ -88,12 +108,15 @@ const NavBar = () => {
         </div>
       </div>
 
-    
       {open && (
         <div className="md:hidden bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
-            <a href="/user/auctions" className="block">Home</a>
-            <a href ="/user/auction/teams" className="block">Teams</a>
+            <a href="/user/auctions" className="block">
+              Home
+            </a>
+            <a href="/user/auction/teams" className="block">
+              Teams
+            </a>
           </div>
         </div>
       )}

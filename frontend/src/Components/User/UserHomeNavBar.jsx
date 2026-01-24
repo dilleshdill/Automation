@@ -1,11 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 
 const UserHomeNavBar = () => {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [name,setName] = useState("");
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchName = async() => {
@@ -16,6 +21,22 @@ const UserHomeNavBar = () => {
     }
     fetchName();
   },[])
+
+
+    const getLogout = async() => {
+      
+      try{
+        const response = await axios.get(DOMAIN + "/user/logout",{
+          withCredentials:true
+        })
+        if (response.status === 200){
+          toast.success("Logout Successfully")
+          navigate("/login")
+        }
+      }catch(err){
+        toast.error("Something went wrong",err)
+      }
+    }
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm top-0 min-w-screen">
@@ -78,7 +99,9 @@ const UserHomeNavBar = () => {
                   Settings
                 </a>
                 <div className="border-t border-gray-200"></div>
-                <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a 
+                onClick={getLogout}
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Logout
                 </a>
               </div>

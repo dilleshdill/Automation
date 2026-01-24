@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../Loader/Loader";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
@@ -19,6 +19,7 @@ const Data = [
     role: "Bidder",
   },
 ];
+
 const LoginPage = () => {
   const [state, setState] = useState("register");
   const [name, setName] = useState("");
@@ -40,7 +41,7 @@ const LoginPage = () => {
           password: password,
         };
         try {
-          const response = await axios.post(DOMAIN + "/auth/login", body);
+          const response = await axios.post(DOMAIN + "/auth/login", body,{withCredentials:true});
           if (response.status === 200) {
             console.log(response.data);
 
@@ -54,7 +55,8 @@ const LoginPage = () => {
           toast.error("Invalid Email or Password");
         }
       }
-    } else if (role === "Admin") {
+    } 
+    else if (role === "Admin") {
       if (adminKey !== "") {
         try {
           const response = await axios.post(
@@ -74,18 +76,29 @@ const LoginPage = () => {
           toast.error("Invalid Admin Key");
         }
       }
-    } else if (role === "Bidder") {
-      // if (team !== "" && bidderID !== ""){
-      //     try{
-      //         const response = await axios.post(DOMAIN + "/bidder/login",{team:team,bidderID:bidderID});
-      //         console.log(response.data);
-      //         toast.success("Bidder Logged Successfully ")
-      //     }
-      //     catch(err){
-      //         console.log(err);
-      //         toast.error("Invalid Bidder Value")
-      //     }
-      // }
+    } 
+    else if (role === "Bidder") {
+      if (role !== "" && email !== "" && password !== "") {
+        const body = {
+          email: email,
+          password: password,
+        };
+        try {
+          toast.success("enter into bidderlogin")
+          const response = await axios.post(DOMAIN + "/bidder/bidderSingin", body,{withCredentials:true});
+          if (response.status === 200) {
+            console.log(response.data);
+
+            localStorage.setItem("BidderId", response.data.data);
+            localStorage.setItem("role", "user");
+            navigate("/bidder/auctions");
+            toast.success("Welcome To The Auction")
+          }
+        } catch (err) {
+          console.log(err);
+          toast.error("Invalid Email or Password");
+        }
+      }
       localStorage.setItem("role", "bidder");
       navigate("/bidder/auctions");
       toast.success("Welcome To The Aucton");
@@ -93,7 +106,7 @@ const LoginPage = () => {
   };
 
   const onCreateAccount = async (e) => {
-    
+    console.log("enter into onCreateAccount",role,name,email,password)
     setLoader(true);
     e.preventDefault();
     if (role !== "" && email !== "" && password !== "") {
@@ -104,7 +117,7 @@ const LoginPage = () => {
             userName: name,
             email: email,
             password: password,
-          });
+          },{withCredentials:true});
           if (response.status === 201) {
             setLoader(false);
             console.log(response.data);
@@ -126,7 +139,7 @@ const LoginPage = () => {
             adminName: name,
             email: email,
             password: password,
-          });
+          },{withCredentials:true});
           if (response.status === 201) {
             setLoader(false);
             toast.success("Welcome To The Auction");
@@ -134,6 +147,27 @@ const LoginPage = () => {
             localStorage.setItem("AdminId", response.data.data);
             localStorage.setItem("role", "user");
             navigate("/admin");
+          }
+        } catch (err) {
+          console.log(err);
+          setLoader(false);
+          toast.error("Invalid Values");
+        }
+      }
+      if (role === "Bidder"){
+        try {
+            
+          const response = await axios.post(DOMAIN + "/bidder/bidderSignup", {
+            bidderName: name,
+            email: email,
+            password: password,
+          },{withCredentials:true});
+          if (response.status === 201) {
+            setLoader(false);
+            toast.success("Welcome To The Auction");
+            localStorage.setItem("BidderId", response.data.data);
+            localStorage.setItem("role", "user");
+            navigate("/bidder/auctions");
           }
         } catch (err) {
           console.log(err);
@@ -254,17 +288,43 @@ const LoginPage = () => {
             </div>
           </>
         }
+        {state === "register" && role == "Bidder" && (
+          <div className="w-full">
+            <p>Name</p>
+            <input
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              placeholder="type here"
+              className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500"
+              type="text"
+              required
+            />
+          </div>
+        )}
         {role === "Bidder" && (
           <>
-            {/* <div className="w-full ">
-                        <p>IPL Team</p>
-                        <input placeholder="type here" 
-                        onChange={(e)=>setTeam(e.target.value)} className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500" type="text" required />
-                    </div>
-                    <div className="w-full ">
-                        <p>Bidder ID</p>
-                        <input placeholder="type here" onChange={(e)=>setBidderID(e.target.value)} className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500" type="text" required />
-                    </div> */}
+            <div className="w-full ">
+              <p>Email</p>
+              <input
+                required
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                placeholder="type here"
+                className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500"
+                type="email"
+              />
+            </div>
+            <div className="w-full ">
+              <p>Password</p>
+              <input
+                required
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                placeholder="type here"
+                className="border border-gray-200 rounded w-full p-2 mt-1 outline-indigo-500"
+                type="password"
+              />
+            </div>
           </>
         )}
         {state === "register" ? (

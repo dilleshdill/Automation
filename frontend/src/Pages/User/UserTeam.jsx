@@ -9,14 +9,13 @@ const DOMAIN = import.meta.env.VITE_DOMAIN;
 const TiltCard = ({ team }) => {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const threshold = 20;
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const getNavigate = (id,team) => {
-    navigate(`/user/teams/player/${id}`,{
-        state:team.players
-    })
-  }
-    
+  const handleNavigate = () => {
+    navigate(`/user/teams/player/${team._id}`, {
+      state: team.players
+    });
+  };
 
   const handleMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -27,26 +26,32 @@ const TiltCard = ({ team }) => {
 
   return (
     <div
-      className="rounded-xl shadow-xl overflow-hidden transition-transform duration-200 ease-out cursor-pointer max-w-80 bg-white"
+      onClick={handleNavigate}
       onMouseMove={handleMove}
       onMouseLeave={() => setTilt({ x: 0, y: 0 })}
+      className="group rounded-2xl shadow-md hover:shadow-xl cursor-pointer bg-white border border-gray-200 overflow-hidden transition-all duration-300"
       style={{
         transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
       }}
-      onClick={() => getNavigate(team._id,team)}
     >
-      <img
-        src="https://images.unsplash.com/photo-1747134392471-831ea9a48e1e?q=80&w=2000&auto=format&fit=crop"
-        alt="City skyline"
-        className="w-full h-52 object-cover"
-      />
+      <div className="relative">
+        <img
+          src="https://images.unsplash.com/photo-1747134392471-831ea9a48e1e?q=80&w=2000&auto=format&fit=crop"
+          alt="Team Banner"
+          className="w-full h-48 object-cover group-hover:scale-105 transition-all duration-300"
+        />
+      </div>
 
-      <h3 className="mt-3 px-4 pt-3 mb-1 text-lg font-semibold text-gray-800">
-        {team.teamName}
-      </h3>
-      <p className="text-sm px-4 pb-6 text-gray-600 w-5/6">
-        Purse: {team.purse}
-      </p>
+      <div className="px-5 py-4">
+        <h3 className="text-lg font-bold text-gray-800 tracking-wide">
+          {team.teamName}
+        </h3>
+
+        <div className="mt-2 flex justify-between items-center">
+          <p className="text-sm text-gray-600">Purse:</p>
+          <p className="text-sm font-semibold text-blue-600">{team.purse}</p>
+        </div>
+      </div>
     </div>
   );
 };
@@ -54,7 +59,7 @@ const TiltCard = ({ team }) => {
 const UserTeam = () => {
   const [data, setData] = useState([]);
 
-  const fetchedData = async () => {
+  const fetchData = async () => {
     try {
       const auctionId = localStorage.getItem("auctionId");
 
@@ -65,7 +70,6 @@ const UserTeam = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data.data)
         setData(response.data.data);
       }
     } catch (err) {
@@ -75,19 +79,30 @@ const UserTeam = () => {
   };
 
   useEffect(() => {
-    fetchedData();
+    fetchData();
   }, []);
 
-  
   return (
     <div className="flex flex-col min-h-screen">
       <NavBar />
-      <p className="text-xl font-semibold px-4 mt-4">Team Details</p>
 
-      <div className="grid md:grid-cols-3 gap-6 p-6">
-        {data.map((team) => (
-          <TiltCard key={team._id} team={team} />
-        ))}
+      <div className="px-4 lg:px-12 mt-5">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-4">
+          Team Details
+        </h1>
+
+        {/* Responsive Grid */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-3">
+          {data.map((team) => (
+            <TiltCard key={team._id} team={team} />
+          ))}
+        </div>
+
+        {data.length === 0 && (
+          <p className="text-gray-500 text-center py-10">
+            No teams found for this auction.
+          </p>
+        )}
       </div>
     </div>
   );

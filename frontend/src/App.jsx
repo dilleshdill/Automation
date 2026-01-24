@@ -33,11 +33,13 @@ const UserAuctionDeatailes = lazy(() => import("./Pages/User/UserAuctionDetailes
 
 
 import { ToastContainer } from "react-toastify";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
     <BrowserRouter>
       <ToastContainer />
+      <Toaster />
       <Suspense>
         <Routes>
           <Route path='/login' element={<LoginPage />} />

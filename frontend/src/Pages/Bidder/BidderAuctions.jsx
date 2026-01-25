@@ -159,7 +159,7 @@ const BidderAuctions = () => {
               <div
                 key={auction?._id}
                 onClick={() => getNavigate(auction?._id)}
-                className="!bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer p-4 flex flex-col"
+                className="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer p-4 flex flex-col"
               >
                 <img
                   src={auction?.auction_img}
@@ -245,7 +245,7 @@ const BidderAuctions = () => {
       {/* LOGIN MODAL */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-3">
-          <div className="!bg-white w-full max-w-sm rounded-xl shadow-xl p-6">
+          <div className="bg-white w-full max-w-sm rounded-xl shadow-xl p-6">
             <h2 className="text-lg font-semibold mb-4 text-slate-800">
               Bidder Login
             </h2>

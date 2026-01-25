@@ -10,7 +10,7 @@ const AuctionNotStart = () => {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
-        className="flex items-center gap-2 border border-slate-300 hover:border-slate-400/80 rounded-full w-max px-4 py-2 mt-24 md:mt-32 bg-white/70 backdrop-blur-sm cursor-pointer"
+        className="flex items-center gap-2 border !border-slate-300 hover:border-slate-400/80 rounded-full w-max px-4 py-2 mt-24 md:mt-32 bg-white/70 backdrop-blur-sm cursor-pointer"
       >
         <span className="text-sm text-slate-700">To Know More Information</span>
         <button className="flex items-center gap-1 font-medium text-blue-600 hover:text-blue-700">
@@ -61,7 +61,7 @@ const AuctionNotStart = () => {
         transition={{ delay: 0.22, duration: 0.35 }}
         className="min-w-screen flex items-center justify-center gap-3 mt-6"
       >
-        <button className="flex items-center gap-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-full px-6 py-3 text-sm md:text-base transition font-medium">
+        <button className="flex items-center gap-2 border border-slate-300 text-slate-700 hover:!bg-slate-100 rounded-full px-6 py-3 text-sm md:text-base transition font-medium">
           Learn More
           <svg
             width="6"

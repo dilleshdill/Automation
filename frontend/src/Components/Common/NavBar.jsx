@@ -12,7 +12,9 @@ const NavBar = () => {
 
   useEffect(() => {
     const fetchName = async () => {
-      const response = await axios.get(DOMAIN + "/user/getName");
+      const response = await axios.get(DOMAIN + "/user/getName",{
+        withCredentials:true
+      });
       if (response.status === 200) {
         setName(response.data.name);
       }
@@ -79,7 +81,7 @@ const NavBar = () => {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center gap-2 focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
+              <div className="w-9 h-9 rounded-full !bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
                 {name[0]}
               </div>
             </button>
@@ -88,16 +90,16 @@ const NavBar = () => {
               <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-lg shadow-md">
                 <a
                   href="/auction/user/profile"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  className="block px-4 py-2 text-gray-700 hover:!bg-gray-100 cursor-pointer"
                 >
                   Profile
                 </a>
-                <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a className="block px-4 py-2 text-gray-700 hover:!bg-gray-100 cursor-pointer">
                   Settings
                 </a>
                 <div className="border-t border-gray-200"></div>
                 <a
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  className="block px-4 py-2 text-gray-700 hover:!bg-gray-100 cursor-pointer"
                   onClick={getLogout}
                 >
                   Logout
@@ -109,7 +111,7 @@ const NavBar = () => {
       </div>
 
       {open && (
-        <div className="md:hidden bg-gray-50 border-t border-gray-200">
+        <div className="md:hidden !bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
             <a href="/user/auctions" className="block">
               Home

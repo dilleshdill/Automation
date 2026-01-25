@@ -13,7 +13,9 @@ const UserHomeNavBar = () => {
 
   useEffect(() => {
     const fetchName = async () => {
-      const response = await axios.get(DOMAIN + "user/getName");
+      const response = await axios.get(DOMAIN + "user/getName",{
+        withCredentials:true
+      });
       if (response.status === 200) {
         setName(response.data.name);
       }
@@ -79,7 +81,7 @@ const UserHomeNavBar = () => {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center gap-2"
             >
-              <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
+              <div className="w-9 h-9 rounded-full !bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
                 {name ? name[0] : "U"}
               </div>
             </button>
@@ -89,17 +91,17 @@ const UserHomeNavBar = () => {
               <div className="absolute right-0 top-14 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-fade">
                 <a
                   href="/auction/user/profile"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  className="block px-4 py-2 text-gray-700 hover:!bg-gray-100 cursor-pointer"
                 >
                   Profile
                 </a>
-                <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <a className="block px-4 py-2 text-gray-700 hover:!bg-gray-100 cursor-pointer">
                   Settings
                 </a>
                 <div className="border-t border-gray-200" />
                 <button
                   onClick={getLogout}
-                  className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 text-gray-700 hover:!bg-gray-100"
                 >
                   Logout
                 </button>
@@ -111,7 +113,7 @@ const UserHomeNavBar = () => {
 
       {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden bg-gray-50 border-t border-gray-200 transition-all duration-200">
+        <div className="md:hidden !bg-gray-50 border-t border-gray-200 transition-all duration-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
             <a href="/user/auctions" className="block">
               Home

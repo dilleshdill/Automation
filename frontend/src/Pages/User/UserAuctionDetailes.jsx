@@ -30,17 +30,17 @@ const UserAuctionDetails = () => {
   }, [id]);
 
   const statusColor = {
-    upcoming: "bg-blue-100 text-blue-700 border-blue-300",
-    live: "bg-green-100 text-green-700 border-green-300",
-    paused: "bg-amber-100 text-amber-700 border-amber-300",
-    ended: "bg-red-100 text-red-700 border-red-300",
+    upcoming: "!bg-blue-100 text-blue-700 border-blue-300",
+    live: "!bg-green-100 text-green-700 border-green-300",
+    paused: "!bg-amber-100 text-amber-700 border-amber-300",
+    ended: "!bg-red-100 text-red-700 border-red-300",
   }[auction?.status];
 
   return (
     <>
       <BidderHomeNavBar />
 
-      <div className="min-h-screen bg-[#f5f6fa] px-6 py-10 flex justify-center">
+      <div className="min-h-screen !bg-[#f5f6fa] px-6 py-10 flex justify-center">
         <div className="max-w-6xl w-full bg-white border border-slate-200 rounded-xl shadow p-8">
 
           {/* HEADER + STATUS */}

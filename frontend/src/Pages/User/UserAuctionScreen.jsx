@@ -28,7 +28,9 @@ const UserAuctionScreen = () => {
   const fetchedData = async () => {
     try {
       const response = await axios.get(
-        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`
+        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`,{
+          withCredentials:true
+        }
       );
 
       if (response.status === 200) {

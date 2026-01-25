@@ -97,7 +97,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="min-w-screen min-h-screen flex flex-col bg-[#eef1f4]">
+    <div className="min-w-screen min-h-screen flex flex-col !bg-[#eef1f4]">
       <AdminHomeNavBar />
       {showLoader && <Loader />}
 
@@ -198,7 +198,7 @@ const AdminPage = () => {
                     {status === "ended" && (
                       <button
                         disabled
-                        className="w-full bg-slate-400 text-white text-sm py-2 rounded-md"
+                        className="w-full !bg-slate-400 text-white text-sm py-2 rounded-md"
                       >
                         Auction Ended
                       </button>

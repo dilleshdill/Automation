@@ -46,7 +46,7 @@ const BidderNavBar = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
 
-          {/* BRAND */}
+          
           <div
             className="text-lg font-semibold tracking-wide text-slate-800 cursor-pointer"
             onClick={() => navigate("/bidder/auctions")}
@@ -54,7 +54,6 @@ const BidderNavBar = () => {
             🏏 Auction
           </div>
 
-          {/* DESKTOP MENU */}
           <div className="hidden md:flex items-center gap-6 text-slate-600 font-medium">
             <button
               onClick={() => navigate("/bidder/auctions")}
@@ -96,7 +95,7 @@ const BidderNavBar = () => {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center gap-2"
             >
-              <div className="w-9 h-9 rounded-full bg-slate-300 flex items-center justify-center text-slate-800 font-medium">
+              <div className="w-9 h-9 rounded-full !bg-slate-300 flex items-center justify-center text-slate-800 font-medium">
                 {(name && name[0]?.toUpperCase()) || "B"}
               </div>
             </button>
@@ -106,7 +105,7 @@ const BidderNavBar = () => {
               <div className="absolute right-0 top-14 w-40 bg-white border border-slate-200 rounded-lg shadow-md">
                 <button
                   onClick={() => navigate("/bidder/profile")}
-                  className="w-full text-left px-4 py-2 text-slate-700 hover:bg-slate-100"
+                  className="w-full text-left px-4 py-2 text-slate-700 hover:!bg-slate-100"
                 >
                   Profile
                 </button>
@@ -131,9 +130,8 @@ const BidderNavBar = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden bg-slate-50 border-t border-slate-200">
+        <div className="md:hidden !bg-slate-50 border-t border-slate-200">
           <div className="px-4 py-3 space-y-3 text-slate-700 font-medium">
             <button onClick={() => navigate("/bidder/auctions")} className="block w-full text-left">
               Home

@@ -30,7 +30,7 @@ const BidderProfile = () => {
   }, []);
 
   return (
-    <div className="min-h-screen min-w-screen bg-[#eef1f4] flex flex-col">
+    <div className="min-h-screen min-w-screen !bg-[#eef1f4] flex flex-col">
       <BidderHomeNavBar />
 
       <div className="flex justify-center items-start mt-16 px-6 pb-20 w-full">
@@ -40,7 +40,7 @@ const BidderProfile = () => {
           <div className="flex flex-col flex-1 justify-center">
             {/* Title + badge */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
+              <div className="w-12 h-12 rounded-full !bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
                 {BidderData?.teamName?.[0] ?? "B"}
               </div>
               <h1 className="text-3xl font-semibold text-slate-800 tracking-tight">

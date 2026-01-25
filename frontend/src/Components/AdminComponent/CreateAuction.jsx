@@ -151,7 +151,7 @@ const CreateAuction = () => {
   };
 
   return (
-    <div className="min-h-screen min-w-screen bg-gray-100 p-4 md:p-8">
+    <div className="min-h-screen min-w-screen !bg-gray-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Step Progress */}
@@ -168,7 +168,7 @@ const CreateAuction = () => {
           ))}
         </div>
 
-        <div className="w-full h-1 bg-gray-300 rounded-full">
+        <div className="w-full h-1 !bg-gray-300 rounded-full">
           <div
             className="h-full bg-blue-500 rounded-full transition-all"
             style={{ width: `${(step / 3) * 100}%` }}

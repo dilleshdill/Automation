@@ -83,7 +83,7 @@ const BidderHomeNavBar = () => {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center gap-2 focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
+              <div className="w-9 h-9 rounded-full !bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
                 {name[0]}
               </div>
             </button>
@@ -113,7 +113,7 @@ const BidderHomeNavBar = () => {
       </div>
 
       {open && (
-        <div className="md:hidden bg-gray-50 border-t border-gray-200">
+        <div className="md:hidden !bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
             <a href="/bidder/auctions" className="block">
               Home

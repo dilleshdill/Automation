@@ -1,81 +1,66 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import http from "http";
-import cookieParser from "cookie-parser";
-import cookie from "cookie";
-import jwt from "jsonwebtoken";
-import { Server } from "socket.io";
-
 import { connectDB } from "./config/db.js";
 import authRoute from "./routes/authRoute.js";
 import adminRoute from "./routes/adminRoute.js";
 import bidderRoute from "./routes/bidderRoute.js";
 import playerRoute from "./routes/playersRoute.js";
 import auctionRoute from "./routes/auctionRoute.js";
-import userRoute from "./routes/userRoute.js";
+import userRoute  from "./routes/userRoute.js";
+import cookieParser from "cookie-parser";
+import cookie from "cookie";
+import { Server } from "socket.io";
+import http from "http";
+import jwt from "jsonwebtoken";
 import { registerAuctionSocketEvents } from "./socket/socketAuction.js";
+
 
 dotenv.config();
 
 const app = express();
-
-/* -------------------- MIDDLEWARE -------------------- */
+app.use(cookieParser());
 
 app.use(express.json());
-app.use(cookieParser());
 
 const origins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  process.env.FRONTEND_DOMAIN, // MUST be full https://domain
+  process.env.FRONTEND_DOMAIN,
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: origins,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
-
-// 🔴 IMPORTANT: allow preflight requests
-app.options(
-  "*",
-  cors({
-    origin: origins,
-    credentials: true,
-  })
-);
-
-/* -------------------- SERVER & SOCKET -------------------- */
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: origins,
+    origin: ["http://localhost:5173", "http://localhost:5174",process.env.FRONTEND_DOMAIN,],
     credentials: true,
   },
 });
 
 app.set("io", io);
 
-/* -------------------- SOCKET AUTH -------------------- */
-
 io.use((socket, next) => {
   try {
-    const cookiesHeader = socket.handshake.headers.cookie;
+    const cookies = socket.handshake.headers.cookie;
 
-    if (!cookiesHeader) {
+    // If no cookie → admin or public client
+    if (!cookies) {
       socket.isAdmin = true;
       return next();
     }
 
-    const parsedCookies = cookie.parse(cookiesHeader);
-    const token = parsedCookies.bidder_token;
+    const parsed = cookie.parse(cookies);
+    const token = parsed.bidder_token;
 
+    // No bidder token → treat as admin
     if (!token) {
       socket.isAdmin = true;
       return next();
@@ -89,8 +74,8 @@ io.use((socket, next) => {
     };
 
     next();
-  } catch (err) {
-    console.error("Socket auth failed:", err.message);
+  } catch (e) {
+    console.log("Socket auth middleware failed", e);
     socket.isAdmin = true;
     next();
   }
@@ -98,27 +83,23 @@ io.use((socket, next) => {
 
 registerAuctionSocketEvents(io);
 
-/* -------------------- ROUTES -------------------- */
-
 app.use("/auth", authRoute);
 app.use("/admin", adminRoute);
 app.use("/bidder", bidderRoute);
+app.use("/add-player", playerRoute);
 app.use("/auction", auctionRoute);
 app.use("/player", playerRoute);
 app.use("/user", userRoute);
 
-app.get("/api/check", (req, res) => {
-  return res.status(200).json({ message: "Server is live 🚀" });
-});
-
-/* -------------------- START SERVER -------------------- */
-
+app.get('/api/check',(req,res)=>{
+  console.log('server is  live')
+  return res.status(200).json({Message:"server is live "})
+})
 const PORT = process.env.PORT || 5000;
-
 await connectDB();
 
 // server.listen(PORT, () => {
-//   console.log(`✅ Server running on port ${PORT}`);
+//   console.log(`Server running on port ${PORT}`);
 // });
 
-export default server;
+export default server

@@ -118,7 +118,7 @@ const AuctionAdminPage = () => {
       <AdminHomeNavBar />
       {showLoader && <Loader />}
 
-      <div className="min-h-screen bg-[#f4f5f7] px-6 py-8">
+      <div className="min-h-screen !bg-[#f4f5f7] px-6 py-8">
         <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-md p-8 border border-slate-200">
 
           {/* HEADER */}
@@ -128,10 +128,10 @@ const AuctionAdminPage = () => {
             </h1>
 
             <span className={`px-4 py-1 rounded-full text-sm font-semibold 
-              ${auction.status === "upcoming" && "bg-yellow-100 text-yellow-700 border border-yellow-300"} 
-              ${auction.status === "live" && "bg-green-100 text-green-700 border border-green-300"} 
-              ${auction.status === "paused" && "bg-blue-100 text-blue-700 border border-blue-300"} 
-              ${auction.status === "ended" && "bg-red-100 text-red-700 border border-red-300"}`}>
+              ${auction.status === "upcoming" && "!bg-yellow-100 text-yellow-700 border border-yellow-300"} 
+              ${auction.status === "live" && "!bg-green-100 text-green-700 border border-green-300"} 
+              ${auction.status === "paused" && "!bg-blue-100 text-blue-700 border border-blue-300"} 
+              ${auction.status === "ended" && "!bg-red-100 text-red-700 border border-red-300"}`}>
               {auction.status?.toUpperCase()}
             </span>
           </div>
@@ -159,14 +159,14 @@ const AuctionAdminPage = () => {
             {/* ACTIONS */}
             <div className="flex flex-col gap-4 justify-start lg:mt-6">
               <button
-                className="px-6 py-3 bg-[#003f88] hover:bg-[#0050b5] text-white rounded-lg font-semibold shadow transition"
+                className="px-6 py-3 !bg-[#003f88] hover:!bg-[#0050b5] text-white rounded-lg font-semibold shadow transition"
                 onClick={() => setShowPlayerModal(true)}
               >
                 ➕ Add Players
               </button>
 
               <button
-                className="px-6 py-3 bg-[#008000] hover:bg-[#009d00] text-white rounded-lg font-semibold shadow transition"
+                className="px-6 py-3 !bg-[#008000] !hover:bg-[#009d00] text-white rounded-lg font-semibold shadow transition"
                 onClick={() => setShowFranchiseModal(true)}
               >
                 🏏 Add Franchise
@@ -260,7 +260,7 @@ const PlayerForm = ({ players, setPlayers, index }) => {
   };
 
   return (
-    <div className="border rounded-lg p-4 shadow-sm bg-slate-50 mb-4">
+    <div className="border rounded-lg p-4 shadow-sm !bg-slate-50 mb-4">
       <h3 className="font-medium text-slate-700 mb-2">Player {index + 1}</h3>
 
       <div className="grid grid-cols-3 gap-3">
@@ -298,7 +298,7 @@ const FranchiseForm = ({ franchises, setFranchises, index }) => {
   };
 
   return (
-    <div className="border rounded-lg p-4 shadow-sm bg-slate-50 mb-4">
+    <div className="border rounded-lg p-4 shadow-sm !bg-slate-50 mb-4">
       <h3 className="font-medium text-slate-700 mb-2">Franchise {index + 1}</h3>
 
       <div className="grid grid-cols-2 gap-3">
@@ -317,7 +317,7 @@ const ModalFooter = ({ onSave, onClose }) => (
     <button className="px-4 py-2 border rounded-md" onClick={onClose}>
       Cancel
     </button>
-    <button className="px-5 py-2 bg-[#003f88] text-white rounded-md hover:bg-[#0050b5]" onClick={onSave}>
+    <button className="px-5 py-2 !bg-[#003f88] text-white rounded-md hover:!bg-[#0050b5]" onClick={onSave}>
       Save
     </button>
   </div>

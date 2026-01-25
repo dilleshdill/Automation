@@ -57,7 +57,7 @@ const UserAuctions = () => {
     }[status]);
 
   return (
-    <div className='flex flex-col min-h-screen bg-[#eef1f4]'>
+    <div className='flex flex-col min-h-screen !bg-[#eef1f4]'>
       <UserHomeNavBar />
 
       {/* Search + Filter */}

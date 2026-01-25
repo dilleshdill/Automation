@@ -31,10 +31,10 @@ const BidderAuctionDetailes = () => {
   }, [id]);
 
   const statusStyles = {
-    upcoming: "bg-blue-100 text-blue-700 border-blue-300",
-    live: "bg-green-100 text-green-700 border-green-300",
-    paused: "bg-amber-100 text-amber-700 border-amber-300",
-    ended: "bg-red-100 text-red-700 border-red-300",
+    upcoming: "!bg-blue-100 text-blue-700 border-blue-300",
+    live: "!bg-green-100 text-green-700 border-green-300",
+    paused: "!bg-amber-100 text-amber-700 border-amber-300",
+    ended: "!bg-red-100 text-red-700 border-red-300",
   };
 
   return (

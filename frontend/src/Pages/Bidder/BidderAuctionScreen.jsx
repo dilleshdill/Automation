@@ -32,7 +32,9 @@ const BidderAuctionScreen = () => {
   const fetchedData = async () => {
     try {
       const response = await axios.get(
-        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`
+        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`,{
+          withCredentials:true
+        }
       );
 
       if (response.status === 200) {
@@ -52,7 +54,6 @@ const BidderAuctionScreen = () => {
   const getPurse = async() => {
     try{
       const response = await axios.get(`${DOMAIN}/bidder/getPurse?auctionId=${auctionId}`,
-        
         {
         withCredentials:true
       })
@@ -165,7 +166,7 @@ const BidderAuctionScreen = () => {
   const displayPlayer = player;
 
   return (
-    <div className="min-h-screen min-w-screen bg-[#eef1f4] flex flex-col items-center">
+    <div className="min-h-screen min-w-screen !bg-[#eef1f4] flex flex-col items-center">
       <BidderNavBar />
       
 

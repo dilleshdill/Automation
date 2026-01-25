@@ -65,7 +65,7 @@ const TiltCard = ({ team }) => {
         {/* Progress Bar (Remaining Purse Visual) */}
         <div className="w-full h-[6px] bg-slate-200 rounded-full overflow-hidden mt-2">
           <div
-            className="h-full bg-green-500"
+            className="h-full !bg-green-500"
             style={{ width: `${Math.min((team?.purse / 10000000) * 100, 100)}%` }}
           ></div>
         </div>
@@ -100,7 +100,7 @@ const TeamsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen min-w-screen flex flex-col bg-[#f5f6fa]">
+    <div className="min-h-screen min-w-screen flex flex-col !bg-[#f5f6fa]">
       <BidderNavBar />
 
       <div className="px-6 py-10 max-w-7xl w-full mx-auto">

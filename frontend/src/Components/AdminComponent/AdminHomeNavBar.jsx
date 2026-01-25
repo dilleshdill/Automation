@@ -96,7 +96,7 @@ const AdminHomeNavBar = () => {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center gap-2 focus:outline-none"
             >
-              <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-semibold uppercase">
+              <div className="w-10 h-10 rounded-full !bg-blue-100 text-blue-700 flex items-center justify-center font-semibold uppercase">
                 {name?.[0] ?? "A"}
               </div>
             </button>
@@ -128,7 +128,7 @@ const AdminHomeNavBar = () => {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-gray-50 border-t border-gray-200">
+        <div className="md:hidden !bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
             <Link to="/admin" className="block">
               Home

@@ -29,7 +29,7 @@ const AdminProfile = () => {
   }, []);
 
   return (
-    <div className="min-w-screen min-h-screen flex flex-col bg-slate-50">
+    <div className="min-w-screen min-h-screen flex flex-col !bg-slate-50">
       <AdminHomeNavBar />
 
       <div className="flex flex-col md:flex-row items-center justify-between gap-12 w-full px-4 md:px-10 lg:px-20 py-16">

@@ -95,7 +95,7 @@ const AdminNavBar = () => {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center gap-2 focus:outline-none"
             >
-              <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-semibold uppercase">
+              <div className="w-10 h-10 rounded-full !bg-blue-100 text-blue-700 flex items-center justify-center font-semibold uppercase">
                 {name?.[0] ?? "A"}
               </div>
             </button>
@@ -105,26 +105,26 @@ const AdminNavBar = () => {
               <div className="absolute right-0 top-14 w-44 bg-white border border-slate-200 rounded-lg shadow-lg animate-fadeIn">
                 <Link
                   to="/admin/profile"
-                  className="block px-4 py-2 text-slate-700 hover:bg-slate-100 transition"
+                  className="block px-4 py-2 text-slate-700 hover:!bg-slate-100 transition"
                 >
                   Profile
                 </Link>
                 <Link
                   to="/admin/create-auction"
-                  className="block px-4 py-2 text-slate-700 hover:bg-slate-100 transition"
+                  className="block px-4 py-2 text-slate-700 hover:!bg-slate-100 transition"
                 >
                   Create Auction
                 </Link>
                 <button
                   disabled
-                  className="block px-4 py-2 w-full text-left text-slate-500 hover:bg-slate-100 cursor-not-allowed"
+                  className="block px-4 py-2 w-full text-left text-slate-500 hover:!bg-slate-100 cursor-not-allowed"
                 >
                   Settings
                 </button>
                 <div className="border-t border-slate-200"></div>
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition"
+                  className="block w-full text-left px-4 py-2 text-red-600 hover:!bg-red-50 transition"
                 >
                   Logout
                 </button>
@@ -136,7 +136,7 @@ const AdminNavBar = () => {
 
       {/* Mobile Nav Links */}
       {open && (
-        <div className="md:hidden bg-gray-50 border-t border-slate-200 animate-slideDown">
+        <div className="md:hidden !bg-gray-50 border-t border-slate-200 animate-slideDown">
           <div className="px-4 py-3 space-y-3 text-slate-700 font-medium">
             <Link to="/admin" className="block hover:text-slate-900">
               Home

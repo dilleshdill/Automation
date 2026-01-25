@@ -4,7 +4,7 @@ const AuctionStart = ({ Player }) => {
   const player = Player ?? {};
 
   return (
-    <div className="min-w-screen min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-start">
+    <div className="min-w-screen min-h-screen !bg-gray-50 px-4 py-8 flex justify-center items-start">
       <div className="w-full max-w-6xl bg-white rounded-xl shadow-lg border border-slate-200 p-6 md:p-8">
         
         <div className="flex flex-col md:flex-row gap-8">
@@ -28,7 +28,7 @@ const AuctionStart = ({ Player }) => {
               </h1>
 
               {player?.role && (
-                <span className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-700 font-medium">
+                <span className="px-3 py-1 text-sm rounded-full !bg-blue-100 text-blue-700 font-medium">
                   {player?.role}
                 </span>
               )}

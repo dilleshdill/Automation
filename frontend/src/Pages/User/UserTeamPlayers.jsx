@@ -14,7 +14,7 @@ const UserTeamPlayers = () => {
   };
 
   return (
-    <div className="min-h-screen min-w-screen flex flex-col bg-[#eef1f4]">
+    <div className="min-h-screen min-w-screen flex flex-col !bg-[#eef1f4]">
       <NavBar />
 
       <div className="w-full px-5 mt-6 mb-4 text-center">
@@ -61,7 +61,7 @@ const UserTeamPlayers = () => {
                 </p>
 
                 <button
-                  className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.97] transition text-white text-sm font-medium py-2 rounded-md"
+                  className="mt-3 w-full !bg-indigo-600 hover:!bg-indigo-700 active:scale-[0.97] transition text-white text-sm font-medium py-2 rounded-md"
                 >
                   View Details
                 </button>

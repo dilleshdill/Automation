@@ -14,7 +14,7 @@ const BidderTeamPlayers = () => {
   };
 
   return (
-    <div className="min-h-screen min-w-screen flex flex-col bg-[#eef1f4]">
+    <div className="min-h-screen min-w-screen flex flex-col !bg-[#eef1f4]">
       <BidderNavBar />
 
       <div className="px-6 py-8 max-w-7xl w-full mx-auto">
@@ -45,7 +45,7 @@ const BidderTeamPlayers = () => {
                     </h3>
 
                     {/* ROLE BADGE */}
-                    <span className="text-xs px-2 py-[2px] rounded-full border bg-slate-100 text-slate-600">
+                    <span className="text-xs px-2 py-[2px] rounded-full border !bg-slate-100 text-slate-600">
                       {player?.role}
                     </span>
                   </div>

@@ -15,7 +15,7 @@ const BidderAuctionEnded = () => {
 
           {/* Header */}
           <div className="flex flex-col items-center">
-            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center border border-green-200 shadow-sm">
+            <div className="w-14 h-14 rounded-full !bg-green-100 flex items-center justify-center border border-green-200 shadow-sm">
               <span className="text-2xl">✔️</span>
             </div>
 

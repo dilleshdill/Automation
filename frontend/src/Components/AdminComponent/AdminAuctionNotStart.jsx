@@ -38,7 +38,7 @@ const AdminAuctionNotStart = () => {
           Learn More
         </button>
 
-        <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-3 text-sm md:text-base font-medium transition duration-300 shadow-md">
+        <button className="!bg-blue-600 hover:!bg-blue-700 text-white rounded-full px-6 py-3 text-sm md:text-base font-medium transition duration-300 shadow-md">
           Create Auction
         </button>
       </div>

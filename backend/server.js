@@ -91,6 +91,10 @@ app.use("/auction", auctionRoute);
 app.use("/player", playerRoute);
 app.use("/user", userRoute);
 
+app.get('/api/check',(req,res)=>{
+  console.log('server is  live')
+  return res.status(200).json({Message:"server is live "})
+})
 const PORT = process.env.PORT || 5000;
 await connectDB();
 

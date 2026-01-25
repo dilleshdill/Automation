@@ -3,7 +3,6 @@ import { socket } from "../../Socket/socket.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import AdminNavBar from "../../Components/AdminComponent/AdminNavBar.jsx";
 import axios from "axios";
-import BidderUpcomingPlayer from "../../Components/BidderComponent/BidderUpcomingPlayer.jsx";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -12,38 +11,35 @@ const AuctionScreen = () => {
   const location = useLocation();
   const [player, setPlayer] = useState(null);
 
-  const { auction } = location.state || "";
-
+  const { auction } = location.state || {};
   const { auctionId, currentPlayer } = auction;
-  
+
   const [currentBid, setCurrentBid] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isAuctionPause, setAuctionPause] = useState(false);
-  const [showEndAutionModel, setEndAuctionModel] = useState(false);
+  const [showEndAuctionModel, setEndAuctionModel] = useState(false);
   const [showPauseAuctionModel, setPauseAuctionModel] = useState(false);
   const [showResumeAuctionModel, setResumeAuctionModel] = useState(false);
-
+  
 
   const fetchedData = async () => {
     try {
       const response = await axios.get(
-        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`,
+        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`
       );
       if (response.status === 200) {
-        if (response.data.status === "upcoming") {
-          setAuctionPause(false);
-        }
-        if (response.data.status === "paused") {
-          setAuctionPause(true);
-        }
+        if (response.data.status === "upcoming") setAuctionPause(false);
+        if (response.data.status === "paused") setAuctionPause(true);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
   };
 
+  
   useEffect(() => {
     fetchedData();
+    
     if (auctionId) socket.emit("join-auction", auctionId);
 
     socket.on("resume-auction", () => {
@@ -51,10 +47,9 @@ const AuctionScreen = () => {
       setResumeAuctionModel(false);
     });
 
-    socket.on("state-sync",({currentPlayer,currentBid,currentBidder,auctionStatus,timeLeft}) => {
-      console.log(currentPlayer)
-      setPlayer(currentPlayer)
-    })
+    socket.on("state-sync", ({ currentPlayer }) => {
+      setPlayer(currentPlayer);
+    });
 
     socket.on("timer-update", (data) => setTimer(data.timeLeft));
     socket.on("bid-updated", (data) => setCurrentBid(data.bid));
@@ -66,243 +61,197 @@ const AuctionScreen = () => {
     });
 
     socket.on("auction-ended", () => navigate("/admin/auction/ended"));
-
-    socket.on("auction-paused", (time, currentBid, currentPlayer) => {
-      setAuctionPause(true);
-      console.log(time, currentBid, currentPlayer);
-    });
-
-    return () => {
-      socket.off("timer-update");
-      socket.off("bid-updated");
-      socket.off("new-player");
-    };
+    socket.on("auction-paused", () => setAuctionPause(true));
   }, []);
 
-  const pauseAuction = () => {
-    setPauseAuctionModel(true);
-  };
-
-  const endAuction = () => {
-    setEndAuctionModel(true);
-  };
-
-  const getResumeAuction = () => {
-    setResumeAuctionModel(true);
-  };
+  const pauseAuction = () => setPauseAuctionModel(true);
+  const endAuction = () => setEndAuctionModel(true);
+  const getResumeAuction = () => setResumeAuctionModel(true);
 
   const confirmEndAuction = () => {
-    const auctionId = localStorage.getItem("auctionId");
-    socket.emit("end-auction",auctionId)
-    setEndAuctionModel(false)
-    // navigate("/admin/auction/ended");
+    socket.emit("end-auction", auctionId);
+    setEndAuctionModel(false);
   };
 
   const confirmPauseAuction = () => {
-    const auctionId = localStorage.getItem("auctionId");
-    socket.emit("pause-auction", {
-      auctionId,
-      timer,
-    });
+    socket.emit("pause-auction", { auctionId, timer });
     setPauseAuctionModel(false);
   };
 
   const confirmResumeAuction = () => {
-    const auctionId = localStorage.getItem("auctionId");
-    socket.emit("resume-auction", {
-      auctionId,
-    });
+    socket.emit("resume-auction", { auctionId });
     setResumeAuctionModel(false);
   };
 
   const displayPlayer = player || currentPlayer;
-  console.log("displayPlayer",displayPlayer)
-  
 
   return (
-    <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center ">
+    <div className="min-h-screen min-w-screen bg-[#f6f7f9] flex flex-col">
       <AdminNavBar />
-      <h2 className="text-3xl font-bold mb-6 mt-6 tracking-wide">
-        Live Auction
-      </h2>
 
-      {displayPlayer && (
-        <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
-          <div className="w-full md:w-1/3 p-3 flex justify-center items-center">
-            <img
-              src={displayPlayer.imageUrl}
-              alt="player"
-              className="rounded-lg object-cover w-48 h-56 md:w-56 md:h-72"
-            />
-          </div>
+      <div className="flex flex-col items-center mt-10">
+        <h2 className="text-3xl font-semibold text-slate-800 tracking-wide">
+          Live Auction
+        </h2>
 
-          <div className="w-full md:w-2/3 p-4">
-            <h3 className="text-2xl font-semibold">{displayPlayer.name}</h3>
-            <p className="text-gray-600 mb-3">{displayPlayer.role}</p>
+        {displayPlayer && (
+          <div
+            className="
+            mt-8 w-full max-w-4xl bg-white rounded-2xl shadow-md
+            border border-slate-200 p-6 flex flex-col md:flex-row gap-6
+          "
+          >
+            {/* IMAGE */}
+            <div className="flex justify-center w-full md:w-1/3">
+              <img
+                src={displayPlayer.imageUrl}
+                alt="player"
+                className="rounded-xl object-cover w-56 h-72 shadow-sm"
+              />
+            </div>
 
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <p>
-                <span className="font-medium">Matches:</span>{" "}
-                {displayPlayer.matches}
-              </p>
-              <p>
-                <span className="font-medium">Innings:</span>{" "}
-                {displayPlayer.innings}
-              </p>
-              <p>
-                <span className="font-medium">Runs:</span> {displayPlayer.runs}
-              </p>
-              <p>
-                <span className="font-medium">Highest:</span>{" "}
-                {displayPlayer.highestScore}
-              </p>
-              <p>
-                <span className="font-medium">Average:</span>{" "}
-                {displayPlayer.average}
-              </p>
-              <p>
-                <span className="font-medium">Strike Rate:</span>{" "}
-                {displayPlayer.strikeRate}
-              </p>
-              <p>
-                <span className="font-medium">50s:</span>{" "}
-                {displayPlayer.fifties}
-              </p>
-              <p>
-                <span className="font-medium">100s:</span>{" "}
-                {displayPlayer.hundreds}
-              </p>
+            {/* DETAILS */}
+            <div className="w-full md:w-2/3 space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-semibold text-slate-800">
+                  {displayPlayer.name}
+                </h3>
+                <span className="text-xs px-3 py-1 rounded-full border border-slate-300 text-slate-600">
+                  {displayPlayer.role}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-sm text-slate-700">
+                <Info label="Matches" value={displayPlayer.matches} />
+                <Info label="Innings" value={displayPlayer.innings} />
+                <Info label="Runs" value={displayPlayer.runs} />
+                <Info label="Highest" value={displayPlayer.highestScore} />
+                <Info label="Average" value={displayPlayer.average} />
+                <Info label="Strike Rate" value={displayPlayer.strikeRate} />
+                <Info label="50s" value={displayPlayer.fifties} />
+                <Info label="100s" value={displayPlayer.hundreds} />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="flex flex-wrap gap-6 mt-6 justify-center">
-        <div className="bg-white shadow rounded-xl p-3 w-32 text-center">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">
-            Time Left
-          </p>
-          <p className="text-xl font-bold text-red-600">{timer}s</p>
+        {/* BID PANEL */}
+        <div className="flex gap-6 mt-8">
+          <Panel title="Time Left" value={timer + 's'} color="text-red-600" />
+          <Panel title="Current Bid" value={'₹' + currentBid} color="text-blue-600" />
         </div>
 
-        <div className="bg-white shadow rounded-xl p-3 w-32 text-center">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">
-            Current Bid
-          </p>
-          <p className="text-xl font-bold text-blue-600">₹{currentBid}</p>
-        </div>
+        {/* ACTION BUTTONS */}
+        {isAuctionPause ? (
+          <button
+            onClick={getResumeAuction}
+            className="
+              mt-6 px-8 py-2 rounded-lg
+              text-white font-medium shadow
+              !bg-[#22a447] hover:!bg-[#1b8c3b]
+              transition
+            "
+          >
+            Resume Auction
+          </button>
+        ) : (
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={pauseAuction}
+              className="
+                px-8 py-2 rounded-lg text-white font-medium shadow
+                !bg-[#0052cc] hover:!bg-[#003f99]
+                transition
+              "
+            >
+              Pause Auction
+            </button>
+            <button
+              onClick={endAuction}
+              className="
+                px-8 py-2 rounded-lg text-white font-medium shadow
+                !bg-[#d03838] hover:!bg-[#b82f2f]
+                transition
+              "
+            >
+              End Auction
+            </button>
+          </div>
+        )}
       </div>
 
-      {isAuctionPause ? (
-        <button
-          onClick={getResumeAuction}
-          className="mt-6 !bg-green-600 hover:!bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition shadow"
-        >
-          Resume Auction
-        </button>
-      ) : (
-        <div className="flex gap-4">
-          <button
-            onClick={pauseAuction}
-            className="mt-6 !bg-blue-600 hover:!bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition shadow"
-          >
-            Pause Auction
-          </button>
-          <button
-            onClick={endAuction}
-            className="mt-6 !bg-red-500 hover:!bg-red-600 text-white font-semibold px-6 py-2 rounded-lg transition shadow"
-          >
-            End Auction
-          </button>
-        </div>
-      )}
+      {/* MODALS */}
       {showPauseAuctionModel && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="!bg-white rounded-xl shadow-xl p-6 w-[350px]">
-            <h2 className="text-xl font-semibold mb-4">Pause Auction?</h2>
-
-            <p className="text-gray-600 mb-5">
-              Are you sure you want to pause the auction?
-            </p>
-
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setPauseAuctionModel(false)}
-                className="px-4 py-2 rounded !bg-gray-300 hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={confirmPauseAuction}
-                className="px-4 py-2 rounded !bg-blue-600 text-white hover:!bg-blue-700"
-              >
-                Pause
-              </button>
-            </div>
-          </div>
-        </div>
+        <GlassModal
+          title="Pause Auction?"
+          confirm="Pause"
+          color="blue"
+          onCancel={() => setPauseAuctionModel(false)}
+          onConfirm={confirmPauseAuction}
+        />
       )}
 
-      {showEndAutionModel && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="!bg-white rounded-xl shadow-xl p-6 w-[350px]">
-            <h2 className="text-xl font-semibold mb-4">End Auction?</h2>
-
-            <p className="text-gray-600 mb-5">
-              Are you sure you want to End the auction?
-            </p>
-
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setEndAuctionModel(false)}
-                className="px-4 py-2 rounded !bg-gray-300 hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={confirmEndAuction}
-                className="px-4 py-2 rounded !bg-red-600 text-white hover:!bg-red-700"
-              >
-                End
-              </button>
-            </div>
-          </div>
-        </div>
+      {showEndAuctionModel && (
+        <GlassModal
+          title="End Auction?"
+          confirm="End"
+          color="red"
+          onCancel={() => setEndAuctionModel(false)}
+          onConfirm={confirmEndAuction}
+        />
       )}
-
-      
 
       {showResumeAuctionModel && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="!bg-white rounded-xl shadow-xl p-6 w-[350px]">
-            <h2 className="text-xl font-semibold mb-4">Resume Auction?</h2>
-
-            <p className="text-gray-600 mb-5">
-              Are you sure you want to Resume the auction?
-            </p>
-
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setResumeAuctionModel(false)}
-                className="px-4 py-2 rounded !bg-gray-300 hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={confirmResumeAuction}
-                className="px-4 py-2 rounded !bg-green-600 text-white hover:!bg-green-700"
-              >
-                Resume
-              </button>
-            </div>
-          </div>
-        </div>
+        <GlassModal
+          title="Resume Auction?"
+          confirm="Resume"
+          color="green"
+          onCancel={() => setResumeAuctionModel(false)}
+          onConfirm={confirmResumeAuction}
+        />
       )}
     </div>
   );
 };
+
+const Info = ({ label, value }) => (
+  <p>
+    <span className="text-slate-500">{label}: </span>
+    <span className="font-medium">{value}</span>
+  </p>
+);
+
+const Panel = ({ title, value, color }) => (
+  <div className="w-32 bg-white border border-slate-200 shadow-sm rounded-xl p-3 text-center">
+    <p className="text-xs text-slate-500 uppercase tracking-wider">{title}</p>
+    <p className={`text-xl font-semibold ${color}`}>{value}</p>
+  </div>
+);
+
+const GlassModal = ({ title, confirm, color, onCancel, onConfirm }) => (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-50">
+    <div className="w-[330px] rounded-xl bg-white shadow-lg p-6 border border-slate-200">
+      <h2 className="text-lg font-semibold text-slate-800 mb-3">{title}</h2>
+      <div className="flex justify-end gap-3 mt-4">
+        <button
+          onClick={onCancel}
+          className="px-4 py-2 rounded-md border border-slate-300 hover:bg-slate-100"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onConfirm}
+          className={`px-4 py-2 rounded-md text-white font-medium ${
+            color === "blue" && "!bg-[#0052cc]"
+          } ${color === "red" && "!bg-[#d03838]"} ${
+            color === "green" && "!bg-[#22a447]"
+          }`}
+        >
+          {confirm}
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 export default AuctionScreen;

@@ -1,41 +1,44 @@
 import { React, useEffect, useState } from "react";
 import { socket } from "../../Socket/socket";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { Navigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import BidderNavBar from "../../Components/BidderComponent/BidderNavBar";
 import Marquee from "react-fast-marquee";
 import axios from "axios";
 import BidderUpcomingPlayer from "../../Components/BidderComponent/BidderUpcomingPlayer";
+import BidderSoldPlayer from "./BidderSoldPlayer";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const BidderAuctionScreen = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  console.log(location.state)
-  const { data } = location.state || "";
-  console.log("data in admin page",data)
-  const { id, teamName, teamId } = data;
+
+  const { data } = location.state || {};
+  const { id, teamName, teamId} = data ?? {};
+
   const auctionId = id;
   localStorage.setItem("auctionId", auctionId);
 
   const [player, setPlayer] = useState(null);
-  const [isAuctionStart ,setAuctionStart] = useState(false)
+  const [isAuctionStart, setAuctionStart] = useState(false);
 
   const [currentBid, setCurrentBid] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isAuctionPaused, setAuctionPause] = useState(false);
+  const [purse,setPurse] = useState(0)
+  const [soldPlayer,setSoldPlayer] = useState([])
 
   const fetchedData = async () => {
     try {
       const response = await axios.get(
-        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`,
+        `${DOMAIN}/auction/auction-status?auctionId=${auctionId}`
       );
+
       if (response.status === 200) {
-          if (response.data.status === "live") {
+        if (response.data.status === "live") {
           setAuctionPause(false);
-          setAuctionStart(true)
+          setAuctionStart(true);
         }
         if (response.data.status === "paused") {
           setAuctionPause(true);
@@ -46,30 +49,49 @@ const BidderAuctionScreen = () => {
     }
   };
 
+  const getPurse = async() => {
+    try{
+      const response = await axios.get(`${DOMAIN}/bidder/getPurse?auctionId=${auctionId}`,
+        
+        {
+        withCredentials:true
+      })
+      if(response.status === 200){
+        console.log(response.data.data[0] )
+        setPurse(response.data.data[0].purse)
+        setSoldPlayer(response.data.data[0].players)
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   useEffect(() => {
     fetchedData();
+    getPurse()
+
     socket.emit("franchise-join", {
       id,
       teamName,
     });
 
-    socket.on("state-sync",({currentPlayer,currentBid,currentBidder,timeLeft,auctionStatus}) => {
-        console.log(auctionStatus, currentPlayer, currentBidder);
+    socket.on(
+      "state-sync",
+      ({ currentPlayer, currentBid, currentBidder, timeLeft, auctionStatus }) => {
         setPlayer(currentPlayer);
         setCurrentBid(currentBid);
         setTimer(timeLeft);
-        
-      },
+      }
     );
 
     socket.on("resume-auction", () => {
       setAuctionPause(false);
-      setAuctionStart(true)
+      setAuctionStart(true);
     });
 
     socket.on("auction-started", (auction) => {
       setPlayer(auction.currentPlayer);
-      setAuctionStart(true)
+      setAuctionStart(true);
     });
 
     if (auctionId) {
@@ -91,19 +113,18 @@ const BidderAuctionScreen = () => {
     });
 
     socket.on("join-success", (msg) => {
-      console.log("Bidder Auction Screen JOin Success", msg);
       localStorage.setItem("BidderId", teamId);
       toast.success("Welcome To The Auction");
     });
 
-    socket.on("player-sold",({currentBidder,currentPlayer}) => {
-      console.log(currentBidder,currentPlayer)
-      toast.info(`${currentPlayer} Sold To ${currentBidder} Team`)
-    })
+    socket.on("player-sold", ({ currentBidder, currentPlayer }) => {
+      getPurse()
+      toast.info(`${currentPlayer} Sold To ${currentBidder}`);
+    });
 
-    socket.on("player-unsold",({currentPlayer}) => {
-      toast.error(`${currentPlayer} Unsold`)
-    })
+    socket.on("player-unsold", ({ currentPlayer }) => {
+      toast.error(`${currentPlayer} Unsold`);
+    });
 
     socket.on("bid-error", (msg) => {
       toast.error(msg);
@@ -111,7 +132,6 @@ const BidderAuctionScreen = () => {
 
     socket.on("auction-paused", (time, currentBid, currentPlayer) => {
       setAuctionPause(true);
-      console.log(time, currentBid, currentPlayer);
     });
 
     socket.on("auction-ended", () => {
@@ -122,16 +142,16 @@ const BidderAuctionScreen = () => {
       socket.off("timer-update");
       socket.off("bid-updated");
       socket.off("new-player");
-      socket.off("join-error");
       socket.off("franchise-join");
-      socket.off("auction-stated");
-      socket.off("join-success");
-      socket.off("state-sync")
-      socket.off("player-sold")
-      socket.off("player-unsold")
+      socket.off("join-error");
+      socket.off("auction-started");
+      socket.off("state-sync");
+      socket.off("player-sold");
+      socket.off("player-unsold");
     };
-
   }, []);
+
+  
 
   const placeBid = () => {
     socket.emit("place-bid", {
@@ -143,58 +163,26 @@ const BidderAuctionScreen = () => {
   };
 
   const displayPlayer = player;
-  console.log(displayPlayer)
 
   return (
-    <div className="min-h-screen min-w-screen bg-gray-100 flex flex-col items-center">
+    <div className="min-h-screen min-w-screen bg-[#eef1f4] flex flex-col items-center">
       <BidderNavBar />
+      
+
       {isAuctionPaused ? (
-        <div className="flex flex-wrap items-center justify-center w-full py-2 font-medium text-sm text-white text-center bg-gradient-to-b from-orange-500 to-orange-600">
-          <Marquee speed={50}>
-            <p>🥤Drinks Break...! After Few Minutes Auction Will Resume</p>
-            <a
-              href="https://prebuiltui.com"
-              className="flex items-center gap-1 px-3 py-1 text-xs rounded-md text-orange-600 bg-white hover:bg-slate-200 transition active:scale-95 ml-3"
-            >
-              Check it out
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M2.91797 7H11.0846"
-                  stroke="#F54900"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M7 2.9165L11.0833 6.99984L7 11.0832"
-                  stroke="#F54900"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </a>
-          </Marquee>
+        <div className="w-full py-2 font-medium text-sm bg-orange-600 text-white text-center">
+          <Marquee speed={50}>🛑 Auction Paused (Drinks Break)</Marquee>
         </div>
       ) : (
-        <div className="w-full py-2.5 font-medium text-sm text-green-800 text-center bg-gradient-to-r from-[#ABFF7E] to-[#9defdf]">
-          <Marquee speed={100}>
-            <p className="px-3 py-1 rounded-lg text-white bg-green-600 mr-2">
-              Live Auction
-            </p>
-          </Marquee>
+        <div className="w-full py-2 font-medium text-sm bg-green-600 text-white text-center">
+          <Marquee speed={100}>🏏 Live Auction</Marquee>
         </div>
       )}
 
-      {(displayPlayer && (isAuctionPaused || isAuctionStart) ) ? (
+      {displayPlayer && (isAuctionPaused || isAuctionStart) ? (
         <>
-          <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
+          {/* PLAYER CARD */}
+          <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row mt-6">
             <div className="w-full md:w-1/3 p-3 flex justify-center items-center">
               <img
                 src={displayPlayer.imageUrl}
@@ -207,43 +195,20 @@ const BidderAuctionScreen = () => {
               <h3 className="text-2xl font-semibold">{displayPlayer.name}</h3>
               <p className="text-gray-600 mb-3">{displayPlayer.role}</p>
 
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <p>
-                  <span className="font-medium">Matches:</span>{" "}
-                  {displayPlayer.matches}
-                </p>
-                <p>
-                  <span className="font-medium">Innings:</span>{" "}
-                  {displayPlayer.innings}
-                </p>
-                <p>
-                  <span className="font-medium">Runs:</span>{" "}
-                  {displayPlayer.runs}
-                </p>
-                <p>
-                  <span className="font-medium">Highest:</span>{" "}
-                  {displayPlayer.highestScore}
-                </p>
-                <p>
-                  <span className="font-medium">Average:</span>{" "}
-                  {displayPlayer.average}
-                </p>
-                <p>
-                  <span className="font-medium">Strike Rate:</span>{" "}
-                  {displayPlayer.strikeRate}
-                </p>
-                <p>
-                  <span className="font-medium">50s:</span>{" "}
-                  {displayPlayer.fifties}
-                </p>
-                <p>
-                  <span className="font-medium">100s:</span>{" "}
-                  {displayPlayer.hundreds}
-                </p>
+              <div className="grid grid-cols-2 gap-2 text-sm text-slate-700">
+                <p>Matches: {displayPlayer.matches}</p>
+                <p>Innings: {displayPlayer.innings}</p>
+                <p>Runs: {displayPlayer.runs}</p>
+                <p>Highest: {displayPlayer.highestScore}</p>
+                <p>Average: {displayPlayer.average}</p>
+                <p>Strike Rate: {displayPlayer.strikeRate}</p>
+                <p>50s: {displayPlayer.fifties}</p>
+                <p>100s: {displayPlayer.hundreds}</p>
               </div>
             </div>
           </div>
 
+          {/* BIDDING UI */}
           <div className="flex flex-wrap gap-6 mt-6 justify-center">
             <div className="bg-white shadow rounded-xl p-3 w-32 text-center">
               <p className="text-xs text-gray-500 uppercase tracking-wide">
@@ -257,7 +222,16 @@ const BidderAuctionScreen = () => {
                 Current Bid
               </p>
               <p className="text-xl font-bold text-blue-600">
-                ₹{currentBid ? currentBid : 0}
+                ₹{currentBid ?? 0}
+              </p>
+            </div>
+
+            <div className="bg-white shadow rounded-xl p-3 w-32 text-center">
+              <p className="text-xs text-gray-500 uppercase tracking-wide">
+                Purse
+              </p>
+              <p className="text-xl font-bold text-green-600">
+                ₹{purse}
               </p>
             </div>
           </div>
@@ -269,26 +243,21 @@ const BidderAuctionScreen = () => {
             >
               Place Bid
             </button>
-            
           )}
 
           <BidderUpcomingPlayer auctionId={auctionId} />
+          <BidderSoldPlayer soldPlayer={soldPlayer} />
+          
         </>
-      )
-      :
-      (
+      ) : (
         <>
-          <h2 className="text-3xl font-bold mb-6 mt-6 tracking-wide">
-            Welcome To The Live Auction{" "}
+          <h2 className="text-3xl font-bold mt-10 tracking-wide">
+            Welcome To The Live Auction
           </h2>
-          <h2 className="text-1xl font-bold mb-6 mt-6 tracking-wide">
-            Auction Will Be Start In Few Minutes
-          </h2>
+          <p className="text-slate-600">Auction will start shortly...</p>
         </>
-      )
         
-      }
-
+      )}
       
     </div>
   );

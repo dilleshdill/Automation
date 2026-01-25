@@ -13,15 +13,16 @@ const BidderUpcomingPlayer = ({ auctionId }) => {
 
   const fetchedData = async () => {
     try {
-      const response = await axios.get(
+      const res = await axios.get(
         `${DOMAIN}/bidder/upcoming-players?auctionId=${auctionId}`,
+        { withCredentials: true }
       );
-      if (response.status === 200) {
-        console.log("bidderupcomingplayer", response.data.data);
-        setUpcomingData(response.data);
+
+      if (res.status === 200) {
+        setUpcomingData(res?.data?.data ?? []);
       }
     } catch (err) {
-      console.log(err);
+      console.log("UpcomingPlayer Fetch Error:", err);
     }
   };
 
@@ -29,55 +30,75 @@ const BidderUpcomingPlayer = ({ auctionId }) => {
     fetchedData();
 
     socket.on("upcomingPlayer-error", () => {
-      console.log("something there is error in upcomingPlayer Socket");
+      console.log("Socket: Upcoming player error");
     });
 
-    socket.on("upcomingPlayer-success", (player) => {
-      console.log(player);
-      setUpcomingData(player);
+    socket.on("upcomingPlayer-success", (playerList) => {
+      setUpcomingData(playerList ?? []);
     });
+
+    return () => {
+      socket.off("upcomingPlayer-error");
+      socket.off("upcomingPlayer-success");
+    };
   }, []);
 
   const getNavigate = (player) => {
-    console.log(player);
-    navigate(`/auction/bidder/player/${player._id}`, {
+    navigate(`/auction/bidder/player/${player?._id}`, {
       state: player,
     });
   };
 
   return (
-    <div className="flex flex-col min-w-screen p-5">
-      <h2 className="text-xl font-semibold mb-3">Upcoming Players</h2>
+    <div className="min-w-screen flex flex-col px-4 py-4 md:px-6">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg md:text-xl font-semibold tracking-wide text-slate-800">
+          Upcoming Players
+        </h2>
+      </div>
 
-      {upcomingData.length > 0 ? (
-        <div className="max-w-screen">
+      {upcomingData?.length > 0 ? (
+        <div className="min-w-screen">
           <Swiper
-            spaceBetween={30}
+            spaceBetween={18}
             breakpoints={{
-              640: { slidesPerView: 1 },
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 5 },
+              0: { slidesPerView: 2.3 },
+              480: { slidesPerView: 3 },
+              640: { slidesPerView: 4 },
+              768: { slidesPerView: 5 },
+              1024: { slidesPerView: 6 },
             }}
           >
             {upcomingData.map((player) => (
-              <SwiperSlide key={player.playerId}>
+              <SwiperSlide key={player?.playerId ?? player?._id}>
                 <div
-                  className="border rounded-lg p-3 flex flex-col items-center"
                   onClick={() => getNavigate(player)}
+                  className="flex flex-col items-center bg-white border border-slate-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all hover:-translate-y-[3px] cursor-pointer select-none"
                 >
                   <img
-                    src={player.imageUrl}
-                    className="h-32 w-32 rounded-full object-cover mb-2"
+                    src={player?.imageUrl ?? "/placeholder-player.png"}
+                    alt={player?.name ?? "player"}
+                    className="h-24 w-24 md:h-28 md:w-28 rounded-full object-cover ring-2 ring-slate-200 mb-2"
                   />
-                  <p className="font-semibold">{player.name}</p>
-                  <p className="text-sm text-gray-600">{player.role}</p>
+
+                  <div className="text-center">
+                    <p className="font-medium text-[14px] md:text-[15px] text-slate-800 leading-tight">
+                      {player?.name ?? "Unknown Player"}
+                    </p>
+
+                    <p className="text-xs text-slate-500 mt-[2px] uppercase tracking-wide">
+                      {player?.role ?? "—"}
+                    </p>
+                  </div>
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
       ) : (
-        <p className="text-gray-500 text-sm">No upcoming players</p>
+        <div className="text-center py-4 text-slate-500 text-sm">
+          No upcoming players yet...
+        </div>
       )}
     </div>
   );

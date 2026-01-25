@@ -6,7 +6,6 @@ const BidderTeamPlayers = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const Players = location.state || [];
-  console.log(Players)
 
   const handleNavigate = (id, setNo) => {
     navigate(`/auction/teams/player/${id}`, {
@@ -14,60 +13,70 @@ const BidderTeamPlayers = () => {
     });
   };
 
-  
-
   return (
-    <div className="min-h-screen min-w-screen flex flex-col !bg-gray-100">
+    <div className="min-h-screen min-w-screen flex flex-col bg-[#eef1f4]">
       <BidderNavBar />
 
-      <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 text-center my-6">
-        Team Players
-      </h2>
+      <div className="px-6 py-8 max-w-7xl w-full mx-auto">
+        <h2 className="text-2xl md:text-3xl font-semibold text-slate-800 text-center mb-6 tracking-tight">
+          Purchased Players
+        </h2>
 
-      {Players.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-10 px-6 pb-10">
-          {Players.map((player) => (
-            <div
-              key={player.playerId}
-              onClick={() => handleNavigate(player.playerId, player.setNo)}
-              className="cursor-pointer rounded-lg bg-white shadow hover:shadow-lg transition duration-300 hover:-translate-y-1 border border-gray-200"
-            >
-              <img
-                src={player.imageUrl}
-                alt="player"
-                className="rounded-t-lg w-full h-48 object-cover"
-              />
+        {Players?.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
+            {Players.map((player) => (
+              <div
+                key={player?.playerId}
+                onClick={() => handleNavigate(player?.playerId, player?.setNo)}
+                className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md 
+                           hover:-translate-y-[2px] transition cursor-pointer overflow-hidden"
+              >
+                {/* IMAGE */}
+                <img
+                  src={player?.imageUrl}
+                  alt={player?.name}
+                  className="h-48 w-full object-cover"
+                />
 
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {player.name}
-                </h3>
+                <div className="p-4 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-slate-800 line-clamp-1">
+                      {player?.name}
+                    </h3>
 
-                <p className="text-sm text-gray-600 mt-1">
-                  Set: <span className="font-medium">{player.setNo}</span>
-                </p>
+                    {/* ROLE BADGE */}
+                    <span className="text-xs px-2 py-[2px] rounded-full border bg-slate-100 text-slate-600">
+                      {player?.role}
+                    </span>
+                  </div>
 
-                <p className="text-sm text-gray-600 mt-1">
-                  Sold Price:{" "}
-                  <span className="font-medium text-green-700">
-                    ₹{player.soldPrice}
-                  </span>
-                </p>
+                  <p className="text-xs text-slate-500">
+                    Set No: <span className="font-medium text-slate-700">{player?.setNo}</span>
+                  </p>
 
-                <button
-                  className="mt-4 w-full !bg-gray-600 text-white py-2 rounded-md text-sm font-medium hover:!bg-indigo-700 transition"
-                >
-                  View Details
-                </button>
+                  <p className="text-xs text-slate-500">
+                    Sold Price:{" "}
+                    <span className="font-semibold text-green-700">
+                      ₹{player?.soldPrice?.toLocaleString()}
+                    </span>
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 text-lg mt-10">
-          No players bought yet!
-        </p>
-      )}
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center items-center h-[40vh] opacity-80">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/7466/7466046.png"
+              alt="empty"
+              className="w-24 mb-3 opacity-80"
+            />
+            <p className="text-slate-600 text-lg font-medium">
+              No players purchased yet!
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

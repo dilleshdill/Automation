@@ -36,7 +36,7 @@ const NavBar = () => {
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm top-0 min-w-screen">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="text-lg font-bold text-gray-700 ">Auction</div>
 

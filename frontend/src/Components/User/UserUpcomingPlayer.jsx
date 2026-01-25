@@ -13,14 +13,16 @@ const UserUpcomingPlayer = ({ auctionId }) => {
 
   const fetchedData = async () => {
     try {
-      const response = await axios.get(
+      const res = await axios.get(
         `${DOMAIN}/auction/upcoming-players?auctionId=${auctionId}`,
+        { withCredentials: true }
       );
-      if (response.status === 200) {
-        setUpcomingData(response.data);
+
+      if (res.status === 200) {
+        setUpcomingData(res?.data?.data ?? []);
       }
     } catch (err) {
-      console.log(err);
+      console.log("UpcomingPlayer Fetch Error:", err);
     }
   };
 
@@ -28,55 +30,66 @@ const UserUpcomingPlayer = ({ auctionId }) => {
     fetchedData();
 
     socket.on("upcomingPlayer-error", () => {
-      console.log("something there is error in upcomingPlayer Socket");
+      console.log("User: upcomingPlayer socket error");
     });
 
-    socket.on("upcomingPlayer-success", (player) => {
-      console.log(player);
-      setUpcomingData(player);
+    socket.on("upcomingPlayer-success", (playerList) => {
+      setUpcomingData(playerList ?? []);
     });
+
+    return () => {
+      socket.off("upcomingPlayer-error");
+      socket.off("upcomingPlayer-success");
+    };
   }, []);
 
   const getNavigate = (player) => {
-    console.log(player);
-    navigate(`/auction/user/player/${player._id}`, {
+    navigate(`/auction/user/player/${player?._id}`, {
       state: player,
     });
   };
 
   return (
-    <div className="flex flex-col min-w-screen p-5">
-      <h2 className="text-xl font-semibold mb-3">Upcoming Players</h2>
+    <div className="min-w-screen flex flex-col px-4 py-4">
+      <h2 className="text-lg md:text-xl font-semibold mb-3 tracking-wide text-slate-800">
+        Upcoming Players
+      </h2>
 
-      {upcomingData.length > 0 ? (
-        <div className="max-w-screen">
+      {upcomingData?.length > 0 ? (
+        <div className="min-w-screen">
           <Swiper
-            spaceBetween={30}
+            spaceBetween={20}
             breakpoints={{
-              640: { slidesPerView: 1 },
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 5 },
+              0: { slidesPerView: 2 },
+              640: { slidesPerView: 3 },
+              768: { slidesPerView: 4 },
+              1024: { slidesPerView: 6 },
             }}
           >
             {upcomingData.map((player) => (
-              <SwiperSlide key={player.playerId}>
+              <SwiperSlide key={player?.playerId ?? player?._id}>
                 <div
-                  className="border rounded-lg p-3 flex flex-col items-center"
                   onClick={() => getNavigate(player)}
+                  className="flex flex-col items-center p-3 rounded-lg bg-white shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-1 transition cursor-pointer select-none min-w-[130px]"
                 >
                   <img
-                    src={player.imageUrl}
-                    className="h-32 w-32 rounded-full object-cover mb-2"
+                    src={player?.imageUrl ?? "/placeholder-player.png"}
+                    className="h-24 w-24 rounded-full object-cover ring-1 ring-slate-200 mb-2"
+                    alt={player?.name ?? "player"}
                   />
-                  <p className="font-semibold">{player.name}</p>
-                  <p className="text-sm text-gray-600">{player.role}</p>
+                  <p className="font-medium text-sm md:text-base text-slate-800">
+                    {player?.name ?? "Unknown"}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {player?.role ?? "—"}
+                  </p>
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
       ) : (
-        <p className="text-gray-500 text-sm">No upcoming players</p>
+        <p className="text-slate-500 text-sm">No upcoming players yet...</p>
       )}
     </div>
   );

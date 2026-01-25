@@ -7,6 +7,7 @@ export const registerAuctionSocketEvents = (io) => {
   io.on("connection", (socket) => {
     socket.on("join-auction", async (auctionId) => {
       socket.join(auctionId);
+
       runningAuctions[auctionId] = {
         timeLeft: runningAuctions[auctionId]?.timeLeft || 10,
         currentPlayer: "",
@@ -18,9 +19,11 @@ export const registerAuctionSocketEvents = (io) => {
       const auction = await Auction.findById(auctionId);
       if (!auction) return;
 
-      const set = auction.players[auction.currentSet];
-      const player = set?.playersList[auction.currentPlayerIndex] || [];
-      console.log("state sync players",player)
+      const set = auction?.players?.[auction.currentSet];
+      const player = set?.playersList?.[auction.currentPlayerIndex] || [];
+
+      console.log("state sync players", player);
+
       const newdata = {
         playerId: player?._id || "",
         name: player?.name || "",
@@ -35,53 +38,48 @@ export const registerAuctionSocketEvents = (io) => {
         average: player?.stats?.average || "",
         strikeRate: player?.stats?.strikeRate || "",
         fifties: player?.stats?.fifties || "",
-        hundreds: player?.stats?.hundreds || ""
+        hundreds: player?.stats?.hundreds || "",
       };
 
-      
       io.to(auctionId).emit("state-sync", {
         currentPlayer: newdata,
         currentBid: auction.currentBid,
         currentBidder: auction.currentBidder,
-        timeLeft: runningAuctions[auctionId].timeLeft,
-        auctionStatus: runningAuctions[auctionId].auctionStatus,
+        timeLeft: runningAuctions[auctionId]?.timeLeft,
+        auctionStatus: runningAuctions[auctionId]?.auctionStatus,
       });
 
       const newauction = await Auction.findById(auctionId);
-
       if (!auction) {
         io.to(auctionId).emit("upcomingPlayer-error");
       }
 
-      const setNo = newauction.currentSet;
-      const indexNo = newauction.currentPlayerIndex;
+      const setNo = newauction?.currentSet;
+      const indexNo = newauction?.currentPlayerIndex;
 
-      const players = newauction.players?.filter((each) => each.setNo === setNo);
-
+      const players = newauction?.players?.filter((each) => each?.setNo === setNo);
       if (!players) {
         io.to(auctionId).emit("upcomingPlayer-error");
-        return ;
+        return;
       }
 
-      const upcomingPlayers = players[0]?.playersList?.filter(
-        (each, index) => index > indexNo,
-      ) || [];
+      const upcomingPlayers =
+        players?.[0]?.playersList?.filter((each, index) => index > indexNo) || [];
 
       io.to(auctionId).emit("upcomingPlayer-success", upcomingPlayers);
     });
 
     socket.on("place-bid", async ({ auctionId, bid, teamName, teamId }) => {
-
       const auction = await Auction.findById(auctionId);
-
       if (!auction) return;
-      const team = auction.franchises.find((f) => f._id.toString() === teamId);
 
+      const team = auction?.franchises?.find((f) => f?._id?.toString() === teamId);
       if (!team) {
-        console.log("not mathces with id");
+        console.log("not matches with id");
         return;
       }
-      if (team.purse < bid) {
+
+      if (team?.purse < bid) {
         runningAuctions[auctionId].currentBid = bid;
         runningAuctions[auctionId].currentBidder = teamId;
         io.to(auctionId).emit("bid-error", "Not Enough Purse");
@@ -90,12 +88,15 @@ export const registerAuctionSocketEvents = (io) => {
 
       auction.currentBid = bid;
       auction.currentBidder = teamId;
-      runningAuctions[auctionId].timeLeft = 10
+      runningAuctions[auctionId].timeLeft = 10;
+
       await auction.save();
+
       io.to(auctionId).emit("bid-updated", {
         bid,
         bidderId: teamName,
       });
+
       startTimer(auctionId, io);
     });
 
@@ -107,8 +108,8 @@ export const registerAuctionSocketEvents = (io) => {
 
       io.to(auctionId).emit("auction-paused", {
         timer,
-        currentBid: runningAuctions[auctionId].currentBid,
-        currentPlayer: runningAuctions[auctionId].currentPlayer,
+        currentBid: runningAuctions[auctionId]?.currentBid,
+        currentPlayer: runningAuctions[auctionId]?.currentPlayer,
       });
 
       const auction = await Auction.findById(auctionId);
@@ -119,9 +120,10 @@ export const registerAuctionSocketEvents = (io) => {
     socket.on("resume-auction", async ({ auctionId }) => {
       const auction = await Auction.findById(auctionId);
       auction.status = "live";
-      
       await auction.save();
+
       runningAuctions[auctionId].auctionStatus = "Live";
+
       io.to(auctionId).emit("resume-auction");
       startTimer(auctionId, io);
     });
@@ -130,7 +132,9 @@ export const registerAuctionSocketEvents = (io) => {
       const auction = await Auction.findById(auctionId);
       auction.status = "ended";
       await auction.save();
-      runningAuctions[auctionId].auctionStatus = "ended"
+
+      runningAuctions[auctionId].auctionStatus = "ended";
+
       io.to(auctionId).emit("auction-ended");
     });
 
@@ -140,63 +144,54 @@ export const registerAuctionSocketEvents = (io) => {
         const auction = await Auction.findById(auctionId);
         if (!auction) return socket.emit("join-error", "Auction not found");
 
-        // if (auction.status === "live") {
-        //   return socket.emit("join-error", "Auction already live");
-        // }
-
         socket.teamName = teamName;
         socket.auctionId = auctionId;
 
         socket.join(auctionId);
 
-        const set = auction.players[auction.currentSet];
-        const player = set?.playersList[auction.currentPlayerIndex];
+        const set = auction?.players?.[auction.currentSet];
+        const player = set?.playersList?.[auction.currentPlayerIndex];
 
         const newdata = {
-          playerId: player._id,
-          name: player.name,
-          basePrice: player.basePrice,
-          setNo: set.setNo,
-          role: player.role,
-          imageUrl: player.imageUrl,
-          matches: player.stats.matches,
-          innings: player.stats.innings,
-          runs: player.stats.runs,
-          highestScore: player.stats.highestScore,
-          average: player.stats.average,
-          strikeRate: player.stats.strikeRate,
-          fifties: player.stats.fifties,
-          hundreds: player.stats.hundreds,
+          playerId: player?._id,
+          name: player?.name,
+          basePrice: player?.basePrice,
+          setNo: set?.setNo,
+          role: player?.role,
+          imageUrl: player?.imageUrl,
+          matches: player?.stats?.matches,
+          innings: player?.stats?.innings,
+          runs: player?.stats?.runs,
+          highestScore: player?.stats?.highestScore,
+          average: player?.stats?.average,
+          strikeRate: player?.stats?.strikeRate,
+          fifties: player?.stats?.fifties,
+          hundreds: player?.stats?.hundreds,
         };
 
         io.to(auctionId).emit("state-sync", {
           currentPlayer: newdata,
-          currentBid: auction.currentBid,
-          currentBidder: auction.currentBidder,
-          timeLeft: runningAuctions[auctionId].timeLeft,
-          auctionStatus: runningAuctions[auctionId].auctionStatus,
+          currentBid: auction?.currentBid,
+          currentBidder: auction?.currentBidder,
+          timeLeft: runningAuctions[auctionId]?.timeLeft,
+          auctionStatus: runningAuctions[auctionId]?.auctionStatus,
         });
 
         const newauction = await Auction.findById(auctionId);
-
         if (!auction) {
           io.to(auctionId).emit("upcomingPlayer-error");
         }
 
-        const setNo = newauction.currentSet;
-        const indexNo = newauction.currentPlayerIndex;
+        const setNo = newauction?.currentSet;
+        const indexNo = newauction?.currentPlayerIndex;
 
-        const players = newauction.players.filter(
-          (each) => each.setNo === setNo,
-        );
-
+        const players = newauction?.players?.filter((each) => each?.setNo === setNo);
         if (!players) {
           io.to(auctionId).emit("upcomingPlayer-error");
         }
 
-        const upcomingPlayers = players[0].playersList.filter(
-          (each, index) => index > indexNo,
-        );
+        const upcomingPlayers =
+          players?.[0]?.playersList?.filter((each, index) => index > indexNo);
 
         io.to(auctionId).emit("upcomingPlayer-success", upcomingPlayers);
 
@@ -207,17 +202,19 @@ export const registerAuctionSocketEvents = (io) => {
       }
     });
   });
-};
+};  
 
 export const startTimer = (auctionId, io) => {
-  if (runningAuctions[auctionId].auctionStatus === "Live") {
+  if (runningAuctions[auctionId]?.auctionStatus === "Live") {
     clearInterval(timers[auctionId]);
-    let timeLeft = runningAuctions[auctionId].timeLeft || 10;
+
+    let timeLeft = runningAuctions[auctionId]?.timeLeft || 10;
 
     timers[auctionId] = setInterval(async () => {
       timeLeft--;
 
       io.to(auctionId).emit("timer-update", { timeLeft });
+
       if (timeLeft <= 0) {
         runningAuctions[auctionId].timeLeft = 10;
         clearInterval(timers[auctionId]);
@@ -229,88 +226,99 @@ export const startTimer = (auctionId, io) => {
 
 async function closeBidding(auctionId, io) {
   const auction = await Auction.findById(auctionId);
-  const set = auction.players[auction.currentSet];
-  console.log(auction,auction.currentPlayerIndex)
-  const player = set.playersList[auction.currentPlayerIndex];
 
- 
-  if (auction.currentBid > 0) {
-    console.log(auction.currentBidder)
-     const bidderTeam = auction.franchises.filter(team => team._id.toString() === auction.currentBidder.toString())
-     console.log("bidderTeam",bidderTeam)
-      io.to(auctionId).emit("player-sold",{
-        currentBidder:bidderTeam[0].teamName,
-        currentPlayer:player.name})
-      player.status = "sold";
-      player.soldTo = auction.currentBidder;
-      player.soldPrice = auction.currentBid;
+  const set = auction?.players?.[auction.currentSet];
+  console.log(auction, auction?.currentPlayerIndex);
 
-      const franchise = auction.franchises.find((f) =>
-        f._id.equals(auction.currentBidder),
-      );
-      franchise.players.push({
-        playerId: player._id,
-        name: player.name,
-        soldPrice: auction.currentBid,
-        setNo: auction.currentSet,
-      });
+  const player = set?.playersList?.[auction?.currentPlayerIndex];
 
-      franchise.purse -= auction.currentBid;
-    } else {
+  if (auction?.currentBid > 0) {
+    console.log(auction?.currentBidder);
 
-      player.status = "unsold";
-      io.to(auctionId).emit("player-unsold",{
-        currentPlayer:player.name
-      })
+    const bidderTeam = auction?.franchises?.filter(
+      (team) => team?._id?.toString() === auction?.currentBidder?.toString()
+    );
+
+    console.log("bidderTeam", bidderTeam);
+
+    io.to(auctionId).emit("player-sold", {
+      currentBidder: bidderTeam?.[0]?.teamName,
+      currentPlayer: player?.name,
+    });
+
+    player.status = "sold";
+    player.soldTo = auction?.currentBidder;
+    player.soldPrice = auction?.currentBid;
+
+    const franchise = auction?.franchises?.find((f) =>
+      f?._id?.equals(auction?.currentBidder)
+    );
+
+    franchise.players.push({
+      playerId: player?._id,
+      name: player?.name,
+      soldPrice: auction?.currentBid,
+      setNo: auction?.currentSet,
+    });
+
+    franchise.purse -= auction?.currentBid;
+  } else {
+    player.status = "unsold";
+
+    io.to(auctionId).emit("player-unsold", {
+      currentPlayer: player?.name,
+    });
   }
 
   await auction.save();
 
   io.to(auctionId).emit("player-result", {
     player,
-    result: player.status,
+    result: player?.status,
   });
 
   setTimeout(() => moveNextPlayer(auctionId, io), 2000);
 }
 
+
 async function moveNextPlayer(auctionId, io) {
   const auction = await Auction.findById(auctionId);
-  let set = auction.players[auction.currentSet];
+
+  let set = auction?.players?.[auction.currentSet];
 
   auction.currentPlayerIndex++;
 
-  if (auction.currentPlayerIndex >= set.playersList.length) {
+  if (auction.currentPlayerIndex >= set?.playersList?.length) {
     auction.currentSet++;
     auction.currentPlayerIndex = 0;
 
-    if (auction.currentSet >= auction.players.length) {
+    if (auction.currentSet >= auction?.players?.length) {
       auction.status = "ended";
       await auction.save();
       io.to(auctionId).emit("auction-ended");
       return;
     }
 
-    set = auction.players[auction.currentSet];
+    set = auction?.players?.[auction.currentSet];
   }
 
-  const nextPlayer = set.playersList[auction.currentPlayerIndex];
+  const nextPlayer = set?.playersList?.[auction.currentPlayerIndex];
 
   const newdata = {
-    playerId: nextPlayer._id,
-    name: nextPlayer.name,
-    basePrice: nextPlayer.basePrice,
-    setNo: set.setNo,
-    role: nextPlayer.role,
-    imageUrl: nextPlayer.imageUrl,
-    matches: nextPlayer.stats.matches,
-    innings: nextPlayer.stats.innings,
-    runs: nextPlayer.stats.runs,
-    highestScore: nextPlayer.stats.highestScore,
-    average: nextPlayer.stats.average,
-    strikeRate: nextPlayer.stats.strikeRate,
-    fifties: nextPlayer.stats.fifties,
-    hundreds: nextPlayer.stats.hundreds,
+    playerId: nextPlayer?._id,
+    name: nextPlayer?.name,
+    basePrice: nextPlayer?.basePrice,
+    setNo: set?.setNo,
+    role: nextPlayer?.role,
+    imageUrl: nextPlayer?.imageUrl,
+    matches: nextPlayer?.stats?.matches,
+    innings: nextPlayer?.stats?.innings,
+    runs: nextPlayer?.stats?.runs,
+    highestScore: nextPlayer?.stats?.highestScore,
+    average: nextPlayer?.stats?.average,
+    strikeRate: nextPlayer?.stats?.strikeRate,
+    fifties: nextPlayer?.stats?.fifties,
+    hundreds: nextPlayer?.stats?.hundreds,
   };
 
   auction.currentBid = 0;
@@ -329,18 +337,17 @@ async function moveNextPlayer(auctionId, io) {
     io.to(auctionId).emit("upcomingPlayer-error");
   }
 
-  const setNo = newauction.currentSet;
-  const indexNo = newauction.currentPlayerIndex;
+  const setNo = newauction?.currentSet;
+  const indexNo = newauction?.currentPlayerIndex;
 
-  const players = newauction.players.filter((each) => each.setNo === setNo);
+  const players = newauction?.players?.filter((each) => each?.setNo === setNo);
 
   if (!players) {
     io.to(auctionId).emit("upcomingPlayer-error");
   }
 
-  const upcomingPlayers = players[0].playersList.filter(
-    (each, index) => index > indexNo,
-  );
+  const upcomingPlayers =
+    players?.[0]?.playersList?.filter((each, index) => index > indexNo);
 
   io.to(auctionId).emit("upcomingPlayer-success", upcomingPlayers);
 

@@ -92,7 +92,7 @@ export const getUpcomingPlayers = async(req,res) => {
     return res.status(400).json("Players Doesnot Exist")
   }
 
-  const upcomingPlayers = players[0].playersList.filter((each,index) => index > 0)
+  const upcomingPlayers = players[0]?.playersList?.filter((each,index) => index > 0)
 
   res.status(200).json(upcomingPlayers)
 }
@@ -108,5 +108,28 @@ export const getBidderDetailes = async (req,res) =>{
     return res.status(200).json({message:'success',data:bidder})
   }catch(error){
     return res.status(400).json({message:error})
+  }
+}
+
+export const getPurse = async(req,res) => {
+  try{
+    const {email} = req.user
+  
+      const {auctionId} = req.query
+      
+      const auction = await Auction.findById(auctionId)
+      
+      const franchises = auction.franchises?.filter(eachItem => eachItem.email === email);
+      
+      
+      if (!franchises) {
+        return res.status(404).json({ error: "No franchise found for this email" });
+      }
+
+      
+      return res.status(200).json({ data: franchises});
+
+  }catch(err){
+    res.status(400).json({err})
   }
 }

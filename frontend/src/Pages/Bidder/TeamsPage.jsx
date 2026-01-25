@@ -4,22 +4,18 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 const DOMAIN = import.meta.env.VITE_DOMAIN;
-
-
 
 const TiltCard = ({ team }) => {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const threshold = 20;
-    const navigate = useNavigate()
+  const navigate = useNavigate();
+  const threshold = 18;
 
-    const getNavigate = (id,team) => {
-    navigate(`/auction/teams/${id}`,{
-        state:team.players
-    })
-  }
-    
+  const handleNavigate = () => {
+    navigate(`/auction/teams/${team?._id}`, {
+      state: team?.players ?? [],
+    });
+  };
 
   const handleMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -30,67 +26,97 @@ const TiltCard = ({ team }) => {
 
   return (
     <div
-      className="rounded-xl shadow-xl overflow-hidden transition-transform duration-200 ease-out cursor-pointer max-w-80 bg-white"
+      onClick={handleNavigate}
       onMouseMove={handleMove}
       onMouseLeave={() => setTilt({ x: 0, y: 0 })}
+      className="
+        rounded-xl bg-white border border-slate-200 shadow-md
+        hover:shadow-lg transition-all cursor-pointer overflow-hidden
+        max-w-[270px] w-full
+      "
       style={{
-        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
+        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transition: "transform 0.15s ease-out",
       }}
-      onClick={() => getNavigate(team._id,team)}
     >
       <img
-        src="https://images.unsplash.com/photo-1747134392471-831ea9a48e1e?q=80&w=2000&auto=format&fit=crop"
-        alt="City skyline"
-        className="w-full h-52 object-cover"
+        src={
+          team?.logo ||
+          "https://images.unsplash.com/photo-1508341591423-4347099e1f19?auto=format&fit=crop&w=800&q=60"
+        }
+        alt={team?.teamName}
+        className="w-full h-40 object-cover"
       />
 
-      <h3 className="mt-3 px-4 pt-3 mb-1 text-lg font-semibold text-gray-800">
-        {team.teamName}
-      </h3>
-      <p className="text-sm px-4 pb-6 text-gray-600 w-5/6">
-        Purse: {team.purse}
-      </p>
+      <div className="px-4 py-3 space-y-1">
+        {/* Team Name */}
+        <h3 className="text-lg font-semibold text-slate-800 tracking-tight">
+          {team?.teamName ?? "Team"}
+        </h3>
+
+        {/* Purse */}
+        <p className="text-sm text-slate-600">
+          Purse:{" "}
+          <span className="font-semibold text-green-700">
+            ₹{team?.purse?.toLocaleString() ?? 0}
+          </span>
+        </p>
+
+        {/* Progress Bar (Remaining Purse Visual) */}
+        <div className="w-full h-[6px] bg-slate-200 rounded-full overflow-hidden mt-2">
+          <div
+            className="h-full bg-green-500"
+            style={{ width: `${Math.min((team?.purse / 10000000) * 100, 100)}%` }}
+          ></div>
+        </div>
+      </div>
     </div>
   );
 };
 
 const TeamsPage = () => {
-  const [data, setData] = useState([]);
+  const [teams, setTeams] = useState([]);
 
-  const fetchedData = async () => {
+  const fetchTeams = async () => {
     try {
       const auctionId = localStorage.getItem("auctionId");
 
-      const response = await axios.post(
-        DOMAIN + "/auction/get-teams",
+      const res = await axios.post(
+        `${DOMAIN}/auction/get-teams`,
         { auctionId },
         { withCredentials: true }
       );
 
-      if (response.status === 200) {
-        console.log(response.data.data)
-        setData(response.data.data);
+      if (res.status === 200) {
+        setTeams(res?.data?.data ?? []);
       }
     } catch (err) {
-      toast.error("Something went wrong");
-      console.log(err);
+      toast.error("Failed to load teams");
     }
   };
 
   useEffect(() => {
-    fetchedData();
+    fetchTeams();
   }, []);
 
-  
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen min-w-screen flex flex-col bg-[#f5f6fa]">
       <BidderNavBar />
-      <p className="text-xl font-semibold px-4 mt-4">Team Details</p>
 
-      <div className="grid md:grid-cols-3 gap-6 p-6">
-        {data.map((team) => (
-          <TiltCard key={team._id} team={team} />
-        ))}
+      <div className="px-6 py-10 max-w-7xl w-full mx-auto">
+        {/* Page Title */}
+        <h2 className="text-[24px] font-semibold text-slate-700 tracking-tight mb-6">
+          Auction Teams
+        </h2>
+
+        {/* Team Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 place-items-center">
+          {teams.length > 0 ? (
+            teams.map((team) => <TiltCard key={team?._id} team={team} />)
+          ) : (
+            <p className="text-slate-500 text-sm">No teams found.</p>
+          )}
+        </div>
       </div>
     </div>
   );

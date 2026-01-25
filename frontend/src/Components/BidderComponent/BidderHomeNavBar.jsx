@@ -50,6 +50,13 @@ const BidderHomeNavBar = () => {
             >
               Home
             </a>
+            <a
+              href="/bidder/history"
+              className="hover:text-gray-700 cursor-pointer"
+            >
+              History
+            </a>
+
           </div>
 
           <div className="flex items-center gap-4 relative">
@@ -110,6 +117,9 @@ const BidderHomeNavBar = () => {
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
             <a href="/bidder/auctions" className="block">
               Home
+            </a>
+            <a href="/bidder/history" className="block">
+              History
             </a>
           </div>
         </div>

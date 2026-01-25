@@ -7,18 +7,10 @@ import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
-const BidderAuctions = () => {
+const BidderHistory = () => {
   const [auctionList, setAuctionList] = useState([]);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [selectedAuction, setSelectedAuction] = useState(null);
-
-  const [teamName, setTeamName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [bidderEmail, setBidderEmail] = useState("");
   const [loginId, setLoginId] = useState([]);
-  const [loader, setLoader] = useState(false);
-
+ 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
@@ -51,7 +43,6 @@ const BidderAuctions = () => {
 
         if (res.status === 200) {
           const email = res?.data?.data?.email;
-          setBidderEmail(email);
 
           const loggedAuctions = auctionList
             .filter((a) => a?.franchises?.some((f) => f?.email === email))
@@ -79,34 +70,6 @@ const BidderAuctions = () => {
     navigate(`/bidder/auctiondetailes/${id}`, { state: { id } });
   };
 
-  const openLoginForm = (id, e) => {
-    e.stopPropagation();
-    setSelectedAuction(id);
-    setShowLoginModal(true);
-  };
-
-  const submitLogin = async () => {
-    setLoader(true);
-    try {
-      const res = await axios.post(
-        `${DOMAIN}/bidder/verify`,
-        { auction_id: selectedAuction, teamName, email, password },
-        { withCredentials: true }
-      );
-
-      if (res.status === 200) {
-        setLoader(false);
-        setShowLoginModal(false);
-        navigate(`/bidder/auction/${selectedAuction}`, {
-          state: { data: { id: selectedAuction, teamName, teamId: res?.data?.teamId } },
-        });
-      }
-    } catch (err) {
-      setLoader(false);
-      setShowLoginModal(false);
-      toast.error(err?.response?.data ?? "Invalid Credentials");
-    }
-  };
 
   const statusBadge = (status) =>
     ({
@@ -142,7 +105,6 @@ const BidderAuctions = () => {
         </select>
       </div>
 
-      {/* LIST */}
       {filteredAuctions.length === 0 ? (
         <div className="flex-1 flex justify-center items-center">
           <BidderAuctionNotStart />
@@ -156,7 +118,10 @@ const BidderAuctions = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
             {filteredAuctions.map((auction) => (
-              <div
+              
+            loginId.includes(auction?._id) && 
+            (
+                <div
                 key={auction?._id}
                 onClick={() => getNavigate(auction?._id)}
                 className="!bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer p-4 flex flex-col"
@@ -186,111 +151,24 @@ const BidderAuctions = () => {
                   <p>⏱ Player Time: {auction?.auction_time}s</p>
                 </div>
 
-                <div className="mt-auto pt-4">
-                  {auction.status === "upcoming" && loginId.includes(auction?._id) && (
-                    <button
-                      onClick={(e) => openLoginForm(auction?._id, e)}
-                      className="w-full !bg-blue-500 hover:!bg-blue-700 text-white text-sm py-2 rounded-md"
-                    >
-                      Login to Auction
-                    </button>
-                  )}
-
-                  {(auction.status === "upcoming" && !loginId.includes(auction?._id)) && (
-                    <button
-                      onClick={(e) => openLoginForm(auction?._id, e)}
-                      className="w-full !bg-slate-300 hover:!bg-red-700 text-white text-sm py-2 rounded-md"
-                    >
-                      You Dont Have Access
-                    </button>
-                  )}
-
-
-                  {auction.status === "live" && loginId.includes(auction?._id) && (
-                    <button
-                      onClick={(e) => openLoginForm(auction?._id, e)}
-                      className="w-full !bg-green-600 hover:!bg-green-700 text-white text-sm py-2 rounded-md"
-                    >
-                      Rejoin Auction
-                    </button>
-                  )}
-
-                  {auction.status === "live" && !loginId.includes(auction?._id) && (
-                    <button
-                      onClick={(e) => openLoginForm(auction?._id, e)}
-                      className="w-full !bg-slate-300 hover:!bg-red-700 text-white text-sm py-2 rounded-md"
-                    >
-                      You Dont Have Access
-                    </button>
-                  )}
-
-                  {auction.status === "paused" && (
-                    <button className="w-full !bg-green-500 text-white text-sm py-2 rounded-md opacity-90">
-                      Auction Paused
-                    </button>
-                  )}
-
+                
                   {auction.status === "ended" && (
                     <button className="w-full !bg-slate-400 text-white text-sm py-2 rounded-md opacity-90">
                       Auction Ended
                     </button>
                   )}
-                </div>
               </div>
+            )
+              
+              
             ))}
           </div>
         </div>
       )}
 
-      {/* LOGIN MODAL */}
-      {showLoginModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-3">
-          <div className="!bg-white w-full max-w-sm rounded-xl shadow-xl p-6">
-            <h2 className="text-lg font-semibold mb-4 text-slate-800">
-              Bidder Login
-            </h2>
-
-            <input
-              className="border rounded w-full p-2 mb-3 text-sm"
-              placeholder="Team Name"
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-            />
-
-            <input
-              type="email"
-              className="border rounded w-full p-2 mb-3 text-sm"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <input
-              type="password"
-              className="border rounded w-full p-2 mb-4 text-sm"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <button
-              className="w-full !bg-blue-600 text-white py-2 rounded-md text-sm font-medium hover:!bg-blue-700 mb-2"
-              onClick={submitLogin}
-            >
-              {loader ? "Authenticating..." : "Login"}
-            </button>
-
-            <button
-              className="w-full bg-gray-300 text-black py-2 rounded-md text-sm font-medium"
-              onClick={() => setShowLoginModal(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };
 
-export default BidderAuctions;
+export default BidderHistory;

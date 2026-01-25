@@ -1,69 +1,94 @@
-import {React,useEffect, useState} from 'react'
-import BidderHomeNavBar from '../../Components/BidderComponent/BidderHomeNavBar'
-import axios from 'axios'
-const DOMAIN = import.meta.env.VITE_DOMAIN
+import { React, useEffect, useState } from "react";
+import BidderHomeNavBar from "../../Components/BidderComponent/BidderHomeNavBar";
+import axios from "axios";
 
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const BidderProfile = () => {
-  const [BidderData,setBidderData] = useState({})
+  const [BidderData, setBidderData] = useState({});
 
-  const fetchedData = async() => {
-    try{
-      const id = localStorage.getItem("BidderId")
-      console.log(id)
-      
-      const response = await axios.post(DOMAIN + "/bidder/get-bidder",
-        {
-          id
-        },
-        {withCredentials:true})
-      
-      if (response.status === 200){
-        console.log(response.data)
-        setBidderData(response.data.data)
-      } 
+  const fetchedData = async () => {
+    try {
+      const id = localStorage.getItem("BidderId");
 
-    }catch(err){
-      console.log(err)
+      const res = await axios.post(
+        `${DOMAIN}/bidder/get-bidder`,
+        { id },
+        { withCredentials: true }
+      );
+
+      if (res.status === 200) {
+        setBidderData(res.data?.data ?? {});
+      }
+    } catch (err) {
+      console.log(err);
     }
-  }
-  
-  useEffect(() => {
-    fetchedData()
-  },[])
-  return (
-    <div className='flex flex-col min-w-screen min-h-screen'>
-      <BidderHomeNavBar />
-      <div className="flex flex-col max-md:gap-20 md:flex-row pb-20 items-center justify-between mt-20 px-4 md:px-16 lg:px-24 xl:px-32">
-        <div className="flex flex-col items-center md:items-start">
-            <div className="flex flex-wrap items-center justify-center p-1.5 rounded-full border border-slate-600 text-black text-xs">
-            <div className="flex items-center">
-                    <img className="size-7 rounded-full border-3 !border-white"
-                        src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=50" alt="userImage1"/>
-                    <img className="size-7 rounded-full border-3 border-white -translate-x-2"
-                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=50" alt="userImage2" />
-                    <img className="size-7 rounded-full border-3 border-white -translate-x-4"
-                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=50&h=50&auto=format&fit=crop"
-                        alt="userImage3" />
-                </div>
-                <p className="-translate-x-2">Support Our Franchsis To Win </p>
-            </div>
-            <h1 className="text-center md:text-left text-5xl leading-[68px] md:text-6xl md:leading-[84px] font-medium max-w-xl text-slate-500">
-                {BidderData.teamName}
-            </h1>
-            <p className="text-center md:text-left text-sm text-slate-400 max-w-lg mt-2">
-                Email : {BidderData.email}
-            </p>
-           
-            <div className="flex items-center gap-4 mt-8 text-sm">
-              
-            </div>
-        </div>
-          
-        <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/hero-section-showcase-3.png" alt="hero" className="max-w-xs sm:max-w-sm lg:max-w-md transition-all duration-300" />
-      </div >
-    </div>
-  )
-}
+  };
 
-export default BidderProfile
+  useEffect(() => {
+    fetchedData();
+  }, []);
+
+  return (
+    <div className="min-h-screen min-w-screen bg-[#eef1f4] flex flex-col">
+      <BidderHomeNavBar />
+
+      <div className="flex justify-center items-start mt-16 px-6 pb-20 w-full">
+        <div className="bg-white w-full max-w-4xl rounded-xl shadow-md border border-slate-200 p-10 flex flex-col lg:flex-row gap-10">
+
+          {/* LEFT CONTENT */}
+          <div className="flex flex-col flex-1 justify-center">
+            {/* Title + badge */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
+                {BidderData?.teamName?.[0] ?? "B"}
+              </div>
+              <h1 className="text-3xl font-semibold text-slate-800 tracking-tight">
+                {BidderData?.teamName ?? "Team Name"}
+              </h1>
+            </div>
+
+            {/* Email */}
+            <p className="text-sm text-slate-600 mb-4">
+              Email: <span className="font-medium text-slate-800">{BidderData?.email ?? "-"}</span>
+            </p>
+
+            {/* Purse (Added — important for bidder) */}
+            <div className="mt-4">
+              <p className="text-xs uppercase font-semibold text-slate-500 tracking-wide">
+                Purse Remaining
+              </p>
+              <p className="text-xl font-bold text-green-700">
+                ₹{BidderData?.purse ?? 0}
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-slate-200 my-6" />
+
+            {/* Additional info (can expand later) */}
+            <div className="space-y-2">
+              <p className="text-xs uppercase font-semibold text-slate-500 tracking-wider">
+                Franchise Status
+              </p>
+              <p className="text-[15px] font-medium text-slate-800">
+                Active Bidder
+              </p>
+            </div>
+          </div>
+
+          {/* IMAGE SECTION */}
+          <div className="flex justify-center items-center flex-1">
+            <img
+              src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/hero-section-showcase-3.png"
+              alt="hero"
+              className="max-w-xs sm:max-w-sm lg:max-w-md drop-shadow-md transition-all duration-300"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BidderProfile;

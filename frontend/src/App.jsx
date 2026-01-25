@@ -30,7 +30,7 @@ const UserProfile = lazy(() => import("./Pages/User/UserProfile"))
 const UserTeamPlayers = lazy(() =>import("./Pages/User/UserTeamPlayers"))
 const BidderAuctionDetailes = lazy(() =>import("./Pages/Bidder/BidderAuctionDetailes"))
 const UserAuctionDeatailes = lazy(() => import("./Pages/User/UserAuctionDetailes"))
-
+const BidderHistory = lazy(() =>import("./Pages/Bidder/BidderHistory"))
 
 import { ToastContainer } from "react-toastify";
 import { Toaster } from "react-hot-toast";
@@ -57,6 +57,7 @@ const App = () => {
           <Route path="/bidder/profile" element={<BidderProfile />} />
           <Route path="/bidder/auction/ended" element={<BidderAuctionEnded />} />
           <Route path="/auction/bidder/player/:id" element={<BidderPlayerDetailes />} />
+          <Route path="/bidder/history" element={<BidderHistory />} />
           
 
           <Route path="/auction/:id" element = {<AcutionAdminPage />} /> 
@@ -65,6 +66,7 @@ const App = () => {
           <Route path="/auction/teams/:id" element = {<BidderTeamPlayers />} />
           <Route path="/auction/teams/player/:id" element={<PlayerDetailes />} />
           <Route path="/auction/player/:id" element = {<AuctionPlayer />} />
+
 
           <Route path="/user/auctions" element={<UserAuction />} /> 
           <Route path="/user/auction/:id" element={<UserAuctionDeatailes />} />

@@ -7,8 +7,6 @@ import generateBidderRegisterToken from "../utils/generateBidderRegisterToken.js
 
 dotenv.config();
 
-//bidder Register
-
 export const registerBidder = async (req, res) => {
   try {
     const { email, auctionId, password, bidderTeam } = req.body;

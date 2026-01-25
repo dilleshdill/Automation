@@ -6,28 +6,29 @@ const DOMAIN = import.meta.env.VITE_API_URL;
 
 
 const HomePage = () => {
-    const [status,setStatus] = useState("Started");
-    useEffect(()=>{
-        const fetchedData = async() => {
-            try{
-                const response = await fetch(DOMAIN + "/auction/status");
-                if (response.status === 200) {
-                    const data = response.data.status
-                    setStatus(data);
-                }
+    // const [status,setStatus] = useState("Started");
+    // useEffect(()=>{
+    //     const fetchedData = async() => {
+    //         try{
+    //             const response = await fetch(DOMAIN + "/auction/status");
+    //             if (response.status === 200) {
+    //                 const data = response.data.status
+    //                 setStatus(data);
+    //             }
 
-            }catch(err){
-                console.log(err)
-            }
-        }
-        fetchedData()
-    },[])
+    //         }catch(err){
+    //             console.log(err)
+    //         }
+    //     }
+    //     fetchedData()
+    // },[])
 
   return (
     <div className='flex flex-col min-h-screen'>
-      <NavBar />
-        {status === "notStarted" && <AuctionNotStart /> }:
-        {status === "Started" && <AuctionStart /> }
+        homepage
+      {/* <NavBar /> */}
+        {/* {status === "notStarted" && <AuctionNotStart /> }:
+        {status === "Started" && <AuctionStart /> } */}
     </div>
   )
 }

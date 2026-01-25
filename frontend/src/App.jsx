@@ -43,7 +43,7 @@ const App = () => {
       <Suspense>
         <Routes>
           <Route path='/login' element={<LoginPage />} />
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LoginPage />} />
           
           <Route path="/admin" element={ <AdminPage />} />
           <Route path="/admin/create-auction" element={ <AuctionCreate />} />

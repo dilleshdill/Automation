@@ -98,8 +98,8 @@ app.get('/api/check',(req,res)=>{
 const PORT = process.env.PORT || 5000;
 await connectDB();
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// server.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
 
-// export default server
+export default server

@@ -41,7 +41,7 @@ const UserAuctions = () => {
   };
 
   const filteredAuctions = useMemo(() => {
-    return auctionList.filter((a) => {
+    return auctionList?.filter((a) => {
       const matchSearch = a?.auction_name?.toLowerCase()?.includes(search.toLowerCase());
       const matchFilter = filterStatus === "all" || a?.status === filterStatus;
       return matchSearch && matchFilter;

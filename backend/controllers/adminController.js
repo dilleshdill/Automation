@@ -92,8 +92,8 @@ export const adminLogin = async (req, res) => {
 
     res.cookie("admin_token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -120,8 +120,9 @@ export const getAdminProfile = async (req, res) => {
 export const getLogout = async(req,res) => {
   res.clearCookie("bidder_register_token",{
     httpOnly:true,
-    secure:false,
-    sameSite:"lax"
+    secure:true,
+    sameSite:"none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   })
   res.status(200).json("Logout Successfully")
 }

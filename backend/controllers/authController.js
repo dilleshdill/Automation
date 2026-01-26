@@ -47,8 +47,8 @@ export const registerUser = async (req, res) => {
     // Save token in cookie
     res.cookie("userToken", token, {
       httpOnly: true,
-      secure: false, // Change to true in production
-      sameSite: "lax",
+      secure: true, // Change to true in production
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -105,8 +105,8 @@ export const userLogin = async (req, res) => {
 
     res.cookie("userToken", token, {
       httpOnly: true,
-      secure: false, // true in production (HTTPS)
-      sameSite: "lax",
+      secure: true, // true in production (HTTPS)
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     // console.log("token",token)

@@ -44,7 +44,14 @@ export const registerBidder = async (req, res) => {
       auction._id,
       newBidder.email,
     );
-    // const token = generateUserToken(newBidder._id)
+    
+
+    res.cookie("bidder_token", token, {
+      httpOnly: true,
+      secure: true, // true in production (HTTPS)
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.status(201).json({ message: "Bidder registered successfully", token });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -90,8 +97,8 @@ export const bidderLogin = async (req, res) => {
 
     res.cookie("bidder_token", token, {
       httpOnly: true,
-      secure: false, // true in production (HTTPS)
-      sameSite: "lax",
+      secure: true, // true in production (HTTPS)
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -173,8 +180,8 @@ export const bidderSignIn = async(req,res) => {
 
     res.cookie("bidder_register_token", token, {
       httpOnly: true,
-      secure: false, // true in production (HTTPS)
-      sameSite: "lax",
+      secure: true, // true in production (HTTPS)
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     // console.log("token",token)
@@ -192,8 +199,9 @@ export const getLogout = async(req,res) => {
 
   res.clearCookie("bidder_register_token",{
     httpOnly:true,
-    secure:false,
-    sameSite:"lax"
+    secure:true,
+    sameSite:"none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   })
   
   res.status(200).json("Logout Successfully")

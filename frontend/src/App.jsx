@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import { Toaster } from "react-hot-toast";
 
 /* ===== Lazy Imports ===== */
-const LoginPage = lazy(() => import("./Pages/Common/LoginPage"));
+const LoginPage = lazy(() => import("./Pages/Common/LoginPage")); 
 const HomePage = lazy(() => import("./Pages/Common/HomePage"));
 const AdminPage = lazy(() => import("./Pages/Admin/AdminPage"));
 const AuctionCreate = lazy(() => import("./Pages/Auction/AuctionCreate"));

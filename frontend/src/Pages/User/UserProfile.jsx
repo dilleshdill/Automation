@@ -26,7 +26,7 @@ const UserProfile = () => {
   };
 
   useEffect(() => {
-    fetchedData
+    fetchedData()
   }, []);
 
   return (

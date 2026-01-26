@@ -138,8 +138,8 @@ export const bidderSignUp = async (req, res) => {
 
     res.cookie("bidder_register_token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -152,10 +152,10 @@ export const bidderSignUp = async (req, res) => {
 };
 
 export const bidderSignIn = async(req,res) => {
-  // console.log(req.body);
+  console.log(req.body);
   try {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       return res
         .status(400)

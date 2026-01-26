@@ -9,11 +9,10 @@ const BidderProfile = () => {
 
   const fetchedData = async () => {
     try {
-      const id = localStorage.getItem("BidderId");
-
-      const res = await axios.post(
+    
+      const res = await axios.get(
         `${DOMAIN}/bidder/get-bidder`,
-        { id },
+
         { withCredentials: true }
       );
 

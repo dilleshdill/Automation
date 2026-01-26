@@ -43,9 +43,9 @@ const BidderAuctions = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const bidderId = localStorage.getItem("BidderId");
+      
       try {
-        const res = await axios.get(`${DOMAIN}/bidder/checkAuth?bidderId=${bidderId}`, {
+        const res = await axios.get(`${DOMAIN}/bidder/checkAuth`, {
           withCredentials: true,
         });
 

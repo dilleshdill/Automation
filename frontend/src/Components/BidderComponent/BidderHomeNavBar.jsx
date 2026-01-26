@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -13,11 +14,11 @@ const BidderHomeNavBar = () => {
 
   useEffect(() => {
     const fetchName = async () => {
-      const response = await axios.get(DOMAIN + "/user/getName", {
+      const response = await axios.get(DOMAIN + "/bidder/getName", {
         withCredentials: true,
       });
       if (response.status === 200) {
-        setName(response.data.name);
+        setName(response.data.bidderName);
       }
     };
     fetchName();
@@ -30,7 +31,7 @@ const BidderHomeNavBar = () => {
       });
       if (response.status === 200) {
         toast.success("Logout Successfully");
-        navigate("/login");
+        navigate("/");
       }
     } catch (err) {
       toast.error("Something went wrong", err);
@@ -44,18 +45,18 @@ const BidderHomeNavBar = () => {
           <div className="text-lg font-bold text-gray-700 ">Auction</div>
 
           <div className="hidden md:flex space-x-5 text-gray-600 font-medium">
-            <a
-              href="/bidder/auctions"
+            <Link
+             to="/bidder/auctions"
               className="hover:text-gray-700 cursor-pointer"
             >
               Home
-            </a>
-            <a
-              href="/bidder/history"
+            </Link>
+            <Link
+              to="/bidder/history"
               className="hover:text-gray-700 cursor-pointer"
             >
               History
-            </a>
+            </Link>
 
           </div>
 
@@ -90,22 +91,22 @@ const BidderHomeNavBar = () => {
 
             {profileOpen && (
               <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-lg shadow-md">
-                <a
-                  href="/bidder/profile"
+                <Link
+                  to="/bidder/profile"
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
                 >
                   Profile
-                </a>
-                <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                </Link>
+                <Link className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                   Settings
-                </a>
+                </Link>
                 <div className="border-t border-gray-200"></div>
-                <a
+                <Link
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
                   onClick={getLogout}
                 >
                   Logout
-                </a>
+                </Link>
               </div>
             )}
           </div>
@@ -115,12 +116,12 @@ const BidderHomeNavBar = () => {
       {open && (
         <div className="md:hidden !bg-gray-50 border-t border-gray-200">
           <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
-            <a href="/bidder/auctions" className="block">
+            <Link to="/bidder/auctions" className="block">
               Home
-            </a>
-            <a href="/bidder/history" className="block">
+            </Link>
+            <Link to="/bidder/history" className="block">
               History
-            </a>
+            </Link>
           </div>
         </div>
       )}

@@ -60,10 +60,9 @@ export const franchiseLogin = async (req, res) => {
 };
 
 export const getBidder = async (req, res) => {
-  const { id} = req.body;
+  const id = req.user.bidder_id
   
   const bidderData = await BidderRegister.findById(id).select("-password")
-  console.log("bidder data",bidderData)
 
   if(!bidderData){
     return res.status(400).json("Bidder DoesNot Exist")
@@ -100,11 +99,13 @@ export const getUpcomingPlayers = async(req,res) => {
 // check auth
 export const getBidderDetailes = async (req,res) =>{
   try{
-    const bidderId = req.query.bidderId
+    const bidderId = req.user.bidder_id
+    console.log("bidderrId",bidderId)
     const bidder = await BidderRegister.findById(bidderId)
     if(!bidder){
       return res.status(400).json("Bidder Doesn't Exist")
     }
+    console.log("bidder data",bidder)
     return res.status(200).json({message:'success',data:bidder})
   }catch(error){
     return res.status(400).json({message:error})
@@ -138,4 +139,16 @@ export const getAllAuction = async(req,res) => {
     const auctions = await Auction.find()
 
     res.status(200).json(auctions)
+}
+
+export const getBidderName = async(req,res) => {
+    try{
+        const id = req.user.bidder_id
+        
+        const user = await BidderRegister.findById(id)
+        
+        res.status(200).json(user)
+    }catch(err){
+        res.status(400).json("something went wrong")
+    }
 }

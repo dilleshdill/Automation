@@ -52,7 +52,7 @@ const App = () => {
         <Routes>
 
           {/* ===== COMMON ===== */}
-          <Route path="/" element={<LoginPage />} />
+          <Route exact path="/" element={<LoginPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/home" element={<HomePage />} />
 

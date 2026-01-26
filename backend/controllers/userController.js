@@ -27,3 +27,14 @@ export const getAllAuction = async(req,res) => {
 
     res.status(200).json(auctions)
 }
+
+    export const getUserName = async(req,res) => {
+        try{
+            const id = req.user.id
+            const user = await UserRegister.findById(id)
+            console.log(user)
+            res.status(200).json(user)
+        }catch(err){
+            res.status(400).json("something went wrong")
+        }
+    }

@@ -9,7 +9,7 @@ export const registerAuctionSocketEvents = (io) => {
       socket.join(auctionId);
 
       runningAuctions[auctionId] = {
-        timeLeft: runningAuctions[auctionId]?.timeLeft || 10,
+        timeLeft: runningAuctions[auctionId]?.timeLeft || 30,
         currentPlayer: "",
         currentBid: "",
         auctionStatus: "Live",
@@ -17,10 +17,12 @@ export const registerAuctionSocketEvents = (io) => {
       };
 
       const auction = await Auction.findById(auctionId);
+      
       if (!auction) return;
 
       const set = auction?.players?.[auction.currentSet];
       const player = set?.playersList?.[auction.currentPlayerIndex] || [];
+
 
       console.log("state sync players", player);
 
@@ -204,11 +206,14 @@ export const registerAuctionSocketEvents = (io) => {
   });
 };  
 
-export const startTimer = (auctionId, io) => {
-  if (runningAuctions[auctionId]?.auctionStatus === "Live") {
+export const startTimer = async (auctionId, io) => {
+  if (runningAuctions[auctionId]?.auctionStatus === "Live" ) {
+
     clearInterval(timers[auctionId]);
 
-    let timeLeft = runningAuctions[auctionId]?.timeLeft || 10;
+    const auction = await Auction.findById(auctionId)
+
+    let timeLeft = runningAuctions[auctionId]?.timeLeft || auction.auction_time;
 
     timers[auctionId] = setInterval(async () => {
       timeLeft--;

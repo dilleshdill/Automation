@@ -62,8 +62,7 @@ const LoginPage = () => {
 
     if (role === "Bidder") {
       try {
-        const response = await axios.post(
-          DOMAIN + "/bidder/bidderSingin",
+        const response = await axios.post(DOMAIN + "/bidder/bidderSignin",
           { email, password },
           { withCredentials: true }
         );

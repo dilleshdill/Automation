@@ -35,13 +35,14 @@ const BidderHistory = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const bidderId = localStorage.getItem("BidderId");
+      
       try {
-        const res = await axios.get(`${DOMAIN}/bidder/checkAuth?bidderId=${bidderId}`, {
+        const res = await axios.get(`${DOMAIN}/bidder/checkAuth`, {
           withCredentials: true,
         });
 
         if (res.status === 200) {
+          console.log(res.data)
           const email = res?.data?.data?.email;
 
           const loggedAuctions = auctionList

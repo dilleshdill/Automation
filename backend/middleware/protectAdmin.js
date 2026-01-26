@@ -5,7 +5,7 @@ export const protectAdmin = (req, res, next) => {
   
   // console.log("Protect Admin Middleware Invoked. Token:", token);
   if (!token) {
-    return res.status(401).json({ message: "Not authenticated" });
+    return res.status(401).json({ message: "Not authenticated" ,token});
   }
 
   try {

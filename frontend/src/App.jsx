@@ -75,8 +75,7 @@ const App = () => {
           <Route path="/user/teams/player/:id" element={<UserTeamPlayers />} />
           <Route path="/user/auction/ended" element={<UserAuctionEnded />} />
           <Route path="/auction/user/player/:id" element={<UserPlayerDetailes />} />
-          <Route path="/auction/user/profile" element={<UserProfile />} />
-          
+          <Route path="/user/profile" element={<UserProfile />} />
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>

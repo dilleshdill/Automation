@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Auction } from "../models/auctionModel.js";
 import { startTimer } from "../socket/socketAuction.js";
 
@@ -116,13 +117,17 @@ export const addPlayersAndFranchises = async (req, res) => {
     });
   } catch (err) {
     console.error("Add players error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Add Player Error" });
   }
 };
 
 export const getAllAuctions = async (req, res) => {
   try {
-    const details = await Auction.find();
+    const adminId = req.user.id
+    
+    const details = await Auction.find({adminId})
+    console.log("auction detailes",details)
+    
     if (!details) {
       return res.status(200).json([]);
     }

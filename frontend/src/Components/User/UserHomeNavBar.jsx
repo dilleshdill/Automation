@@ -90,7 +90,7 @@ const UserHomeNavBar = () => {
             {profileOpen && (
               <div className="absolute right-0 top-14 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-fade">
                 <a
-                  href="/auction/user/profile"
+                  href="/user/profile"
                   className="block px-4 py-2 text-gray-700 hover:!bg-gray-100 cursor-pointer"
                 >
                   Profile

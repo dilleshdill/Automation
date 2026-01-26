@@ -33,6 +33,13 @@ export const registerAdmin = async (req, res) => {
     await newAdmin.save();
     const token = generateAdminToken(newAdmin._id, newAdmin.email, "Admin");
 
+    res.cookie("admin_token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     const transport = nodemailer.createTransport({
       service:"gmail",
       auth:{

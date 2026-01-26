@@ -16,7 +16,9 @@ const UserAuctions = () => {
   const fetchList = async () => {
     try {
       const response = await axios.get(DOMAIN + "/user/get-auction-list", { withCredentials: true });
-      if (response.status === 200) setAuctionList(response.data.details);
+      if (response.status === 200) 
+        
+        setAuctionList(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -82,7 +84,7 @@ const UserAuctions = () => {
         </select>
       </div>
 
-      {filteredAuctions.length === 0 ? (
+      {filteredAuctions?.length === 0 ? (
         <div className='flex flex-1 justify-center items-center'>
           <BidderAuctionNotStart />
         </div>

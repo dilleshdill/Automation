@@ -15,7 +15,7 @@ const UserAuctions = () => {
 
   const fetchList = async () => {
     try {
-      const response = await axios.get(DOMAIN + "/auction/get-auction-list", { withCredentials: true });
+      const response = await axios.get(DOMAIN + "/user/get-auction-list", { withCredentials: true });
       if (response.status === 200) setAuctionList(response.data.details);
     } catch (err) {
       console.log(err);

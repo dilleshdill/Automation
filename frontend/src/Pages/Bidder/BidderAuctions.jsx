@@ -26,8 +26,8 @@ const BidderAuctions = () => {
 
   const fetchList = async () => {
     try {
-      const res = await axios.get(`${DOMAIN}/auction/get-auction-list`, {
-        withCredentials: true,
+      const res = await axios.get(`${DOMAIN}/bidder/get-auction-list`, {
+        withCredentials: true
       });
       if (res.status === 200) setAuctionList(res?.data?.details ?? []);
     } catch (err) {

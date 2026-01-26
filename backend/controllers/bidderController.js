@@ -133,3 +133,9 @@ export const getPurse = async(req,res) => {
     res.status(400).json({err})
   }
 }
+
+export const getAllAuction = async(req,res) => {
+    const auctions = await Auction.find()
+
+    res.status(200).json(auctions)
+}

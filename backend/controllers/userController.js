@@ -1,4 +1,5 @@
 import { UserRegister } from "../models/userRegister.js";
+import { Auction } from "../models/auctionModel.js";
 
 export const getUserProfile = async(req,res) => {
     const {userId} = req.body
@@ -19,4 +20,10 @@ export const getLogout = async(req,res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     res.status(200).json("Logout Successfully")
+}
+
+export const getAllAuction = async(req,res) => {
+    const auctions = await Auction.find()
+
+    res.status(200).json(auctions)
 }

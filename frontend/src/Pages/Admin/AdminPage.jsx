@@ -43,7 +43,8 @@ const AdminPage = () => {
     socket.emit("join-auction", id);
 
     socket.off("auction-started");
-    socket.once("auction-started", (auction) => {
+    socket.on("auction-started", (auction) => {
+      console.log("auction started in adminPage")
       setLoader(false);
       navigate(`/auction/${auction?.auctionId}/live`, {
         state: { auction },

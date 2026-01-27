@@ -8,6 +8,7 @@ dotenv.config()
 
 export const registerAdmin = async (req, res) => {
   try {
+    console.log("enter into the  auction")
     const { adminName, email, password } = req.body;
     
     if (!adminName || !email || !password) {
@@ -30,6 +31,7 @@ export const registerAdmin = async (req, res) => {
       password: hashedPassword,
       adminKey: `ADMIN-${Date.now()}`,
     });
+    console.log(newAdmin)
     await newAdmin.save();
     const token = generateAdminToken(newAdmin._id, newAdmin.email, "Admin");
 

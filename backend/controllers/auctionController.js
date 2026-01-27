@@ -199,7 +199,7 @@ export const startAuction = async (req, res) => {
     await auction.save();
 
     const io = req.app.get("io");
-
+    
     io.to(auction_id).emit("auction-started", {
       auctionId: auction._id,
       currentPlayer: newData,

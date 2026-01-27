@@ -1,5 +1,6 @@
 import { io } from "socket.io-client";
-export const socket = io("http://localhost:5000", {
+const DOMAIN = import.meta.env.VITE_DOMAIN
+export const socket = io(, {
   withCredentials: true
 }
 ,{ autoConnect: true });

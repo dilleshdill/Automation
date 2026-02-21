@@ -9,7 +9,36 @@ const AdminHomeNavBar = () => {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [name, setName] = useState("");
+  const [liveAuctions, setLiveAuctions] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [notifications, setNotifications] = useState(5);
   const navigate = useNavigate();
+
+  // Real-time clock update
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Fetch live auction count
+  useEffect(() => {
+    const fetchLiveCount = async () => {
+      try {
+        const response = await axios.get(DOMAIN + "/admin/live-auction-count", {
+          withCredentials: true
+        });
+        if (response.status === 200) {
+          setLiveAuctions(response.data.count);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    
+    fetchLiveCount();
+    const interval = setInterval(fetchLiveCount, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const fetchName = async () => {
@@ -19,11 +48,10 @@ const AdminHomeNavBar = () => {
         });
 
         if (response.status === 200) {
-          setName(response.data?.name ?? "");
+          setName(response.data?.userName ?? "");
         }
       } catch (err) {
         console.log(err)
-        
       }
     };
 
@@ -47,35 +75,73 @@ const AdminHomeNavBar = () => {
   };
 
   return (
-    <nav className="min-w-screen bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20">
-      <div className="max-w-7xl mx-auto px-4">
+    <nav className="sticky top-0 z-[999] w-screen
+      bg-gradient-to-r from-slate-600 via-slate-200 to-slate-600 
+      shadow-lg shadow-gray-400/30 
+      backdrop-blur-xl 
+      border-b border-gray-400/30 py-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          
-          {/* Logo */}
-          <div 
-            className="text-lg font-semibold text-gray-800 cursor-pointer"
-            onClick={() => navigate("/admin")}
-          >
-            Auction Admin
+          {/* LOGO - Auction Style */}
+          <div className="flex items-center gap-2">
+            <span className="text-2xl animate-pulse">⚒️</span>
+            <div>
+              <h2 className="text-lg font-serif font-bold text-amber-900">Admin Auction</h2>
+              <p className="text-[10px] text-amber-600 -mt-1">CONTROL PANEL</p>
+            </div>
           </div>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6 text-gray-600 font-medium">
-            <Link to="/admin" className="hover:text-gray-900 transition">
+          {/* DESKTOP MENU */}
+          <div className="hidden md:flex items-center space-x-8">
+            <Link
+              to="/admin"
+              className="relative text-gray-700 hover:text-amber-700 transition font-medium group"
+            >
               Home
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link to="/admin/create-auction" className="hover:text-gray-900 transition">
-              Create Auction
+            <Link
+              to="/admin/create-auction"
+              className="relative text-gray-700 hover:text-amber-700 transition font-medium group"
+            >
+              Create
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
+            
+            {/* Live Auction Counter */}
+            <div className="flex items-center gap-3 bg-amber-100/80 px-3 py-1.5 rounded-full border border-amber-200">
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span className="text-xs font-medium text-amber-800">{liveAuctions} Live</span>
+              </div>
+              <div className="w-px h-4 bg-amber-300"></div>
+              <span className="text-xs font-mono text-amber-700">
+                {currentTime.toLocaleTimeString()}
+              </span>
+            </div>
           </div>
 
-          {/* Profile / Mobile Button */}
+          {/* PROFILE + MOBILE */}
           <div className="flex items-center gap-3 relative">
-            
-            {/* Mobile Toggle */}
+            {/* Notification Bell */}
+            <button className="relative hidden sm:block text-gray-600 hover:text-amber-700 transition">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {notifications > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center text-white font-bold">
+                  {notifications}
+                </span>
+              )}
+            </button>
+
+            {/* MOBILE MENU BUTTON */}
             <button
               onClick={() => setOpen(!open)}
-              className="md:hidden text-gray-600 hover:text-gray-900"
+              className="md:hidden text-gray-600 hover:text-amber-700 transition"
             >
               <svg
                 className="h-6 w-6"
@@ -83,40 +149,64 @@ const AdminHomeNavBar = () => {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                {open ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
-                )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
               </svg>
             </button>
 
-            {/* Profile Icon */}
+            {/* PROFILE BUTTON */}
             <button
               onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center gap-2 focus:outline-none"
+              className="flex items-center gap-2 group"
             >
-              <div className="w-10 h-10 rounded-full !bg-blue-100 text-blue-700 flex items-center justify-center font-semibold uppercase">
-                {name?.[0] ?? "A"}
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-semibold shadow-md group-hover:shadow-lg transition">
+                {name ? name[0].toUpperCase() : "A"}
+              </div>
+              <div className="hidden lg:block text-left">
+                <p className="text-xs text-gray-500">Welcome back</p>
+                <p className="text-sm font-medium text-gray-700">{name || "Admin"}</p>
               </div>
             </button>
 
-            {/* Profile Dropdown */}
+            {/* PROFILE DROPDOWN */}
             {profileOpen && (
-              <div className="absolute right-0 top-14 w-44 bg-white border border-gray-200 rounded-lg shadow-lg fade-in">
-                <Link to="/admin/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                  Profile
+              <div className="absolute right-0 top-14 w-48 bg-white rounded-lg shadow-xl border border-amber-100 py-2 animate-fade">
+                <div className="px-4 py-2 border-b border-amber-100">
+                  <p className="text-sm font-medium text-gray-700">{name || "Admin"}</p>
+                  <p className="text-xs text-gray-500">Administrator</p>
+                </div>
+                <Link
+                  to="/admin/profile"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 transition"
+                  onClick={() => setProfileOpen(false)}
+                >
+                  My Profile
                 </Link>
-                <Link to="/admin/create-auction" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                <Link
+                  to="/admin/create-auction"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 transition"
+                  onClick={() => setProfileOpen(false)}
+                >
                   Create Auction
                 </Link>
-                <Link className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <Link
+                  to="/admin/settings"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 transition"
+                  onClick={() => setProfileOpen(false)}
+                >
                   Settings
                 </Link>
-                <div className="border-t border-slate-200"></div>
+                <div className="border-t border-amber-100 my-1" />
                 <button
-                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
-                  onClick={handleLogout}
+                  onClick={() => {
+                    setProfileOpen(false);
+                    handleLogout();
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-amber-50 transition"
                 >
                   Logout
                 </button>
@@ -126,16 +216,38 @@ const AdminHomeNavBar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden !bg-gray-50 border-t border-gray-200">
-          <div className="px-4 py-3 space-y-3 text-gray-700 font-medium">
-            <Link to="/admin" className="block">
+        <div className="md:hidden bg-white border-t border-amber-100 shadow-lg">
+          <div className="px-4 py-3 space-y-2">
+            <Link
+              to="/admin"
+              className="block py-2 text-gray-700 hover:text-amber-700 transition"
+              onClick={() => setOpen(false)}
+            >
               Home
             </Link>
-            <Link to="/admin/create-auction" className="block">
+            <Link
+              to="/admin/create-auction"
+              className="block py-2 text-gray-700 hover:text-amber-700 transition"
+              onClick={() => setOpen(false)}
+            >
               Create Auction
             </Link>
+            
+            {/* Live indicator for mobile */}
+            <div className="flex items-center justify-between pt-2 mt-2 border-t border-amber-100">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span className="text-xs text-gray-600">{liveAuctions} Live Auctions</span>
+              </div>
+              <span className="text-xs font-mono text-amber-600">
+                {currentTime.toLocaleTimeString()}
+              </span>
+            </div>
           </div>
         </div>
       )}
